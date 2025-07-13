@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจเช็คอุปกรณ์รถพยาบาล</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- SweetAlert2 for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-green': {
+                            light: '#e0f2f1',
+                            DEFAULT: '#009688',
+                            dark: '#00796b',
+                        },
+                        'brand-blue': {
+                            light: '#e3f2fd',
+                            DEFAULT: '#2196f3',
+                            dark: '#1976d2',
+                        },
+                        'brand-bg': '#f5f7fa',
+                        'brand-surface': '#ffffff',
+                        'brand-text': '#334155',
+                        'brand-subtext': '#64748b',
+                    },
+                    fontFamily: {
+                        'prompt': ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f5f7fa; /* brand-bg */
+            color: #334155; /* brand-text */
+            padding-bottom: 80px;
+        }
+        @media (min-width: 640px) {
+            body {
+                padding-bottom: 0;
+            }
+        }
+        .tab-btn-desktop.active {
+            border-bottom: 3px solid #009688; /* brand-green */
+            color: #00796b; /* brand-green-dark */
+            font-weight: 600;
+        }
+        .tab-btn-mobile.active {
+            color: #009688; /* brand-green */
+            font-weight: 600;
+        }
+        .form-section, .dashboard-section, .history-section {
+            display: none;
+        }
+        .form-section.active, .dashboard-section.active, .history-section.active {
+            display: block;
+        }
+        .equipment-category-tab.active {
+            border-color: #009688;
+            color: #00796b;
+            background-color: #e0f2f1;
+            font-weight: 500;
+        }
+        .swal2-title {
+            font-size: 1.5rem !important;
+        }
+        .swal2-html-container {
+            text-align: left !important;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 0.5em 1em;
+            font-size: 1rem !important;
+        }
+        /* Ambulance Animation */
+        .ambulance-container {
+            width: 100%;
+            overflow: hidden;
+            padding: 8px 0;
+        }
+        .ambulance {
+            position: relative;
+            animation: driveAcross 15s linear infinite;
+        }
+        @keyframes driveAcross {
+            0% { transform: translateX(-120px); }
+            100% { transform: translateX(110%); }
+        }
+        .light {
+            animation: flashLights 1s steps(1) infinite;
+        }
+        @keyframes flashLights {
+            0%, 50% { fill: #ef4444; } /* red */
+            51%, 100% { fill: #3b82f6; } /* blue */
+        }
+    </style>
+</head>
+<body class="bg-brand-bg">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-brand-surface shadow-lg sticky top-0 z-40">
+            <div class="container mx-auto px-4 pt-4 pb-2 flex flex-col items-center">
+                <img src="https://img2.pic.in.th/pic/bf20b381c4d3dbdfdb54bcce6e65dc85.png" alt="Hospital Logo" class="h-16 w-16 mb-2">
+                <h1 class="text-2xl sm:text-3xl font-bold text-brand-text">ระบบตรวจเช็คอุปกรณ์</h1>
+                <p class="text-brand-subtext">โรงพยาบาลเจาะไอร้อง</p>
+            </div>
+             <div class="ambulance-container">
+                <svg class="ambulance" width="100" height="45" viewBox="0 0 100 45">
+                    <rect class="light" x="45" y="0" width="10" height="5" rx="2"></rect>
+                    <path fill="#fff" d="M0,15 L0,40 C0,42.76 2.24,45 5,45 L95,45 C97.76,45 100,42.76 100,40 L100,20 C100,17.24 97.76,15 95,15 L70,15 L55,5 L15,5 C10,5 10,15 0,15 Z"></path>
+                    <path fill="#ef4444" d="M10,20 L90,20 L90,30 L10,30 Z"></path>
+                    <circle fill="#334155" cx="20" cy="40" r="5"></circle>
+                    <circle fill="#334155" cx="80" cy="40" r="5"></circle>
+                    <rect fill="#e3f2fd" x="75" y="20" width="15" height="10"></rect>
+                    <rect fill="#e3f2fd" x="5" y="20" width="15" height="10"></rect>
+                </svg>
+            </div>
+        </header>
+
+        <!-- Main Navigation (Desktop) -->
+        <nav class="bg-brand-surface shadow-sm hidden sm:block">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center space-x-8">
+                    <button id="dashboard-tab-desktop" class="tab-btn tab-btn-desktop py-4 px-3 text-brand-subtext active">
+                        <div class="flex items-center text-base"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg><span>แดชบอร์ด</span></div>
+                    </button>
+                    <button id="form-tab-desktop" class="tab-btn tab-btn-desktop py-4 px-3 text-brand-subtext">
+                        <div class="flex items-center text-base"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg><span>แบบฟอร์ม</span></div>
+                    </button>
+                    <button id="history-tab-desktop" class="tab-btn tab-btn-desktop py-4 px-3 text-brand-subtext">
+                        <div class="flex items-center text-base"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>ประวัติ</span></div>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-6">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="dashboard-section active">
+                 <div class="p-6 sm:p-8 bg-brand-surface rounded-2xl shadow-sm">
+                    <h2 class="text-2xl font-bold text-brand-green-dark">แดชบอร์ด</h2>
+                    <p class="text-brand-subtext mt-1">สรุปผลการตรวจเช็คล่าสุด</p>
+                    <div id="dashboard-content" class="mt-6 text-left">
+                        <div class="text-center text-gray-400 p-8">กำลังโหลดข้อมูล...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Form Section -->
+            <section id="form" class="form-section">
+                <div class="bg-brand-surface rounded-2xl shadow-sm p-5 sm:p-8 mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">แบบฟอร์มตรวจเช็ค</h2>
+                    
+                    <div class="mb-8 p-6 bg-base-50 border border-base-200 rounded-xl">
+                        <h3 class="text-xl font-medium text-gray-700 mb-5">ข้อมูลทั่วไป</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="check-date" class="block text-base font-medium text-gray-700 mb-2">วันที่ตรวจเช็ค <span class="text-red-500">*</span></label>
+                                <input type="date" id="check-date" class="w-full text-base p-3 rounded-lg border-gray-300 shadow-sm" required>
+                            </div>
+                            <div>
+                                <label for="shift" class="block text-base font-medium text-gray-700 mb-2">เวร <span class="text-red-500">*</span></label>
+                                <select id="shift" class="w-full text-base p-3 rounded-lg border-gray-300 shadow-sm" required>
+                                    <option value="">เลือกเวร</option>
+                                    <option value="morning">เช้า</option>
+                                    <option value="afternoon">บ่าย</option>
+                                    <option value="night">ดึก</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="checker-name" class="block text-base font-medium text-gray-700 mb-2">ชื่อผู้ตรวจเช็ค <span class="text-red-500">*</span></label>
+                                <input type="text" id="checker-name" class="w-full text-base p-3 rounded-lg border-gray-300 shadow-sm" placeholder="ระบุชื่อ-นามสกุล" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-medium text-gray-700 mb-5">รายการอุปกรณ์</h3>
+                        <div class="sm:hidden mb-4">
+                            <label for="category-select-mobile" class="sr-only">เลือกหมวดหมู่อุปกรณ์</label>
+                            <select id="category-select-mobile" class="w-full text-base p-3 rounded-lg border-gray-300 shadow-sm focus:border-brand-green focus:ring-brand-green">
+                                <option value="airway-breathing">Airway & Breathing</option>
+                                <option value="circulation">Circulation</option>
+                                <option value="iv-kit">ชุดอุปกรณ์ให้ IV</option>
+                                <option value="injection-kit">ชุดอุปกรณ์ฉีดยา</option>
+                                <option value="splint-moving">อุปกรณ์ดาม & ยกเคลื่อนย้าย</option>
+                                <option value="ppe">ชุด PPE</option>
+                                <option value="safety">Safety</option>
+                                <option value="other">อุปกรณ์อื่นๆทั่วไป</option>
+                            </select>
+                        </div>
+                        <div class="hidden sm:flex flex-wrap gap-2 mb-6">
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap active" data-category="airway-breathing">Airway & Breathing</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="circulation">Circulation</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="iv-kit">ชุดให้ IV</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="injection-kit">ชุดฉีดยา</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="splint-moving">อุปกรณ์ดาม</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="ppe">ชุด PPE</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="safety">Safety</button>
+                            <button class="equipment-category-tab px-4 py-2 text-base font-medium rounded-lg whitespace-nowrap" data-category="other">อื่นๆ</button>
+                        </div>
+
+                        <div id="equipment-list-container" class="bg-base-50 p-4 rounded-xl"></div>
+
+                        <div id="category-navigation" class="flex justify-between mt-6">
+                            <button id="prev-category-btn" class="px-5 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-sm hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="flex items-center justify-center text-base"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg><span class="hidden sm:inline">ก่อนหน้า</span></span>
+                            </button>
+                            <button id="next-category-btn" class="px-5 py-3 bg-brand-blue text-white font-semibold rounded-lg shadow-sm hover:bg-brand-blue-dark disabled:opacity-50 disabled:cursor-not-allowed">
+                                 <span class="flex items-center justify-center text-base"><span class="hidden sm:inline">ถัดไป</span><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-12">
+                        <button id="save-form" class="w-full sm:w-auto px-8 py-4 bg-brand-green text-white font-semibold rounded-lg shadow-md hover:bg-brand-green-dark text-lg">
+                            บันทึกข้อมูลการตรวจเช็คทั้งหมด
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history" class="history-section">
+                 <div class="bg-brand-surface rounded-2xl shadow-sm p-5 sm:p-8 mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">ประวัติการตรวจเช็ค</h2>
+                    <div id="history-content" class="space-y-4">
+                        <div class="text-center text-gray-400 p-8">กำลังโหลดข้อมูล...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-brand-surface shadow-[0_-2px_5px_rgba(0,0,0,0.1)] z-50">
+            <div class="flex justify-around">
+                <button id="dashboard-tab-mobile" class="tab-btn tab-btn-mobile flex-1 py-2 px-1 flex flex-col items-center justify-center active">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                    <span class="text-xs">แดชบอร์ด</span>
+                </button>
+                <button id="form-tab-mobile" class="tab-btn tab-btn-mobile flex-1 py-2 px-1 flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                    <span class="text-xs">แบบฟอร์ม</span>
+                </button>
+                <button id="history-tab-mobile" class="tab-btn tab-btn-mobile flex-1 py-2 px-1 flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-xs">ประวัติ</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+    let allFetchedRecords = [];
+    let statusChart = null;
+
+    function handleSaveResponse(response) {
+        Swal.close();
+        if (response.status === 'success') {
+            Swal.fire({ title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว', icon: 'success', confirmButtonText: 'ตกลง' })
+            .then(() => { window.location.reload(); });
+        } else {
+            Swal.fire({ title: 'เกิดข้อผิดพลาด!', text: 'ไม่สามารถบันทึกข้อมูลได้: ' + response.message, icon: 'error', confirmButtonText: 'ตกลง' });
+        }
+    }
+
+    function showHistoryDetails(checkId) {
+        const record = allFetchedRecords.find(r => r.checkId == checkId);
+        if (!record) {
+            Swal.fire('ไม่พบข้อมูล', 'ไม่พบข้อมูลการตรวจเช็คสำหรับ ID นี้', 'error');
+            return;
+        }
+        const itemsByCategory = record.items.reduce((acc, item) => {
+            const categoryName = item.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            if (!acc[categoryName]) acc[categoryName] = [];
+            acc[categoryName].push(item);
+            return acc;
+        }, {});
+        let detailsHtml = `<div class="text-base space-y-2">
+                <p><strong>วันที่:</strong> ${record.checkDate}</p>
+                <p><strong>เวร:</strong> ${record.shift}</p>
+                <p><strong>ผู้ตรวจ:</strong> ${record.checkerName}</p><hr class="my-4"></div>`;
+        for (const category in itemsByCategory) {
+            detailsHtml += `<h4 class="text-lg font-semibold text-brand-green-dark mt-4 mb-2">${category}</h4><ul class="list-none space-y-2 pl-2">`;
+            itemsByCategory[category].forEach(item => {
+                const isNotReady = item.status !== 'ready';
+                const statusText = isNotReady ? 'ไม่พร้อม' : 'พร้อมใช้';
+                const statusColor = isNotReady ? 'text-red-600 font-bold' : 'text-green-700';
+                let details = `สถานะ: <span class="${statusColor}">${statusText}</span>`;
+                if (item.note) details += `<br><span class="text-sm text-gray-500">หมายเหตุ: ${item.note}</span>`;
+                detailsHtml += `<li class="border-b pb-2">- ${item.equipmentName} <div class="text-base text-gray-700 pl-4 mt-1">${details}</div></li>`;
+            });
+            detailsHtml += `</ul>`;
+        }
+        Swal.fire({ title: 'รายละเอียดการตรวจเช็ค', html: detailsHtml, width: '95%', customClass: { popup: 'p-4 sm:p-6' }, confirmButtonText: 'ปิด' });
+    }
+
+    function renderStatusChart(readyCount, notReadyCount) {
+        const ctx = document.getElementById('statusChart');
+        if (!ctx) return;
+        if (statusChart) statusChart.destroy();
+        statusChart = new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['พร้อมใช้', 'ไม่พร้อม'],
+                datasets: [{ data: [readyCount, notReadyCount], backgroundColor: ['#22c55e', '#ef4444'], borderColor: '#ffffff', borderWidth: 4, hoverOffset: 4 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false } } }
+        });
+    }
+
+    function handleFetchResponse(data) {
+        const dashboardContent = document.getElementById('dashboard-content');
+        const historyContent = document.getElementById('history-content');
+        allFetchedRecords = (data.status === 'success' && data.records) ? data.records : [];
+        if (allFetchedRecords.length > 0) {
+            const latestCheck = allFetchedRecords[0];
+            const notReadyItems = latestCheck.items.filter(item => item.status === 'not-ready');
+            const readyCount = latestCheck.items.length - notReadyItems.length;
+            const issueCounts = allFetchedRecords.flatMap(record => record.items)
+                .filter(item => item.status === 'not-ready' && item.equipmentName)
+                .reduce((acc, item) => { acc[item.equipmentName] = (acc[item.equipmentName] || 0) + 1; return acc; }, {});
+            const commonIssues = Object.entries(issueCounts).sort(([, a], [, b]) => b - a).slice(0, 5);
+            dashboardContent.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <div class="lg:col-span-3 p-5 bg-brand-blue-light rounded-xl">
+                        <h3 class="text-xl font-semibold mb-3 text-gray-700">การตรวจเช็คล่าสุด</h3>
+                        <p class="text-base"><strong>วันที่:</strong> ${latestCheck.checkDate}</p>
+                        <p class="text-base"><strong>เวร:</strong> ${latestCheck.shift}</p>
+                        <p class="text-base"><strong>ผู้ตรวจเช็ค:</strong> ${latestCheck.checkerName}</p>
+                        <h4 class="font-semibold mt-4 mb-2 text-gray-700">รายการที่ไม่พร้อมใช้งาน:</h4>
+                        ${notReadyItems.length > 0 ? `<ul class="list-disc list-inside text-red-600 space-y-1">${notReadyItems.map(item => `<li>${item.equipmentName} ${item.note ? `(${item.note})` : ''}</li>`).join('')}</ul>` : '<p class="text-green-600">อุปกรณ์ทุกอย่างพร้อมใช้งาน</p>' }
+                    </div>
+                    <div class="lg:col-span-2 p-5 bg-brand-surface border rounded-xl">
+                         <h3 class="text-xl font-semibold mb-3 text-gray-700 text-center">สถานะอุปกรณ์</h3>
+                         <div class="relative h-48"><canvas id="statusChart"></canvas></div>
+                         <div class="flex justify-center mt-4 space-x-6 text-sm">
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-brand-green"></div><span class="ml-2">พร้อมใช้ (${readyCount})</span></div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-red-500"></div><span class="ml-2">ไม่พร้อม (${notReadyItems.length})</span></div>
+                         </div>
+                    </div>
+                </div>
+                <div class="mt-6 p-5 bg-brand-surface border rounded-xl">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-700">ปัญหาที่พบบ่อย</h3>
+                    ${commonIssues.length > 0 ? `<ul class="space-y-2">${commonIssues.map(([name, count]) => `<li class="flex justify-between items-center text-base p-3 bg-red-50 rounded-lg"><span>${name}</span><span class="font-bold text-red-600">${count} ครั้ง</span></li>`).join('')}</ul>` : '<p class="text-gray-500">ไม่พบข้อมูลปัญหาที่เคยเกิดขึ้น</p>' }
+                </div>`;
+            renderStatusChart(readyCount, notReadyItems.length);
+            historyContent.innerHTML = allFetchedRecords.map(check => {
+                const notReadyCount = check.items.filter(item => item.status === 'not-ready').length;
+                const statusClass = notReadyCount > 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+                const statusText = notReadyCount > 0 ? `พบปัญหา` : 'เรียบร้อย';
+                return `<div class="p-5 bg-brand-surface rounded-xl border border-gray-200">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                            <div>
+                                <p class="font-bold text-lg text-gray-800">${check.checkDate} - เวร ${check.shift}</p>
+                                <p class="text-base text-brand-subtext">ผู้ตรวจ: ${check.checkerName}</p>
+                            </div>
+                            <div class="mt-3 sm:mt-0 flex items-center gap-4">
+                                <span class="px-3 py-1 text-sm leading-5 font-semibold rounded-full ${statusClass}">${statusText}</span>
+                                <button class="view-details-btn text-base text-brand-blue hover:underline" data-check-id="${check.checkId}">ดูรายละเอียด</button>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+            document.querySelectorAll('.view-details-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const checkId = event.currentTarget.dataset.checkId;
+                    showHistoryDetails(checkId);
+                });
+            });
+        } else {
+            dashboardContent.innerHTML = '<div class="text-center text-gray-400 p-8">ไม่พบข้อมูลการตรวจเช็คล่าสุด</div>';
+            historyContent.innerHTML = '<div class="text-center text-gray-400 p-8">ไม่พบประวัติการตรวจเช็ค</div>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzrmxyUcv1wlUiV0s4RzEmirfBckwyrMEFKX_rvt0oXCK-bsGRSYufnVJN4fmfhaLMeIA/exec";
+        const equipmentData = {
+            'airway-breathing': [
+                { id: 'ambu-child', name: 'Ambu เด็ก' }, { id: 'ambu-adult', name: 'Ambu ผู้ใหญ่' }, { id: 'o2-mask-child', name: 'O2 mask เด็ก' }, { id: 'o2-mask-adult', name: 'O2 mask ผู้ใหญ่' }, { id: 'o2-cannular', name: 'O2 cannular' }, { id: 'nebulizer-set-child', name: 'set พ่นยา เด็ก' }, { id: 'nebulizer-set-adult', name: 'set พ่นยา ผู้ใหญ่' }, { id: 'rubber-bulb-syringe', name: 'ลูกสูบยางแดง' }, { id: 'stethoscope', name: 'stethoscope' }, { id: 'oral-airway', name: 'oral away ขนาดต่างๆ', notePlaceholder: 'ระบุขนาดที่ครบ/ไม่ครบ' }, { id: 'nasal-airway', name: 'nasal away ขนาดต่างๆ', notePlaceholder: 'ระบุขนาดที่ครบ/ไม่ครบ' }, { id: 'ky-jelly', name: 'KY jell' }, { id: 'oxygen-tank-1', name: 'Oxygen ถังที่ 1', notePlaceholder: 'ระบุ % คงเหลือ' }, { id: 'oxygen-tank-2', name: 'Oxygen ถังที่ 2', notePlaceholder: 'ระบุ % คงเหลือ' },
+            ],
+            'circulation': [
+                { id: 'nss-1000', name: 'NSS 1000 ml.' }, { id: '5dn2-1000', name: '5%D/N/2 1000 ml.' }, { id: 'aed', name: 'AED' }, { id: 'paddle-child', name: 'Paddle เด็ก' }, { id: 'paddle-adult', name: 'Paddle ผู้ใหญ่' }, { id: 'electrode-adult', name: 'แผ่น Electrode ผู้ใหญ่' }, { id: 'electrode-child', name: 'แผ่น Electrode เด็ก' }, { id: 'bp-digital', name: 'เครื่องวัด BP Digital' }, { id: 'o2-sat', name: 'เครื่องวัด O2 sat' }, { id: 'top-gauze', name: 'Top gauze' }, { id: 'gauze', name: 'gauze' }, { id: 'roll-gauze', name: 'Roll gauze' }, { id: 'elastic-bandage', name: 'Elastic bandage ขนาดต่างๆ', notePlaceholder: 'ระบุขนาดที่ครบ' }, { id: 'three-side-dressing', name: 'three side dressing' }, { id: 'tourniquet-multi', name: 'turnigue (อเนกประสงค์)' }, { id: 'dtx-set', name: 'ชุด DTX' },
+            ],
+            'iv-kit': [
+                { id: 'medicut', name: 'medicut ขนาดต่างๆ', notePlaceholder: 'ระบุขนาดที่ครบ' }, { id: 'iv-set-child', name: 'set IV เด็ก' }, { id: 'iv-set-adult', name: 'set IV ผู้ใหญ่' }, { id: 'three-way', name: 'tree way' }, { id: 'extension-tube', name: 'extension tube' }, { id: 'tourniquet', name: 'turnigue' }, { id: 'iv-plaster', name: 'พลาสเตอร์ IV' }, { id: 'transpore-1-inch', name: 'transpore 1"' }, { id: 'heplock', name: 'heplock' }, { id: 'alcohol-boll-iv', name: 'alcohol boll' },
+            ],
+            'injection-kit': [
+                { id: 'syringe', name: 'syringe 50,20,10,5,3', notePlaceholder: 'ระบุขนาดที่ครบ' }, { id: 'needles', name: 'เข็ม 18,21,23,24,25,26', notePlaceholder: 'ระบุขนาดที่ครบ' }, { id: 'alcohol-boll-inject', name: 'alcohol boll' },
+            ],
+            'splint-moving': [
+                { id: 'spinal-board', name: 'spinal board' }, { id: 'head-immobilize', name: 'Herd immobilize' }, { id: 'belt', name: 'belt' }, { id: 'hard-collar', name: 'Hard collar ขนาดต่างๆ', notePlaceholder: 'ระบุขนาดที่ครบ' }, { id: 'ked', name: 'KED' }, { id: 'vacuum-splint', name: 'vaccuum splint' }, { id: 'leg-splint', name: 'ไม้ดามขา' }, { id: 'arm-splint', name: 'ไม้ดามแขน' },
+            ],
+            'ppe': [
+                { id: 'gloves-disposable', name: 'ถุงมือ Disposable' }, { id: 'gloves-sterile', name: 'ถุงมือ sterile' }, { id: 'apron', name: 'เอี๊ยม' }, { id: 'mask', name: 'mask' }, { id: 'mask-n95', name: 'mask N95' }, { id: 'raincoat', name: 'เสื้อกันฝน' }, { id: 'boots', name: 'รองเท้าบูท' }, { id: 'goggles', name: 'แว่นตา' }, { id: 'cap', name: 'หมวก' },
+            ],
+            'safety': [
+                { id: 'reflective-vest', name: 'เสื้อสะท้อนแสง' }, { id: 'safety-helmet', name: 'หมวกกันกระแทกฯ' }, { id: 'traffic-cone', name: 'กรวยและอุปกรณ์สะท้อนแสง' }, { id: 'barrier-tape', name: 'แถบกั้นจราจร' }, { id: 'fire-extinguisher', name: 'ถังดับเพลิง' }, { id: 'whistle', name: 'นกหวีด' }, { id: 'glass-breaker', name: 'อุปกรณ์ทุบกระจก & ตัดสายรัด' }, { id: 'traffic-wand', name: 'กระบองไฟจราจร' }, { id: 'flashlight-safety', name: 'ไฟฉาย' }, { id: 'scissors', name: 'กรรไกร' }, { id: 'bulletproof-vest', name: 'เสื้อกันกระสุน' },
+            ],
+            'other': [
+                { id: 'red-bag', name: 'ถุงแดง' }, { id: 'trash-bag', name: 'ถุงขยะทั่วไป' }, { id: 'hand-sanitizer', name: 'เจลล้างมือ' }, { id: 'ammonia', name: 'แอมโมเนียหอม' }, { id: 'nss-wound', name: 'NSS ล้างแผล' }, { id: 'betadine', name: 'เบต้าดีน' }, { id: 'consent-form', name: 'ใบเช็นไม่ยินยอม' },
+            ]
+        };
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const sections = document.querySelectorAll('.dashboard-section, .form-section, .history-section');
+        const desktopCategoryTabs = document.querySelectorAll('.equipment-category-tab');
+        const mobileCategorySelect = document.getElementById('category-select-mobile');
+        const equipmentListContainer = document.getElementById('equipment-list-container');
+        const prevCategoryBtn = document.getElementById('prev-category-btn');
+        const nextCategoryBtn = document.getElementById('next-category-btn');
+        const saveFormBtn = document.getElementById('save-form');
+        const categoryOrder = Object.keys(equipmentData);
+        let currentCategoryIndex = 0;
+        function switchTab(targetId) {
+            const cleanId = targetId.replace(/-tab-desktop|-tab-mobile/g, '');
+            sections.forEach(section => section.classList.remove('active'));
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            const targetSection = document.getElementById(cleanId);
+            if (targetSection) targetSection.classList.add('active');
+            document.querySelectorAll(`#${cleanId}-tab-desktop, #${cleanId}-tab-mobile`).forEach(btn => { if(btn) btn.classList.add('active') });
+        }
+        function createEquipmentItemHTML(item, index) {
+            const notePlaceholder = item.notePlaceholder || 'รายละเอียด (ถ้ามี)';
+            return `<div class="p-4 bg-white rounded-xl border border-gray-200/80"><div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><h4 class="text-lg font-semibold text-gray-800 flex-1">${index + 1}. ${item.name}</h4><div class="flex space-x-5 flex-shrink-0"><label class="flex items-center text-base"><input type="radio" name="${item.id}-status" value="ready" class="h-5 w-5 text-brand-green"><span class="ml-2 text-gray-700">พร้อมใช้</span></label><label class="flex items-center text-base"><input type="radio" name="${item.id}-status" value="not-ready" class="h-5 w-5 text-red-500"><span class="ml-2 text-gray-700">ไม่พร้อม</span></label></div></div><div class="mt-3"><textarea id="${item.id}-note" rows="1" class="w-full text-base p-3 rounded-lg border-gray-300 shadow-sm" placeholder="${notePlaceholder}"></textarea></div></div>`;
+        }
+        function updateCheckAllStatus(container, category) {
+            const checkAllCheckbox = container.querySelector(`#check-all-ready-${category}`);
+            if (!checkAllCheckbox) return;
+            const readyRadios = container.querySelectorAll('input[type="radio"][value="ready"]');
+            if (readyRadios.length === 0) { checkAllCheckbox.checked = false; checkAllCheckbox.indeterminate = false; return; }
+            const totalChecked = Array.from(readyRadios).filter(r => r.checked).length;
+            if (totalChecked === 0) { checkAllCheckbox.checked = false; checkAllCheckbox.indeterminate = false; }
+            else if (totalChecked === readyRadios.length) { checkAllCheckbox.checked = true; checkAllCheckbox.indeterminate = false; }
+            else { checkAllCheckbox.checked = false; checkAllCheckbox.indeterminate = true; }
+        }
+        function renderEquipmentList(category) {
+            const items = equipmentData[category] || [];
+            const checkAllHTML = `<div class="p-4 mb-4 bg-brand-green-light border border-brand-green rounded-lg"><label class="flex items-center"><input type="checkbox" id="check-all-ready-${category}" class="h-5 w-5 text-brand-green rounded"><span class="ml-3 text-base font-medium text-brand-green-dark">เลือก "พร้อมใช้" ทั้งหมด</span></label></div>`;
+            const itemsHTML = items.map(createEquipmentItemHTML).join('');
+            equipmentListContainer.innerHTML = checkAllHTML + '<div class="space-y-4">' + itemsHTML + '</div>';
+            const checkAllCheckbox = document.getElementById(`check-all-ready-${category}`);
+            checkAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                const readyRadios = equipmentListContainer.querySelectorAll('input[type="radio"][value="ready"]');
+                readyRadios.forEach(radio => radio.checked = isChecked);
+                updateCheckAllStatus(equipmentListContainer, category);
+            });
+            const allRadios = equipmentListContainer.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => { radio.addEventListener('change', () => updateCheckAllStatus(equipmentListContainer, category)); });
+            updateCheckAllStatus(equipmentListContainer, category);
+        }
+        function updateNavButtons() {
+            if (!prevCategoryBtn || !nextCategoryBtn) return;
+            prevCategoryBtn.disabled = currentCategoryIndex === 0;
+            nextCategoryBtn.disabled = currentCategoryIndex === categoryOrder.length - 1;
+        }
+        function switchCategory(targetCategory) {
+            currentCategoryIndex = categoryOrder.indexOf(targetCategory);
+            desktopCategoryTabs.forEach(t => t.classList.remove('active'));
+            const activeTab = document.querySelector(`.equipment-category-tab[data-category="${targetCategory}"]`);
+            if(activeTab) activeTab.classList.add('active');
+            if (mobileCategorySelect) mobileCategorySelect.value = targetCategory;
+            renderEquipmentList(targetCategory);
+            updateNavButtons();
+        }
+        function saveData() {
+            if (!SCRIPT_URL) { Swal.fire('ข้อผิดพลาด', 'ยังไม่ได้ตั้งค่า URL ของ Google Apps Script ในโค้ด', 'error'); return; }
+            const checkDate = document.getElementById('check-date').value;
+            const shift = document.getElementById('shift').value;
+            const checkerName = document.getElementById('checker-name').value;
+            if (!checkDate || !shift || !checkerName) { Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลทั่วไปให้ครบถ้วน', 'warning'); return; }
+            Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            const consolidatedData = { checkId: new Date().getTime(), checkDate: checkDate, shift: shift, checkerName: checkerName, items: [] };
+            categoryOrder.forEach(category => {
+                equipmentData[category].forEach(item => {
+                    const statusRadio = document.querySelector(`input[name="${item.id}-status"]:checked`);
+                    const noteInput = document.getElementById(`${item.id}-note`);
+                    if (statusRadio) { consolidatedData.items.push({ category: category, equipmentName: item.name, status: statusRadio.value, note: noteInput ? noteInput.value : '' }); }
+                });
+            });
+            const url = `${SCRIPT_URL}?callback=handleSaveResponse&action=save&data=${encodeURIComponent(JSON.stringify(consolidatedData))}`;
+            const script = document.createElement("script");
+            script.src = url;
+            document.body.appendChild(script);
+        }
+        function fetchData() {
+             if (!SCRIPT_URL) {
+                console.error("Google Apps Script URL is not set.");
+                document.getElementById('dashboard-content').innerHTML = '<div class="text-red-600 p-4 bg-red-100 rounded-lg">การตั้งค่าไม่ถูกต้อง: กรุณาตั้งค่า URL ของ Google Apps Script ในโค้ดก่อน</div>';
+                document.getElementById('history-content').innerHTML = '<div class="text-red-600 p-4 bg-red-100 rounded-lg">การตั้งค่าไม่ถูกต้อง: กรุณาตั้งค่า URL ของ Google Apps Script ในโค้ดก่อน</div>';
+                return;
+            }
+            const url = `${SCRIPT_URL}?callback=handleFetchResponse&action=fetch`;
+            const script = document.createElement("script");
+            script.src = url;
+            document.body.appendChild(script);
+        }
+        tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.id)));
+        desktopCategoryTabs.forEach(tab => tab.addEventListener('click', () => switchCategory(tab.dataset.category)));
+        if (mobileCategorySelect) mobileCategorySelect.addEventListener('change', () => switchCategory(mobileCategorySelect.value));
+        if (nextCategoryBtn) nextCategoryBtn.addEventListener('click', () => { if (currentCategoryIndex < categoryOrder.length - 1) switchCategory(categoryOrder[currentCategoryIndex + 1]); });
+        if (prevCategoryBtn) prevCategoryBtn.addEventListener('click', () => { if (currentCategoryIndex > 0) switchCategory(categoryOrder[currentCategoryIndex - 1]); });
+        if (saveFormBtn) saveFormBtn.addEventListener('click', saveData);
+        const checkDateInput = document.getElementById('check-date');
+        if(checkDateInput) checkDateInput.value = new Date().toISOString().split('T')[0];
+        switchCategory(categoryOrder[0]);
+        fetchData();
+    });
+    </script>
+</body>
+</html>
