@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบตรวจเช็คอุปกรณ์รถพยาบาล 4 คัน - รพ.เจาะไอร้อง</title>
+  
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Modern Medical Emergency Theme - Cho-airong Hospital */
+    :root {
+      --primary: #059669;
+      --primary-hover: #047857;
+      --primary-light: #ecfdf5;
+      --primary-dark: #065f46;
+      --secondary: #0284c7;
+      --secondary-light: #f0f9ff;
+      --bg-dark: #0f172a;
+      --bg-subtle: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border: #cbd5e1;
+      
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Sarabun', 'Inter', -apple-system, sans-serif;
+      background-color: #f1f5f9;
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* Header Navbar */
+    .navbar {
+      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #0284c7 100%);
+      color: white;
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .navbar-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .brand-title h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .brand-title p {
+      font-size: 0.825rem;
+      opacity: 0.95;
+      font-weight: 400;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.85rem;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #4ade80;
+      box-shadow: 0 0 10px #4ade80;
+    }
+
+    .status-dot.local {
+      background-color: #facc15;
+      box-shadow: 0 0 10px #facc15;
+    }
+
+    .btn-config {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      min-height: 38px;
+    }
+
+    .btn-config:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 1280px;
+      margin: 1.25rem auto;
+      padding: 0 1rem 3rem 1rem;
+    }
+
+    /* Tabs */
+    .tab-navigation {
+      display: flex;
+      gap: 0.5rem;
+      background: white;
+      padding: 0.4rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 0.85rem 1rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      min-height: 48px;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Vehicle Selector */
+    .vehicle-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .vehicle-card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .vehicle-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+    }
+
+    .vehicle-card .v-icon {
+      width: 46px;
+      height: 46px;
+      background: #e0f2fe;
+      color: var(--secondary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .vehicle-card.selected .v-icon {
+      background: var(--primary);
+      color: white;
+    }
+
+    .vehicle-card .v-info h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .vehicle-card .v-info p {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    /* Content Card */
+    .content-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding-left: 0.75rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    /* Category Nav Grid */
+    .category-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 640px) {
+      .category-nav-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .cat-card-btn {
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 0.65rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.15s ease;
+      min-height: 52px;
+      text-align: left;
+    }
+
+    .cat-card-btn.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25);
+    }
+
+    .cat-card-btn .cat-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #e0f2fe;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .cat-card-btn.active .cat-icon-box {
+      background: var(--primary);
+      color: white;
+    }
+
+    .cat-card-btn .cat-title-text {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      flex: 1;
+    }
+
+    .cat-card-btn .cat-count-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: #e2e8f0;
+      color: var(--text-main);
+      padding: 0.15rem 0.45rem;
+      border-radius: 8px;
+    }
+
+    .cat-card-btn.active .cat-count-badge {
+      background: var(--primary);
+      color: white;
+    }
+
+    .cat-pill {
+      background: #f1f5f9;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cat-pill.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    /* Category Stepper Bar */
+    .category-stepper-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0.5rem 0 0.5rem;
+      margin-top: 1rem;
+      border-top: 1.5px dashed var(--border);
+      gap: 0.5rem;
+    }
+
+    /* Form Inputs */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .form-control {
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #f8fafc;
+      min-height: 48px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+    }
+
+    /* Item Row & Status Buttons */
+    .category-block {
+      margin-bottom: 1.25rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: white;
+    }
+
+    .category-header {
+      background: linear-gradient(to right, #ecfdf5, #f0f9ff);
+      padding: 0.95rem 1.15rem;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--primary-dark);
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .item-row {
+      padding: 1rem 1.15rem;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .item-row:last-child {
+      border-bottom: none;
+    }
+
+    .item-title-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+    }
+
+    .item-badge-num {
+      background: #e2e8f0;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.825rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .item-name-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .item-code-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-left: 0.3rem;
+    }
+
+    .status-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .status-btn {
+      min-height: 44px;
+      padding: 0.5rem 0.6rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border: 1.5px solid var(--border);
+      background: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      color: var(--text-main);
+    }
+
+    .status-btn.ready.active {
+      background: #16a34a;
+      color: white;
+      border-color: #15803d;
+    }
+
+    .status-btn.repair.active {
+      background: #dc2626;
+      color: white;
+      border-color: #b91c1c;
+    }
+
+    .status-btn.refill.active {
+      background: #d97706;
+      color: white;
+      border-color: #b45309;
+    }
+
+    .item-note-input {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    @media (min-width: 768px) {
+      .item-row {
+        display: grid;
+        grid-template-columns: 45% 32% 23%;
+        align-items: center;
+        gap: 1rem;
+      }
+      .status-options {
+        display: flex;
+        gap: 0.4rem;
+      }
+      .status-btn {
+        flex: 1;
+        min-height: 40px;
+        font-size: 0.825rem;
+      }
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.75rem;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+      font-family: inherit;
+      width: 100%;
+      min-height: 54px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      min-height: 44px;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .kpi-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .kpi-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .kpi-icon.green { background: #dcfce7; color: #15803d; }
+    .kpi-icon.blue { background: #e0f2fe; color: #0369a1; }
+    .kpi-icon.red { background: #fee2e2; color: #b91c1c; }
+    .kpi-icon.amber { background: #fef3c7; color: #b45309; }
+
+    .kpi-value {
+      font-size: 1.65rem;
+      font-weight: 800;
+    }
+
+    .kpi-label {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .chart-box {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      border: 1px solid var(--border);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+
+    /* Filter Bar & Data Table */
+    .filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      background: white;
+      padding: 0.85rem 1.15rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th, .data-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .data-table th {
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      padding: 0.75rem;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: white;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      background: var(--primary-dark);
+      color: white;
+      padding: 1.15rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 0.85rem 1.25rem;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      left: 1.25rem;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    @media (min-width: 600px) {
+      .toast-container {
+        left: auto;
+        max-width: 420px;
+      }
+    }
+
+    .toast {
+      background: var(--bg-dark);
+      color: white;
+      padding: 0.95rem 1.25rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      animation: slideUp 0.25s ease forwards;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast.success { border-left: 5px solid var(--success); }
+    .toast.error { border-left: 5px solid var(--danger); }
+    .toast.info { border-left: 5px solid var(--secondary); }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-truck-medical"></i>
+        </div>
+        <div class="brand-title">
+          <h1>ระบบตรวจเช็คอุปกรณ์รถพยาบาล 4 คัน (78 รายการ)</h1>
+          <p>กลุ่มงานการพยาบาลผู้ป่วยนอกและอุบัติเหตุฉุกเฉิน โรงพยาบาลเจาะไอร้อง</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="sync-badge" id="syncStatusBadge">
+          <span class="status-dot local" id="statusDot"></span>
+          <span id="syncStatusText">Local Storage Mode</span>
+        </div>
+        <button class="btn-config" onclick="openConfigModal()">
+          <i class="fa-solid fa-file-excel"></i> ตั้งค่า Google Sheet
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="main-container">
+
+    <!-- Navigation Tabs -->
+    <div class="tab-navigation">
+      <button class="tab-btn active" id="tabBtnForm" onclick="switchTab('formTab')">
+        <i class="fa-solid fa-clipboard-check"></i> แบบฟอร์มตรวจเช็ค
+      </button>
+      <button class="tab-btn" id="tabBtnDash" onclick="switchTab('dashboardTab')">
+        <i class="fa-solid fa-chart-pie"></i> แดชบอร์ดสรุปผล
+      </button>
+      <button class="tab-btn" id="tabBtnHist" onclick="switchTab('historyTab')">
+        <i class="fa-solid fa-clock-rotate-left"></i> ประวัติการตรวจเช็ค
+      </button>
+    </div>
+
+    <!-- TAB 1: FORM TAB -->
+    <section id="formTab" class="tab-content active">
+      
+      <!-- Vehicle Selection -->
+      <div class="card-title">
+        <i class="fa-solid fa-ambulance"></i> เลือกหมายเลขรถพยาบาลที่ทำการตรวจเช็ค
+      </div>
+      <div class="vehicle-selector-grid">
+        <div class="vehicle-card selected" data-vehicle="คันที่ 1 (รถ Refer)" onclick="selectVehicle('คันที่ 1 (รถ Refer)', this)">
+          <div class="v-icon"><i class="fa-solid fa-truck-medical"></i></div>
+          <div class="v-info">
+            <h3>คันที่ 1 (รถ Refer)</h3>
+            <p>รถส่งต่อผู้ป่วยวิกฤต</p>
+          </div>
+        </div>
+        <div class="vehicle-card" data-vehicle="คันที่ 2 (รถ EMS)" onclick="selectVehicle('คันที่ 2 (รถ EMS)', this)">
+          <div class="v-icon"><i class="fa-solid fa-kit-medical"></i></div>
+          <div class="v-info">
+            <h3>คันที่ 2 (รถ EMS)</h3>
+            <p>รถกู้ชีพฉุกเฉินออกรับเหตุ</p>
+          </div>
+        </div>
+        <div class="vehicle-card" data-vehicle="คันที่ 3" onclick="selectVehicle('คันที่ 3', this)">
+          <div class="v-icon"><i class="fa-solid fa-van-shuttle"></i></div>
+          <div class="v-info">
+            <h3>คันที่ 3</h3>
+            <p>รถพยาบาลสำรอง/ทั่วไป</p>
+          </div>
+        </div>
+        <div class="vehicle-card" data-vehicle="คันที่ 4" onclick="selectVehicle('คันที่ 4', this)">
+          <div class="v-icon"><i class="fa-solid fa-van-shuttle"></i></div>
+          <div class="v-info">
+            <h3>คันที่ 4</h3>
+            <p>รถพยาบาลสำรอง/ทั่วไป</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Information -->
+      <form id="inspectionForm" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="selectedVehicle" value="คันที่ 1 (รถ Refer)">
+
+        <div class="content-card">
+          <div class="card-title">
+            <i class="fa-solid fa-id-card"></i> ข้อมูลผู้ตรวจและเวรการทำงาน
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="inspectorName"><i class="fa-solid fa-user"></i> ชื่อ-นามสกุล ผู้ตรวจ</label>
+              <input type="text" id="inspectorName" class="form-control" placeholder="เช่น พยาบาลวิชาชีพ สมชาย ใจดี" required>
+            </div>
+            <div class="form-group">
+              <label for="shiftType"><i class="fa-solid fa-clock"></i> เวรการทำงาน</label>
+              <select id="shiftType" class="form-control" required>
+                <option value="เวรเช้า (08:00 - 16:00)">เวรเช้า (08:00 - 16:00)</option>
+                <option value="เวรบ่าย (16:00 - 24:00)">เวรบ่าย (16:00 - 24:00)</option>
+                <option value="เวรดึก (00:00 - 08:00)">เวรดึก (00:00 - 08:00)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inspectionDate"><i class="fa-solid fa-calendar-day"></i> วันที่และเวลาตรวจ</label>
+              <input type="datetime-local" id="inspectionDate" class="form-control" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY GRID SELECTOR -->
+        <div class="content-card">
+          <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <span><i class="fa-solid fa-layer-group"></i> เลือกหมวดหมู่อุปกรณ์ (8 หมวดหมู่)</span>
+            <button type="button" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" onclick="setAllItemsStatus('READY')">
+              <i class="fa-solid fa-check-double"></i> เลือก "พร้อมใช้" ทั้งหมด (78 รายการ)
+            </button>
+          </div>
+
+          <!-- All Items Toggle Pill & Quick Search -->
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+            <button type="button" id="btnShowAllPill" class="cat-pill active" style="flex: 1; justify-content: center; min-height: 44px;" onclick="switchCategory('ALL')">
+              <i class="fa-solid fa-border-all"></i>
+              <span>แสดงครบทุกหมวดหมู่ (78 รายการ)</span>
+            </button>
+            <div style="flex: 1; min-width: 220px;">
+              <input type="text" id="quickSearchInput" class="form-control" style="min-height: 44px;" placeholder="🔍 ค้นหาชื่ออุปกรณ์ด่วน..." oninput="handleQuickSearch(this.value)">
+            </div>
+          </div>
+
+          <!-- 2-Row Grid -->
+          <div class="category-nav-grid" id="categoryNavGrid"></div>
+
+          <!-- Checklist Items Render Area -->
+          <div id="checklistCategoriesContainer"></div>
+
+          <!-- Stepper Footer Bar -->
+          <div class="category-stepper-bar">
+            <button type="button" class="btn-secondary" id="btnPrevCat" onclick="stepCategory(-1)">
+              <i class="fa-solid fa-chevron-left"></i> หมวดก่อนหน้า
+            </button>
+            <span id="catStepProgressText" style="font-weight: 700; color: var(--primary-dark); font-size: 0.95rem;">
+              แสดงครบทั้ง 8 หมวดหมู่
+            </span>
+            <button type="button" class="btn-secondary" id="btnNextCat" onclick="stepCategory(1)">
+              หมวดถัดไป <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <button type="submit" class="btn-primary" id="btnSubmit">
+              <i class="fa-solid fa-paper-plane"></i> บันทึกผลการตรวจเช็คอุปกรณ์ (78 รายการ)
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- TAB 2: DASHBOARD TAB -->
+    <section id="dashboardTab" class="tab-content">
+      
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label><i class="fa-solid fa-filter"></i> เลือกแสดงข้อมูล:</label>
+          <select id="dashVehicleFilter" class="form-control" onchange="renderDashboard()">
+            <option value="ALL">รถพยาบาลทั้งหมด (4 คัน)</option>
+            <option value="คันที่ 1 (รถ Refer)">คันที่ 1 (รถ Refer)</option>
+            <option value="คันที่ 2 (รถ EMS)">คันที่ 2 (รถ EMS)</option>
+            <option value="คันที่ 3">คันที่ 3</option>
+            <option value="คันที่ 4">คันที่ 4</option>
+          </select>
+        </div>
+        <div style="margin-left: auto;">
+          <button class="btn-secondary" onclick="renderDashboard()">
+            <i class="fa-solid fa-rotate"></i> รีเฟรชข้อมูล
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div>
+          <div>
+            <div class="kpi-value" id="kpiReadiness">0%</div>
+            <div class="kpi-label">อัตราความพร้อมอุปกรณ์ (สถานะล่าสุด)</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon blue"><i class="fa-solid fa-truck-medical"></i></div>
+          <div>
+            <div class="kpi-value" id="kpiTotalInspections">0</div>
+            <div class="kpi-label">จำนวนการตรวจเช็ครวม</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon red"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+          <div>
+            <div class="kpi-value" id="kpiRepairNeeded">0</div>
+            <div class="kpi-label">รายการอุปกรณ์ชำรุด (ต้องซ่อม)</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon amber"><i class="fa-solid fa-box-open"></i></div>
+          <div>
+            <div class="kpi-value" id="kpiRefillNeeded">0</div>
+            <div class="kpi-label">รายการขาดแคลน (ต้องเติม)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="card-title">
+            <i class="fa-solid fa-chart-bar"></i> เปรียบเทียบความพร้อมของรถพยาบาล 4 คัน (การตรวจล่าสุด)
+          </div>
+          <div class="chart-container">
+            <canvas id="barChartVehicles"></canvas>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="card-title">
+            <i class="fa-solid fa-chart-pie"></i> สัดส่วนสถานะอุปกรณ์รวม (78 รายการ)
+          </div>
+          <div class="chart-container">
+            <canvas id="doughnutStatus"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Defective Items Table -->
+      <div class="content-card">
+        <div class="card-title" style="color: var(--danger);">
+          <i class="fa-solid fa-triangle-exclamation"></i> รายการอุปกรณ์ที่ต้องดำเนินการแก้ไขด่วน (สถานะล่าสุด)
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>หมายเลขรถ</th>
+                <th>รหัสอุปกรณ์</th>
+                <th>ชื่ออุปกรณ์</th>
+                <th>หมวดหมู่</th>
+                <th>สถานะปัญหา</th>
+                <th>หมายเหตุ</th>
+                <th>วันที่ตรวจล่าสุด</th>
+              </tr>
+            </thead>
+            <tbody id="defectItemsBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted);">ไม่มีรายการแจ้งชำรุดหรือขาดแคลน</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 3: HISTORY TAB -->
+    <section id="historyTab" class="tab-content">
+      
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label><i class="fa-solid fa-car"></i> รถพยาบาล:</label>
+          <select id="histVehicleFilter" class="form-control" onchange="filterHistoryTable()">
+            <option value="ALL">ทั้งหมด (4 คัน)</option>
+            <option value="คันที่ 1 (รถ Refer)">คันที่ 1 (รถ Refer)</option>
+            <option value="คันที่ 2 (รถ EMS)">คันที่ 2 (รถ EMS)</option>
+            <option value="คันที่ 3">คันที่ 3</option>
+            <option value="คันที่ 4">คันที่ 4</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label><i class="fa-solid fa-magnifying-glass"></i> ค้นหา:</label>
+          <input type="text" id="histSearchInput" class="form-control" placeholder="ค้นหาชื่อผู้ตรวจ/หมายเหตุ..." oninput="filterHistoryTable()">
+        </div>
+
+        <div style="margin-left: auto;">
+          <button class="btn-secondary" onclick="exportHistoryCSV()">
+            <i class="fa-solid fa-file-csv"></i> Export CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-title">
+          <i class="fa-solid fa-list"></i> ประวัติการตรวจเช็คทั้งหมด
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>วันที่ / เวลา</th>
+                <th>หมายเลขรถ</th>
+                <th>ผู้ตรวจเช็ค</th>
+                <th>เวร</th>
+                <th>พร้อมใช้</th>
+                <th>ชำรุด</th>
+                <th>ต้องเติม</th>
+                <th>การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL: Inspection Detail -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-box" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-medical"></i> รายละเอียดรายงานการตรวจเช็ค</h3>
+        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detailModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeDetailModal()">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Google Sheet Config -->
+  <div class="modal-backdrop" id="configModal">
+    <div class="modal-box" style="max-width: 700px;">
+      <div class="modal-header" style="background: #15803d;">
+        <h3><i class="fa-solid fa-file-excel"></i> ตั้งค่าการเชื่อมต่อ Google Sheets</h3>
+        <button class="modal-close" onclick="closeConfigModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+          เชื่อมต่อระบบตรวจเช็คเข้ากับ Google Sheets เพื่อจัดเก็บข้อมูลแบบออนไลน์ผ่าน Google Apps Script Web App
+        </p>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="font-weight: 700;"><i class="fa-solid fa-link"></i> Web App URL (Google Apps Script):</label>
+          <input type="url" id="cfgGoogleScriptUrl" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+          <h4 style="color: #166534; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <span><i class="fa-solid fa-code"></i> โค้ด Google Apps Script สำหรับคัดลอก:</span>
+            <button class="btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.8rem; background: #dcfce7; border-color: #86efac; color: #15803d;" onclick="copyAppsScriptCode()">
+              <i class="fa-solid fa-copy"></i> คัดลอกโค้ด GAS
+            </button>
+          </h4>
+          <p style="font-size: 0.825rem; color: #15803d; margin-bottom: 0.5rem;">
+            วิธีตั้งค่า: 1. เปิด Google Sheet > ไปที่เมนู <b>ส่วนขยาย (Extensions)</b> > <b>Apps Script</b> <br>
+            2. วางโค้ดด้านล่างนี้แทนโค้ดเดิมทั้งหมด <br>
+            3. กด <b>ทำให้ใช้งานได้ (Deploy)</b> > <b>การทำให้ใช้งานได้ใหม่ (New deployment)</b> <br>
+            4. เลือกประเภท <b>เว็บแอป (Web app)</b> และตั้งค่า <b>ผู้มีสิทธิ์เข้าถึง: ทุกคน (Anyone)</b> แล้วคัดลอก URL มาใส่ในช่องด้านบน
+          </p>
+          <textarea id="appsScriptCodeText" class="form-control" style="font-family: monospace; font-size: 0.8rem; height: 120px; background: #ffffff;" readonly>
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["ID", "วันที่/เวลา", "หมายเลขรถ", "ผู้ตรวจเช็ค", "เวรการทำงาน", "พร้อมใช้", "ชำรุด", "ต้องเติม", "รวมทั้งสิ้น", "รายละเอียดอุปกรณ์(JSON)"]);
+    }
+    var data = JSON.parse(e.postData.contents);
+    var record = data.record;
+    sheet.appendRow([record.id, record.dateStr, record.vehicle, record.inspector, record.shift, record.readyCount, record.repairCount, record.refillCount, record.totalCount || 78, JSON.stringify(record.items)]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var rows = sheet.getDataRange().getValues();
+    if (rows.length <= 1) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", data: [] })).setMimeType(ContentService.MimeType.JSON);
+    }
+    var records = [];
+    for (var i = 1; i < rows.length; i++) {
+      var row = rows[i];
+      var itemsObj = {};
+      try { itemsObj = JSON.parse(row[9]); } catch(ex) {}
+      records.push({
+        id: row[0], dateStr: row[1], vehicle: row[2], inspector: row[3], shift: row[4],
+        readyCount: row[5], repairCount: row[6], refillCount: row[7], totalCount: row[8],
+        items: itemsObj, timestamp: new Date(row[1]).getTime() || (Date.now() - i*1000)
+      });
+    }
+    records.reverse();
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", data: records })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+          </textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="clearGoogleSheetConfig()">สลับไปใช้ Local Storage</button>
+        <button class="btn-primary" style="width: auto; background: #15803d;" onclick="saveGoogleSheetConfig()">บันทึกและเชื่อมต่อ Google Sheet</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- APPLICATION LOGIC CODE -->
+  <script>
+    // Security Helper: XSS Sanitization
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    const CATEGORIES_META = {
+      'airway-breathing': { name: 'Airway & Breathing', icon: 'fa-lungs' },
+      'circulation': { name: 'Circulation', icon: 'fa-heart-pulse' },
+      'iv-kit': { name: 'ชุดอุปกรณ์ให้ IV', icon: 'fa-droplet' },
+      'injection-kit': { name: 'ชุดอุปกรณ์ฉีดยา', icon: 'fa-syringe' },
+      'splint-moving': { name: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', icon: 'fa-bed-pulse' },
+      'ppe': { name: 'ชุด PPE', icon: 'fa-head-side-mask' },
+      'safety': { name: 'Safety', icon: 'fa-shield-halved' },
+      'other': { name: 'อุปกรณ์อื่นๆ ทั่วไป', icon: 'fa-box-archive' }
+    };
+
+    const CATEGORIES_ORDER = Object.keys(CATEGORIES_META);
+
+    const CHECKLIST_ITEMS_78 = [
+      { num: 1, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'ambu-child', name: 'Ambu เด็ก' },
+      { num: 2, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'ambu-adult', name: 'Ambu ผู้ใหญ่' },
+      { num: 3, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'o2-mask-child', name: 'O2 mask เด็ก' },
+      { num: 4, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'o2-mask-adult', name: 'O2 mask ผู้ใหญ่' },
+      { num: 5, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'o2-cannular', name: 'O2 cannular' },
+      { num: 6, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'nebulizer-set-child', name: 'set พ่นยา เด็ก' },
+      { num: 7, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'nebulizer-set-adult', name: 'set พ่นยา ผู้ใหญ่' },
+      { num: 8, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'rubber-bulb-syringe', name: 'ลูกสูบยางแดง' },
+      { num: 9, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'stethoscope', name: 'stethoscope' },
+      { num: 10, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'oral-airway', name: 'oral airway ขนาดต่างๆ' },
+      { num: 11, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'nasal-airway', name: 'nasal airway ขนาดต่างๆ' },
+      { num: 12, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'ky-jelly', name: 'KY jelly' },
+      { num: 13, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'oxygen-tank-1', name: 'Oxygen ถังที่ 1' },
+      { num: 14, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'oxygen-tank-2', name: 'Oxygen ถังที่ 2' },
+      { num: 15, catId: 'circulation', catName: 'Circulation', id: 'nss-1000', name: 'NSS 1000 ml.' },
+      { num: 16, catId: 'circulation', catName: 'Circulation', id: '5dn2-1000', name: '5%D/N/2 1000 ml.' },
+      { num: 17, catId: 'circulation', catName: 'Circulation', id: 'aed', name: 'AED' },
+      { num: 18, catId: 'circulation', catName: 'Circulation', id: 'paddle-child', name: 'Paddle เด็ก' },
+      { num: 19, catId: 'circulation', catName: 'Circulation', id: 'paddle-adult', name: 'Paddle ผู้ใหญ่' },
+      { num: 20, catId: 'circulation', catName: 'Circulation', id: 'electrode-adult', name: 'แผ่น Electrode ผู้ใหญ่' },
+      { num: 21, catId: 'circulation', catName: 'Circulation', id: 'electrode-child', name: 'แผ่น Electrode เด็ก' },
+      { num: 22, catId: 'circulation', catName: 'Circulation', id: 'bp-digital', name: 'เครื่องวัด BP Digital' },
+      { num: 23, catId: 'circulation', catName: 'Circulation', id: 'o2-sat', name: 'เครื่องวัด O2 sat' },
+      { num: 24, catId: 'circulation', catName: 'Circulation', id: 'top-gauze', name: 'Top gauze' },
+      { num: 25, catId: 'circulation', catName: 'Circulation', id: 'gauze', name: 'gauze' },
+      { num: 26, catId: 'circulation', catName: 'Circulation', id: 'roll-gauze', name: 'Roll gauze' },
+      { num: 27, catId: 'circulation', catName: 'Circulation', id: 'elastic-bandage', name: 'Elastic bandage ขนาดต่างๆ' },
+      { num: 28, catId: 'circulation', catName: 'Circulation', id: 'three-side-dressing', name: 'three side dressing' },
+      { num: 29, catId: 'circulation', catName: 'Circulation', id: 'tourniquet-multi', name: 'tourniquet (อเนกประสงค์)' },
+      { num: 30, catId: 'circulation', catName: 'Circulation', id: 'dtx-set', name: 'ชุด DTX' },
+      { num: 31, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'medicut', name: 'medicut ขนาดต่างๆ' },
+      { num: 32, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'iv-set-child', name: 'set IV เด็ก' },
+      { num: 33, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'iv-set-adult', name: 'set IV ผู้ใหญ่' },
+      { num: 34, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'three-way', name: 'three way' },
+      { num: 35, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'extension-tube', name: 'extension tube' },
+      { num: 36, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'tourniquet', name: 'tourniquet' },
+      { num: 37, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'iv-plaster', name: 'พลาสเตอร์ IV' },
+      { num: 38, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'transpore-1-inch', name: 'transpore 1"' },
+      { num: 39, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'heplock', name: 'heplock' },
+      { num: 40, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'alcohol-ball-iv', name: 'alcohol ball' },
+      { num: 41, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', id: 'syringe', name: 'syringe ขนาดต่างๆ (50,20,10,5,3 cc)' },
+      { num: 42, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', id: 'needles', name: 'เข็มเบอร์ต่างๆ (18,21,23,24,25,26)' },
+      { num: 43, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', id: 'alcohol-ball-inject', name: 'alcohol ball' },
+      { num: 44, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'spinal-board', name: 'spinal board' },
+      { num: 45, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'head-immobilize', name: 'Head immobilizer' },
+      { num: 46, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'belt', name: 'สายรัด belt' },
+      { num: 47, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'hard-collar', name: 'Hard collar ขนาดต่างๆ' },
+      { num: 48, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'ked', name: 'KED' },
+      { num: 49, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'vacuum-splint', name: 'vacuum splint' },
+      { num: 50, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'leg-splint', name: 'ไม้ดามขา' },
+      { num: 51, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'arm-splint', name: 'ไม้ดามแขน' },
+      { num: 52, catId: 'ppe', catName: 'ชุด PPE', id: 'gloves-disposable', name: 'ถุงมือ Disposable' },
+      { num: 53, catId: 'ppe', catName: 'ชุด PPE', id: 'gloves-sterile', name: 'ถุงมือ sterile' },
+      { num: 54, catId: 'ppe', catName: 'ชุด PPE', id: 'apron', name: 'เอี๊ยม' },
+      { num: 55, catId: 'ppe', catName: 'ชุด PPE', id: 'mask', name: 'หน้ากากอนามัย' },
+      { num: 56, catId: 'ppe', catName: 'ชุด PPE', id: 'mask-n95', name: 'หน้ากาก N95' },
+      { num: 57, catId: 'ppe', catName: 'ชุด PPE', id: 'raincoat', name: 'เสื้อกันฝน' },
+      { num: 58, catId: 'ppe', catName: 'ชุด PPE', id: 'boots', name: 'รองเท้าบูท' },
+      { num: 59, catId: 'ppe', catName: 'ชุด PPE', id: 'goggles', name: 'แว่นตานิรภัย' },
+      { num: 60, catId: 'ppe', catName: 'ชุด PPE', id: 'cap', name: 'หมวกคลุมผม' },
+      { num: 61, catId: 'safety', catName: 'Safety', id: 'reflective-vest', name: 'เสื้อสะท้อนแสง' },
+      { num: 62, catId: 'safety', catName: 'Safety', id: 'safety-helmet', name: 'หมวกกันกระแทก' },
+      { num: 63, catId: 'safety', catName: 'Safety', id: 'traffic-cone', name: 'กรวยและอุปกรณ์สะท้อนแสง' },
+      { num: 64, catId: 'safety', catName: 'Safety', id: 'barrier-tape', name: 'แถบกั้นจราจร' },
+      { num: 65, catId: 'safety', catName: 'Safety', id: 'fire-extinguisher', name: 'ถังดับเพลิง' },
+      { num: 66, catId: 'safety', catName: 'Safety', id: 'whistle', name: 'นกหวีด' },
+      { num: 67, catId: 'safety', catName: 'Safety', id: 'glass-breaker', name: 'อุปกรณ์ทุบกระจก & ตัดสายรัด' },
+      { num: 68, catId: 'safety', catName: 'Safety', id: 'traffic-wand', name: 'กระบองไฟจราจร' },
+      { num: 69, catId: 'safety', catName: 'Safety', id: 'flashlight-safety', name: 'ไฟฉาย' },
+      { num: 70, catId: 'safety', catName: 'Safety', id: 'scissors', name: 'กรรไกร' },
+      { num: 71, catId: 'safety', catName: 'Safety', id: 'bulletproof-vest', name: 'เสื้อกันกระสุน' },
+      { num: 72, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'red-bag', name: 'ถุงขยะติดเชื้อ (ถุงแดง)' },
+      { num: 73, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'trash-bag', name: 'ถุงขยะทั่วไป' },
+      { num: 74, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'hand-sanitizer', name: 'เจลล้างมือ' },
+      { num: 75, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'ammonia', name: 'แอมโมเนียหอม' },
+      { num: 76, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'nss-wound', name: 'NSS ล้างแผล' },
+      { num: 77, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'betadine', name: 'เบต้าดีน' },
+      { num: 78, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'consent-form', name: 'ใบยินยอม/ไม่ยินยอมรักษา' }
+    ];
+
+    let currentVehicle = 'คันที่ 1 (รถ Refer)';
+    let currentCategory = 'ALL';
+    let searchQuery = '';
+    let inspectionFormState = {};
+    let inspectionsData = [];
+    let isGoogleSheetActive = false;
+    let barChartObj = null;
+    let doughnutChartObj = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setInitialDate();
+      resetInspectionFormState();
+      renderCategoryNavGrid();
+      renderChecklistCategories();
+      initGoogleSheetOrLocal();
+    });
+
+    // Helper: Initial Date Populator
+    function setInitialDate() {
+      const dateInput = document.getElementById('inspectionDate');
+      if (dateInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        dateInput.value = now.toISOString().slice(0, 16);
+      }
+    }
+
+    // Helper: Reset Form State cleanly
+    function resetInspectionFormState() {
+      inspectionFormState = {};
+      CHECKLIST_ITEMS_78.forEach(item => {
+        inspectionFormState[item.id] = { status: 'READY', note: '', name: item.name, catName: item.catName };
+      });
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) targetTab.classList.add('active');
+
+      const btnMap = { 'formTab': 'tabBtnForm', 'dashboardTab': 'tabBtnDash', 'historyTab': 'tabBtnHist' };
+      const activeBtn = document.getElementById(btnMap[tabId]);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (tabId === 'dashboardTab') renderDashboard();
+      if (tabId === 'historyTab') filterHistoryTable();
+    }
+
+    function renderCategoryNavGrid() {
+      const grid = document.getElementById('categoryNavGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const showAllPill = document.getElementById('btnShowAllPill');
+      if (showAllPill) {
+        showAllPill.className = `cat-pill ${currentCategory === 'ALL' ? 'active' : ''}`;
+      }
+
+      CATEGORIES_ORDER.forEach((catId, idx) => {
+        const meta = CATEGORIES_META[catId];
+        const catItems = CHECKLIST_ITEMS_78.filter(i => i.catId === catId);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `cat-card-btn ${currentCategory === catId ? 'active' : ''}`;
+        btn.onclick = () => switchCategory(catId);
+        btn.innerHTML = `
+          <div class="cat-icon-box"><i class="fa-solid ${meta.icon}"></i></div>
+          <div class="cat-title-text">${idx + 1}. ${escapeHtml(meta.name)}</div>
+          <div class="cat-count-badge">${catItems.length}</div>
+        `;
+        grid.appendChild(btn);
+      });
+    }
+
+    function switchCategory(catId) {
+      currentCategory = catId;
+      searchQuery = '';
+      const sInput = document.getElementById('quickSearchInput');
+      if (sInput) sInput.value = '';
+
+      renderCategoryNavGrid();
+      renderChecklistCategories();
+      updateStepperProgressText();
+    }
+
+    function handleQuickSearch(query) {
+      searchQuery = (query || '').trim().toLowerCase();
+      renderChecklistCategories();
+    }
+
+    function stepCategory(delta) {
+      if (currentCategory === 'ALL') {
+        currentCategory = delta > 0 ? CATEGORIES_ORDER[0] : CATEGORIES_ORDER[CATEGORIES_ORDER.length - 1];
+      } else {
+        const currIdx = CATEGORIES_ORDER.indexOf(currentCategory);
+        let nextIdx = currIdx + delta;
+        if (nextIdx < 0) nextIdx = CATEGORIES_ORDER.length - 1;
+        if (nextIdx >= CATEGORIES_ORDER.length) nextIdx = 0;
+        currentCategory = CATEGORIES_ORDER[nextIdx];
+      }
+      switchCategory(currentCategory);
+    }
+
+    function updateStepperProgressText() {
+      const text = document.getElementById('catStepProgressText');
+      if (!text) return;
+
+      if (currentCategory === 'ALL') {
+        text.innerText = 'แสดงครบทั้ง 8 หมวดหมู่ (78 รายการ)';
+      } else {
+        const idx = CATEGORIES_ORDER.indexOf(currentCategory) + 1;
+        const meta = CATEGORIES_META[currentCategory];
+        text.innerText = `หมวดที่ ${idx} / 8: ${meta.name}`;
+      }
+    }
+
+    function renderChecklistCategories() {
+      const container = document.getElementById('checklistCategoriesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let targetCats = CATEGORIES_ORDER;
+      if (currentCategory !== 'ALL') targetCats = [currentCategory];
+
+      targetCats.forEach(catId => {
+        const meta = CATEGORIES_META[catId];
+        let items = CHECKLIST_ITEMS_78.filter(item => item.catId === catId);
+
+        if (searchQuery !== '') {
+          items = items.filter(item => 
+            item.name.toLowerCase().includes(searchQuery) || 
+            item.id.toLowerCase().includes(searchQuery)
+          );
+        }
+
+        if (!items || items.length === 0) return;
+
+        const catIdx = CATEGORIES_ORDER.indexOf(catId) + 1;
+        const block = document.createElement('div');
+        block.className = 'category-block';
+
+        const rowsHtml = items.map(item => {
+          if (!inspectionFormState[item.id]) {
+            inspectionFormState[item.id] = { status: 'READY', note: '', name: item.name, catName: meta.name };
+          }
+          const itemState = inspectionFormState[item.id];
+
+          return `
+            <div class="item-row">
+              <div class="item-title-bar">
+                <span class="item-badge-num">${item.num}</span>
+                <div>
+                  <span class="item-name-text">${escapeHtml(item.name)}</span>
+                  <span class="item-code-text">(${escapeHtml(item.id)})</span>
+                </div>
+              </div>
+              <div class="status-options">
+                <button type="button" class="status-btn ready ${itemState.status === 'READY' ? 'active' : ''}" 
+                  id="btn_${item.id}_READY" onclick="setCheckitemStatus('${item.id}', 'READY')">
+                  <i class="fa-solid fa-circle-check"></i> พร้อมใช้
+                </button>
+                <button type="button" class="status-btn repair ${itemState.status === 'REPAIR' ? 'active' : ''}" 
+                  id="btn_${item.id}_REPAIR" onclick="setCheckitemStatus('${item.id}', 'REPAIR')">
+                  <i class="fa-solid fa-circle-xmark"></i> ชำรุด
+                </button>
+                <button type="button" class="status-btn refill ${itemState.status === 'REFILL' ? 'active' : ''}" 
+                  id="btn_${item.id}_REFILL" onclick="setCheckitemStatus('${item.id}', 'REFILL')">
+                  <i class="fa-solid fa-circle-exclamation"></i> ต้องเติม
+                </button>
+              </div>
+              <div>
+                <input type="text" class="item-note-input" value="${escapeHtml(itemState.note || '')}"
+                  placeholder="หมายเหตุเพิ่มเติม..." oninput="setCheckitemNote('${item.id}', this.value)">
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        block.innerHTML = `
+          <div class="category-header">
+            <span><i class="fa-solid ${meta.icon}"></i> ${catIdx}. ${escapeHtml(meta.name)}</span>
+            <span style="font-size: 0.85rem; font-weight: 600; background: rgba(5,150,105,0.15); padding: 0.25rem 0.6rem; border-radius: 8px;">
+              ${items.length} รายการ
+            </span>
+          </div>
+          <div>${rowsHtml}</div>
+        `;
+
+        container.appendChild(block);
+      });
+    }
+
+    function setAllItemsStatus(status) {
+      CHECKLIST_ITEMS_78.forEach(item => {
+        setCheckitemStatus(item.id, status);
+      });
+      showToast(`ตั้งค่าให้รายการทั้งหมด 78 รายการ เป็น "${status === 'READY' ? 'พร้อมใช้งาน' : status}" แล้ว`, 'info');
+    }
+
+    function selectVehicle(vehicleName, element) {
+      currentVehicle = vehicleName;
+      document.getElementById('selectedVehicle').value = vehicleName;
+      document.querySelectorAll('.vehicle-card').forEach(card => card.classList.remove('selected'));
+      if (element) {
+        element.classList.add('selected');
+      } else {
+        const targetCard = document.querySelector(`.vehicle-card[data-vehicle="${vehicleName}"]`);
+        if (targetCard) targetCard.classList.add('selected');
+      }
+    }
+
+    function setCheckitemStatus(itemId, status) {
+      if (!inspectionFormState[itemId]) {
+        inspectionFormState[itemId] = { status: status, note: '' };
+      } else {
+        inspectionFormState[itemId].status = status;
+      }
+      
+      ['READY', 'REPAIR', 'REFILL'].forEach(s => {
+        const btn = document.getElementById(`btn_${itemId}_${s}`);
+        if (btn) btn.classList.remove('active');
+      });
+      
+      const activeBtn = document.getElementById(`btn_${itemId}_${status}`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function setCheckitemNote(itemId, note) {
+      if (inspectionFormState[itemId]) {
+        inspectionFormState[itemId].note = note;
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const savedVehicleChoice = currentVehicle || document.getElementById('selectedVehicle').value;
+      const inspector = document.getElementById('inspectorName').value.trim();
+      const shift = document.getElementById('shiftType').value;
+      const rawDate = document.getElementById('inspectionDate').value;
+      const dateObj = rawDate ? new Date(rawDate) : new Date();
+
+      if (!inspector) {
+        showToast('กรุณากรอกชื่อผู้ตรวจเช็ค', 'error');
+        return;
+      }
+
+      let readyCnt = 0, repairCnt = 0, refillCnt = 0;
+      const itemsBreakdown = {};
+
+      CHECKLIST_ITEMS_78.forEach(item => {
+        const state = inspectionFormState[item.id] || { status: 'READY', note: '' };
+        const st = state.status || 'READY';
+
+        if (st === 'READY') readyCnt++;
+        if (st === 'REPAIR') repairCnt++;
+        if (st === 'REFILL') refillCnt++;
+
+        itemsBreakdown[item.id] = {
+          id: item.id,
+          name: item.name,
+          catId: item.catId,
+          catName: item.catName,
+          status: st,
+          note: state.note ? state.note.trim() : ''
+        };
+      });
+
+      const docId = 'rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      const record = {
+        id: docId,
+        vehicle: savedVehicleChoice,
+        inspector: inspector,
+        shift: shift,
+        dateStr: dateObj.toLocaleString('th-TH'),
+        timestamp: dateObj.getTime(),
+        readyCount: readyCnt,
+        repairCount: repairCnt,
+        refillCount: refillCnt,
+        totalCount: CHECKLIST_ITEMS_78.length,
+        items: itemsBreakdown
+      };
+
+      inspectionsData.unshift(record);
+      saveLocalData();
+
+      showToast(`⚡ บันทึกข้อมูลเรียบร้อยแล้ว (${savedVehicleChoice})`, 'success');
+
+      if (isGoogleSheetActive) {
+        saveToGoogleSheet(record);
+      }
+
+      document.getElementById('inspectionForm').reset();
+      setInitialDate();
+      resetInspectionFormState();
+      selectVehicle(savedVehicleChoice);
+      renderChecklistCategories();
+    }
+
+    function initGoogleSheetOrLocal() {
+      const savedUrl = localStorage.getItem('ambulance_google_sheet_url');
+      if (savedUrl && savedUrl.trim() !== '') {
+        isGoogleSheetActive = true;
+        updateSyncBadge(true, 'Google Sheet Connected');
+        fetchFromGoogleSheet();
+      } else {
+        isGoogleSheetActive = false;
+        updateSyncBadge(false, 'Local Storage Mode');
+        loadLocalData();
+      }
+    }
+
+    function updateSyncBadge(isConnected, text) {
+      const badgeText = document.getElementById('syncStatusText');
+      const dot = document.getElementById('statusDot');
+      if (badgeText && dot) {
+        badgeText.innerText = text;
+        dot.className = isConnected ? 'status-dot' : 'status-dot local';
+      }
+    }
+
+    async function fetchFromGoogleSheet() {
+      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url');
+      if (!scriptUrl) return;
+
+      try {
+        updateSyncBadge(true, 'กำลังโหลดข้อมูลจาก Sheet...');
+        const response = await fetch(scriptUrl);
+        const result = await response.json();
+        
+        if (result && result.status === 'success' && Array.isArray(result.data)) {
+          if (result.data.length > 0) {
+            inspectionsData = result.data;
+            saveLocalDataSilently();
+          } else {
+            loadLocalData();
+          }
+          updateSyncBadge(true, 'Google Sheet Sync Active');
+          refreshActiveViews();
+        } else {
+          loadLocalData();
+        }
+      } catch (err) {
+        console.warn('Cannot fetch from Google Sheet, using local cache:', err);
+        updateSyncBadge(false, 'Local Mode (Offline/Sheet Error)');
+        loadLocalData();
+      }
+    }
+
+    function loadLocalData() {
+      const localData = localStorage.getItem('ambulance_inspections_data_78');
+      if (localData) {
+        inspectionsData = JSON.parse(localData);
+      } else {
+        inspectionsData = createMockData78();
+        localStorage.setItem('ambulance_inspections_data_78', JSON.stringify(inspectionsData));
+      }
+      refreshActiveViews();
+    }
+
+    function saveLocalDataSilently() {
+      localStorage.setItem('ambulance_inspections_data_78', JSON.stringify(inspectionsData));
+    }
+
+    function saveLocalData() {
+      saveLocalDataSilently();
+      refreshActiveViews();
+    }
+
+    function refreshActiveViews() {
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id === 'dashboardTab') renderDashboard();
+      if (activeTab && activeTab.id === 'historyTab') filterHistoryTable();
+    }
+
+    async function saveToGoogleSheet(record) {
+      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url');
+      if (!scriptUrl) return;
+
+      try {
+        await fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'addInspection', record: record })
+        });
+        showToast('🟢 ส่งข้อมูลไปยัง Google Sheet เรียบร้อยแล้ว', 'info');
+      } catch (err) {
+        console.warn('Failed to post to Google Sheet:', err);
+        showToast('⚠️ ไม่สามารถส่งไป Google Sheet ได้ ข้อมูลยังคงเซฟอยู่ในเครื่อง', 'warning');
+      }
+    }
+
+    function openConfigModal() {
+      const savedUrl = localStorage.getItem('ambulance_google_sheet_url') || '';
+      const inputEl = document.getElementById('cfgGoogleScriptUrl');
+      if (inputEl) inputEl.value = savedUrl;
+      document.getElementById('configModal').classList.add('open');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.remove('open');
+    }
+
+    function saveGoogleSheetConfig() {
+      const url = document.getElementById('cfgGoogleScriptUrl').value.trim();
+      if (!url) {
+        showToast('กรุณากรอก Web App URL ของ Google Apps Script', 'error');
+        return;
+      }
+      localStorage.setItem('ambulance_google_sheet_url', url);
+      closeConfigModal();
+      showToast('บันทึกการเชื่อมต่อ Google Sheet เรียบร้อยแล้ว! กำลังเชื่อมต่อ...', 'success');
+      setTimeout(() => initGoogleSheetOrLocal(), 500);
+    }
+
+    function clearGoogleSheetConfig() {
+      localStorage.removeItem('ambulance_google_sheet_url');
+      closeConfigModal();
+      showToast('สลับเป็น Local Storage Mode เรียบร้อยแล้ว', 'info');
+      initGoogleSheetOrLocal();
+    }
+
+    function copyAppsScriptCode() {
+      const textarea = document.getElementById('appsScriptCodeText');
+      if (textarea) {
+        textarea.select();
+        document.execCommand('copy');
+        showToast('คัดลอกโค้ด Google Apps Script เรียบร้อยแล้ว!', 'success');
+      }
+    }
+
+    function getLatestInspectionsMap() {
+      const latestMap = {};
+      const sorted = [...inspectionsData].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      sorted.forEach(rec => {
+        if (!latestMap[rec.vehicle]) {
+          latestMap[rec.vehicle] = rec;
+        }
+      });
+      return latestMap;
+    }
+
+    function renderDashboard() {
+      const filterVal = document.getElementById('dashVehicleFilter').value;
+      const latestMap = getLatestInspectionsMap();
+      
+      let recordsToAnalyze = [];
+      if (filterVal !== 'ALL') {
+        if (latestMap[filterVal]) recordsToAnalyze = [latestMap[filterVal]];
+      } else {
+        recordsToAnalyze = Object.values(latestMap);
+      }
+
+      let totalReady = 0, totalRepair = 0, totalRefill = 0, totalItems = 0;
+      const defectList = [];
+
+      recordsToAnalyze.forEach(rec => {
+        totalReady += rec.readyCount || 0;
+        totalRepair += rec.repairCount || 0;
+        totalRefill += rec.refillCount || 0;
+        totalItems += rec.totalCount || 0;
+
+        if (rec.items) {
+          Object.keys(rec.items).forEach(k => {
+            const itm = rec.items[k];
+            if (itm.status === 'REPAIR' || itm.status === 'REFILL') {
+              defectList.push({
+                vehicle: rec.vehicle,
+                code: k,
+                name: itm.name || k,
+                category: itm.catName || 'อุปกรณ์ทั่วไป',
+                status: itm.status,
+                note: itm.note,
+                date: rec.dateStr
+              });
+            }
+          });
+        }
+      });
+
+      const readinessPercent = totalItems > 0 ? Math.round((totalReady / totalItems) * 100) : 100;
+
+      document.getElementById('kpiReadiness').innerText = `${readinessPercent}%`;
+      document.getElementById('kpiTotalInspections').innerText = inspectionsData.length;
+      document.getElementById('kpiRepairNeeded').innerText = totalRepair;
+      document.getElementById('kpiRefillNeeded').innerText = totalRefill;
+
+      const tbody = document.getElementById('defectItemsBody');
+      if (tbody) {
+        if (defectList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">🎉 ไม่พบรายการอุปกรณ์ชำรุดหรือขาดแคลน รถพยาบาลพร้อมปฏิบัติการ 100%</td></tr>';
+        } else {
+          tbody.innerHTML = defectList.map(d => `
+            <tr>
+              <td><strong>${escapeHtml(d.vehicle)}</strong></td>
+              <td><code>${escapeHtml(d.code)}</code></td>
+              <td>${escapeHtml(d.name)}</td>
+              <td><span class="badge badge-blue">${escapeHtml(d.category)}</span></td>
+              <td>
+                ${d.status === 'REPAIR' 
+                  ? '<span class="badge badge-red"><i class="fa-solid fa-screwdriver-wrench"></i> ชำรุด (ต้องซ่อม)</span>' 
+                  : '<span class="badge badge-amber"><i class="fa-solid fa-box-open"></i> ขาดแคลน (ต้องเติม)</span>'}
+              </td>
+              <td>${escapeHtml(d.note || '-')}</td>
+              <td>${escapeHtml(d.date)}</td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      renderBarChart(latestMap);
+      renderDoughnutChart(totalReady, totalRepair, totalRefill);
+    }
+
+    function renderBarChart(latestMap) {
+      const ctx = document.getElementById('barChartVehicles');
+      if (!ctx) return;
+
+      const vehiclesList = ['คันที่ 1 (รถ Refer)', 'คันที่ 2 (รถ EMS)', 'คันที่ 3', 'คันที่ 4'];
+      const readinessData = vehiclesList.map(v => {
+        const latest = latestMap[v];
+        if (!latest) return 100;
+        return latest.totalCount > 0 ? Math.round((latest.readyCount / latest.totalCount) * 100) : 100;
+      });
+
+      if (barChartObj) barChartObj.destroy();
+
+      barChartObj = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['คันที่ 1 (Refer)', 'คันที่ 2 (EMS)', 'คันที่ 3', 'คันที่ 4'],
+          datasets: [{
+            label: 'อัตราความพร้อมใช้งาน (%)',
+            data: readinessData,
+            backgroundColor: ['#059669', '#0284c7', '#10b981', '#6366f1'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+    }
+
+    function renderDoughnutChart(ready, repair, refill) {
+      const ctx = document.getElementById('doughnutStatus');
+      if (!ctx) return;
+
+      if (doughnutChartObj) doughnutChartObj.destroy();
+
+      doughnutChartObj = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['พร้อมใช้งาน', 'ชำรุด (ต้องซ่อม)', 'ขาดแคลน (ต้องเติม)'],
+          datasets: [{
+            data: [ready, repair, refill],
+            backgroundColor: ['#10b981', '#ef4444', '#f59e0b']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    function filterHistoryTable() {
+      const vehicleFilter = document.getElementById('histVehicleFilter').value;
+      const search = (document.getElementById('histSearchInput').value || '').toLowerCase().trim();
+
+      let filtered = inspectionsData;
+      if (vehicleFilter !== 'ALL') filtered = filtered.filter(r => r.vehicle === vehicleFilter);
+      if (search !== '') {
+        filtered = filtered.filter(r => 
+          (r.inspector && r.inspector.toLowerCase().includes(search)) ||
+          (r.vehicle && r.vehicle.toLowerCase().includes(search)) ||
+          (r.shift && r.shift.toLowerCase().includes(search))
+        );
+      }
+
+      const tbody = document.getElementById('historyTableBody');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">ไม่พบประวัติการตรวจเช็คตามเงื่อนไข</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(rec => `
+        <tr>
+          <td>${escapeHtml(rec.dateStr || '-')}</td>
+          <td><span class="badge badge-blue"><i class="fa-solid fa-ambulance"></i> ${escapeHtml(rec.vehicle)}</span></td>
+          <td><strong>${escapeHtml(rec.inspector || '-')}</strong></td>
+          <td>${escapeHtml(rec.shift || '-')}</td>
+          <td><span class="badge badge-green">${rec.readyCount} / ${rec.totalCount || 78}</span></td>
+          <td>${rec.repairCount > 0 ? `<span class="badge badge-red">${rec.repairCount} รายการ</span>` : '0'}</td>
+          <td>${rec.refillCount > 0 ? `<span class="badge badge-amber">${rec.refillCount} รายการ</span>` : '0'}</td>
+          <td>
+            <button class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="viewRecordDetail('${rec.id}')">
+              <i class="fa-solid fa-eye"></i> ดูรายงาน
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function viewRecordDetail(recordId) {
+      const record = inspectionsData.find(r => r.id === recordId);
+      if (!record) return;
+
+      const modalBody = document.getElementById('detailModalBody');
+      if (!modalBody) return;
+
+      let itemsHtml = '';
+      if (record.items) {
+        itemsHtml = Object.keys(record.items).map((k, idx) => {
+          const itm = record.items[k];
+          let badge = '<span class="badge badge-green">พร้อมใช้</span>';
+          if (itm.status === 'REPAIR') badge = '<span class="badge badge-red">ชำรุด</span>';
+          if (itm.status === 'REFILL') badge = '<span class="badge badge-amber">ต้องเติม</span>';
+
+          return `
+            <tr>
+              <td style="text-align: center;">${idx + 1}</td>
+              <td><code>${escapeHtml(itm.id || k)}</code></td>
+              <td><strong>${escapeHtml(itm.name || k)}</strong></td>
+              <td><span class="badge badge-blue">${escapeHtml(itm.catName || '-')}</span></td>
+              <td>${badge}</td>
+              <td>${escapeHtml(itm.note || '-')}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      modalBody.innerHTML = `
+        <div style="margin-bottom: 1rem;">
+          <h4 style="color: var(--primary-dark); font-size: 1.15rem;">${escapeHtml(record.vehicle)}</h4>
+          <p style="font-size: 0.875rem; color: var(--text-muted);">
+            <strong>วันที่ตรวจ:</strong> ${escapeHtml(record.dateStr)} | 
+            <strong>ผู้ตรวจ:</strong> ${escapeHtml(record.inspector)} | 
+            <strong>เวร:</strong> ${escapeHtml(record.shift)}
+          </p>
+        </div>
+        
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+          <span class="badge badge-green">พร้อมใช้งาน: ${record.readyCount} / ${record.totalCount || 78}</span>
+          <span class="badge badge-red">ชำรุด: ${record.repairCount}</span>
+          <span class="badge badge-amber">ต้องเติม: ${record.refillCount}</span>
+        </div>
+
+        <div style="max-height: 380px; overflow-y: auto;">
+          <table class="data-table" style="font-size: 0.85rem;">
+            <thead>
+              <tr>
+                <th style="width: 5%;">#</th>
+                <th style="width: 15%;">ID</th>
+                <th style="width: 30%;">ชื่ออุปกรณ์</th>
+                <th style="width: 20%;">หมวดหมู่</th>
+                <th style="width: 15%;">สถานะ</th>
+                <th style="width: 15%;">หมายเหตุ</th>
+              </tr>
+            </thead>
+            <tbody>${itemsHtml}</tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById('detailModal').classList.add('open');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('open');
+    }
+
+    function exportHistoryCSV() {
+      if (inspectionsData.length === 0) {
+        showToast('ไม่มีข้อมูลประวัติสำหรับการส่งออก', 'info');
+        return;
+      }
+
+      let csvContent = "\uFEFFวันที่/เวลา,หมายเลขรถ,ผู้ตรวจเช็ค,เวร,พร้อมใช้,ชำรุด,ต้องเติม,รายการรวม\n";
+      inspectionsData.forEach(r => {
+        csvContent += `"${r.dateStr}","${r.vehicle}","${r.inspector}","${r.shift}",${r.readyCount},${r.repairCount},${r.refillCount},${r.totalCount || 78}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Ambulance_Inspections_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast('ส่งออกไฟล์ CSV เรียบร้อยแล้ว', 'success');
+    }
+
+    function createMockData78() {
+      const vehicles = ['คันที่ 1 (รถ Refer)', 'คันที่ 2 (รถ EMS)', 'คันที่ 3', 'คันที่ 4'];
+      const inspectors = ['พว.สมชาย ใจดี', 'พว.อนันต์ นารา', 'พว.สุดารัตน์ มีสุข', 'พว.ดาวเรือง ปันสุข'];
+      const shifts = ['เวรเช้า (08:00 - 16:00)', 'เวรบ่าย (16:00 - 24:00)', 'เวรดึก (00:00 - 08:00)'];
+      const mocks = [];
+      const now = new Date();
+
+      vehicles.forEach((v, idx) => {
+        const d = new Date(now);
+        d.setHours(d.getHours() - (idx * 12));
+        const itemStates = {};
+        let readyCnt = 0, repairCnt = 0, refillCnt = 0;
+
+        CHECKLIST_ITEMS_78.forEach(item => {
+          let st = 'READY';
+          let note = '';
+
+          if (v.includes('คันที่ 2') && item.id === 'aed') {
+            st = 'REPAIR'; note = 'แบตเตอรี่เตือนต่ำ แจ้งช่างเปลี่ยนแผ่น';
+          } else if (v.includes('คันที่ 3') && item.id === 'nss-1000') {
+            st = 'REFILL'; note = 'เหลือ 1 ขวด ต้องเติมเข้าสต็อก';
+          } else if (v.includes('คันที่ 4') && item.id === 'traffic-wand') {
+            st = 'REPAIR'; note = 'ถ่านหมด ไฟกระพริบไม่ติด';
+          } else if (v.includes('คันที่ 1') && item.id === 'oxygen-tank-2') {
+            st = 'REFILL'; note = 'แรงดันเหลือ 500 PSI ต้องสลับถุงเติม';
+          }
+
+          if (st === 'READY') readyCnt++;
+          if (st === 'REPAIR') repairCnt++;
+          if (st === 'REFILL') refillCnt++;
+
+          itemStates[item.id] = { id: item.id, name: item.name, catId: item.catId, catName: item.catName, status: st, note: note };
+        });
+
+        mocks.push({
+          id: 'mock_78_' + (Date.now() - idx * 10000),
+          vehicle: v,
+          inspector: inspectors[idx % inspectors.length],
+          shift: shifts[idx % shifts.length],
+          dateStr: d.toLocaleString('th-TH'),
+          timestamp: d.getTime(),
+          readyCount: readyCnt,
+          repairCount: repairCnt,
+          refillCount: refillCnt,
+          totalCount: CHECKLIST_ITEMS_78.length,
+          items: itemStates
+        });
+      });
+
+      return mocks;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      let icon = '<i class="fa-solid fa-circle-info"></i>';
+      if (type === 'success') icon = '<i class="fa-solid fa-circle-check"></i>';
+      if (type === 'error') icon = '<i class="fa-solid fa-circle-xmark"></i>';
+
+      toast.innerHTML = `${icon} <span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
+</body>
+</html>
