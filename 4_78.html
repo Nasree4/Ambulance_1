@@ -21,6 +21,8 @@
       --primary-dark: #065f46;
       --secondary: #0284c7;
       --secondary-light: #f0f9ff;
+      --telegram: #0088cc;
+      --telegram-hover: #006699;
       --bg-dark: #0f172a;
       --bg-subtle: #f8fafc;
       --text-main: #0f172a;
@@ -114,6 +116,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .sync-badge {
@@ -595,6 +598,28 @@
       background: var(--primary-hover);
     }
 
+    .btn-telegram {
+      background: var(--telegram);
+      color: white;
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      min-height: 44px;
+      transition: background 0.2s;
+    }
+
+    .btn-telegram:hover {
+      background: var(--telegram-hover);
+    }
+
     .btn-secondary {
       background: #f1f5f9;
       color: var(--text-main);
@@ -797,6 +822,7 @@
       display: flex;
       justify-content: flex-end;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     /* Toast Notification */
@@ -859,10 +885,10 @@
       <div class="nav-actions">
         <div class="sync-badge" id="syncStatusBadge">
           <span class="status-dot local" id="statusDot"></span>
-          <span id="syncStatusText">Local Storage Mode</span>
+          <span id="syncStatusText">Google Sheet Connected</span>
         </div>
         <button class="btn-config" onclick="openConfigModal()">
-          <i class="fa-solid fa-file-excel"></i> ตั้งค่า Google Sheet
+          <i class="fa-solid fa-gear"></i> ตั้งค่า Google Sheet & Telegram
         </button>
       </div>
     </div>
@@ -991,7 +1017,7 @@
 
           <div style="margin-top: 1.5rem;">
             <button type="submit" class="btn-primary" id="btnSubmit">
-              <i class="fa-solid fa-paper-plane"></i> บันทึกผลการตรวจเช็คอุปกรณ์ (78 รายการ)
+              <i class="fa-solid fa-paper-plane"></i> บันทึกผลการตรวจเช็คและแจ้งเตือน (78 รายการ)
             </button>
           </div>
         </div>
@@ -1171,37 +1197,62 @@
     </div>
   </div>
 
-  <!-- MODAL: Google Sheet Config -->
+  <!-- MODAL: Configuration (Google Sheet & Telegram) -->
   <div class="modal-backdrop" id="configModal">
-    <div class="modal-box" style="max-width: 700px;">
-      <div class="modal-header" style="background: #15803d;">
-        <h3><i class="fa-solid fa-file-excel"></i> ตั้งค่าการเชื่อมต่อ Google Sheets</h3>
+    <div class="modal-box" style="max-width: 720px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #15803d, #0284c7);">
+        <h3><i class="fa-solid fa-sliders"></i> ตั้งค่าระบบ Google Sheet & Telegram Notification</h3>
         <button class="modal-close" onclick="closeConfigModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
-          เชื่อมต่อระบบตรวจเช็คเข้ากับ Google Sheets เพื่อจัดเก็บข้อมูลแบบออนไลน์ผ่าน Google Apps Script Web App
-        </p>
-
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label style="font-weight: 700;"><i class="fa-solid fa-link"></i> Web App URL (Google Apps Script):</label>
-          <input type="url" id="cfgGoogleScriptUrl" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+        
+        <!-- Section 1: Google Sheet Config -->
+        <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+          <h4 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-file-excel"></i> 1. ตั้งค่า Google Sheets Web App URL
+          </h4>
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.85rem;">Web App URL:</label>
+            <input type="url" id="cfgGoogleScriptUrl" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+          </div>
         </div>
 
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-          <h4 style="color: #166534; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <span><i class="fa-solid fa-code"></i> โค้ด Google Apps Script สำหรับคัดลอก:</span>
+        <!-- Section 2: Telegram Bot Config -->
+        <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+          <h4 style="font-size: 1rem; color: #0088cc; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-brands fa-telegram"></i> 2. ตั้งค่าการแจ้งเตือน Telegram Bot</span>
+            <button class="btn-telegram" style="padding: 0.25rem 0.65rem; font-size: 0.8rem;" onclick="testTelegramConnection()">
+              <i class="fa-solid fa-paper-plane"></i> ทดสอบส่ง Telegram
+            </button>
+          </h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            ใส่ Bot Token จาก @BotFather และ Chat ID กลุ่ม/บุคคล เพื่อรับแจ้งเตือนเมื่อมีบันทึกตรวจเช็คทันที
+          </p>
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label style="font-size: 0.85rem;">Bot Token:</label>
+              <input type="text" id="cfgTelegramToken" class="form-control" placeholder="เช่น 123456789:ABCdefGHIjklMNO...">
+            </div>
+            <div class="form-group">
+              <label style="font-size: 0.85rem;">Chat ID (กลุ่ม/ส่วนตัว):</label>
+              <input type="text" id="cfgTelegramChatId" class="form-control" placeholder="เช่น -100123456789 หรือ 987654321">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Google Apps Script Code -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 10px;">
+          <h4 style="color: #166534; font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <span><i class="fa-solid fa-code"></i> โค้ด Google Apps Script (พร้อมฟังก์ชัน Telegram ในตัว):</span>
             <button class="btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.8rem; background: #dcfce7; border-color: #86efac; color: #15803d;" onclick="copyAppsScriptCode()">
               <i class="fa-solid fa-copy"></i> คัดลอกโค้ด GAS
             </button>
           </h4>
-          <p style="font-size: 0.825rem; color: #15803d; margin-bottom: 0.5rem;">
-            วิธีตั้งค่า: 1. เปิด Google Sheet > ไปที่เมนู <b>ส่วนขยาย (Extensions)</b> > <b>Apps Script</b> <br>
-            2. วางโค้ดด้านล่างนี้แทนโค้ดเดิมทั้งหมด <br>
-            3. กด <b>ทำให้ใช้งานได้ (Deploy)</b> > <b>การทำให้ใช้งานได้ใหม่ (New deployment)</b> <br>
-            4. เลือกประเภท <b>เว็บแอป (Web app)</b> และตั้งค่า <b>ผู้มีสิทธิ์เข้าถึง: ทุกคน (Anyone)</b> แล้วคัดลอก URL มาใส่ในช่องด้านบน
-          </p>
-          <textarea id="appsScriptCodeText" class="form-control" style="font-family: monospace; font-size: 0.8rem; height: 120px; background: #ffffff;" readonly>
+          <textarea id="appsScriptCodeText" class="form-control" style="font-family: monospace; font-size: 0.775rem; height: 130px; background: #ffffff;" readonly>
+// โค้ด Google Apps Script สำหรับรับข้อมูลและแจ้งเตือน Telegram
+const TELEGRAM_TOKEN = "8767296623:AAGRsnjD41DKw_9fLNrH3vQNRlxihEhaDw0"; // ใส่ Bot Token
+const TELEGRAM_CHAT_ID = "-5593653503"; // ใส่ Chat ID
+
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -1209,8 +1260,17 @@ function doPost(e) {
       sheet.appendRow(["ID", "วันที่/เวลา", "หมายเลขรถ", "ผู้ตรวจเช็ค", "เวรการทำงาน", "พร้อมใช้", "ชำรุด", "ต้องเติม", "รวมทั้งสิ้น", "รายละเอียดอุปกรณ์(JSON)"]);
     }
     var data = JSON.parse(e.postData.contents);
-    var record = data.record;
-    sheet.appendRow([record.id, record.dateStr, record.vehicle, record.inspector, record.shift, record.readyCount, record.repairCount, record.refillCount, record.totalCount || 78, JSON.stringify(record.items)]);
+    var record = data.record || data;
+    sheet.appendRow([
+      record.id, record.dateStr, record.vehicle, record.inspector, record.shift, 
+      record.readyCount, record.repairCount, record.refillCount, record.totalCount || 78, 
+      JSON.stringify(record.items)
+    ]);
+
+    if (TELEGRAM_TOKEN && TELEGRAM_CHAT_ID) {
+      sendTelegramAlert(record);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
@@ -1241,12 +1301,35 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
+
+function sendTelegramAlert(r) {
+  var msg = "🚑 *รายงานตรวจเช็คอุปกรณ์รถพยาบาล*\n";
+  msg += "🏥 *รพ.เจาะไอร้อง*\n";
+  msg += "━━━━━━━━━━━━━━━━━━\n";
+  msg += "🚘 *รถ:* " + r.vehicle + "\n";
+  msg += "👤 *ผู้ตรวจ:* " + r.inspector + "\n";
+  msg += "🕒 *เวร:* " + r.shift + "\n";
+  msg += "📅 *เวลา:* " + r.dateStr + "\n\n";
+  msg += "📊 *สรุปผล (78 รายการ):*\n";
+  msg += "✅ พร้อมใช้: " + r.readyCount + " รายการ\n";
+  msg += "🛠️ ชำรุด: " + r.repairCount + " รายการ\n";
+  msg += "📦 ต้องเติม: " + r.refillCount + " รายการ\n";
+
+  var url = "https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage";
+  UrlFetchApp.fetch(url, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: msg, parse_mode: "Markdown" })
+  });
+}
           </textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" onclick="clearGoogleSheetConfig()">สลับไปใช้ Local Storage</button>
-        <button class="btn-primary" style="width: auto; background: #15803d;" onclick="saveGoogleSheetConfig()">บันทึกและเชื่อมต่อ Google Sheet</button>
+        <button class="btn-secondary" onclick="clearGoogleSheetConfig()">คืนค่าเริ่มต้น</button>
+        <button class="btn-primary" style="width: auto; background: var(--primary);" onclick="saveGoogleSheetConfig()">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าทั้งหมด
+        </button>
       </div>
     </div>
   </div>
@@ -1255,6 +1338,11 @@ function doGet(e) {
 
   <!-- APPLICATION LOGIC CODE -->
   <script>
+    // Default Web App URL requested by user
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzZ-VEvZQ_Q5S7LP59eLlyuJSVR1F_rcrhxoIe4jbo99bTdw15sAXpC2-PLaJaubhwbpg/exec";
+    const DEFAULT_TELEGRAM_TOKEN = "8767296623:AAGRsnjD41DKw_9fLNrH3vQNRlxihEhaDw0";
+    const DEFAULT_TELEGRAM_CHAT_ID = "-5593653503";
+
     // Security Helper: XSS Sanitization
     function escapeHtml(str) {
       if (!str) return '';
@@ -1655,6 +1743,9 @@ function doGet(e) {
         saveToGoogleSheet(record);
       }
 
+      // Send Telegram Notification if configured
+      sendTelegramNotification(record);
+
       document.getElementById('inspectionForm').reset();
       setInitialDate();
       resetInspectionFormState();
@@ -1662,17 +1753,108 @@ function doGet(e) {
       renderChecklistCategories();
     }
 
-    function initGoogleSheetOrLocal() {
-      const savedUrl = localStorage.getItem('ambulance_google_sheet_url');
-      if (savedUrl && savedUrl.trim() !== '') {
-        isGoogleSheetActive = true;
-        updateSyncBadge(true, 'Google Sheet Connected');
-        fetchFromGoogleSheet();
-      } else {
-        isGoogleSheetActive = false;
-        updateSyncBadge(false, 'Local Storage Mode');
-        loadLocalData();
+    // TELEGRAM NOTIFICATION DISPATCHER
+    async function sendTelegramNotification(record) {
+      const token = localStorage.getItem('ambulance_telegram_token') || DEFAULT_TELEGRAM_TOKEN;
+      const chatId = localStorage.getItem('ambulance_telegram_chatid') || DEFAULT_TELEGRAM_CHAT_ID;
+
+      if (!token || !chatId) {
+        console.log('Telegram credentials not configured. Skipping alert.');
+        return;
       }
+
+      let msg = `🚑 *รายงานตรวจเช็คอุปกรณ์รถพยาบาล*\n`;
+      msg += `🏥 *รพ.เจาะไอร้อง*\n`;
+      msg += `━━━━━━━━━━━━━━━━━━\n`;
+      msg += `🚘 *รถพยาบาล:* ${record.vehicle}\n`;
+      msg += `👤 *ผู้ตรวจ:* ${record.inspector}\n`;
+      msg += `🕒 *เวร:* ${record.shift}\n`;
+      msg += `📅 *วันที่/เวลา:* ${record.dateStr}\n\n`;
+      msg += `📊 *สรุปสถานะอุปกรณ์ (78 รายการ):*\n`;
+      msg += `✅ พร้อมใช้งาน: ${record.readyCount} รายการ\n`;
+      msg += `🛠️ ชำรุด (ต้องซ่อม): ${record.repairCount} รายการ\n`;
+      msg += `📦 ขาดแคลน (ต้องเติม): ${record.refillCount} รายการ\n`;
+
+      const defects = [];
+      if (record.items) {
+        Object.keys(record.items).forEach(k => {
+          const itm = record.items[k];
+          if (itm.status === 'REPAIR') {
+            defects.push(`🛠️ *${itm.name}*: ${itm.note || 'ชำรุด'}`);
+          } else if (itm.status === 'REFILL') {
+            defects.push(`📦 *${itm.name}*: ${itm.note || 'ขาดแคลน/ต้องเติม'}`);
+          }
+        });
+      }
+
+      if (defects.length > 0) {
+        msg += `\n⚠️ *รายการอุปกรณ์ที่ต้องดำเนินการด่วน:*\n`;
+        msg += defects.join('\n');
+      } else {
+        msg += `\n🎉 *อุปกรณ์ครบถ้วน พร้อมปฏิบัติการ 100%*`;
+      }
+
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: msg,
+            parse_mode: 'Markdown'
+          })
+        });
+        const resData = await response.json();
+        if (resData.ok) {
+          showToast('📲 ส่งการแจ้งเตือนไปยัง Telegram เรียบร้อยแล้ว', 'info');
+        } else {
+          console.warn('Telegram API response error:', resData);
+        }
+      } catch (err) {
+        console.error('Failed to send Telegram notification:', err);
+      }
+    }
+
+    async function testTelegramConnection() {
+      const token = document.getElementById('cfgTelegramToken').value.trim() || DEFAULT_TELEGRAM_TOKEN;
+      const chatId = document.getElementById('cfgTelegramChatId').value.trim() || DEFAULT_TELEGRAM_CHAT_ID;
+
+      if (!token || !chatId) {
+        showToast('กรุณากรอกทั้ง Telegram Bot Token และ Chat ID', 'error');
+        return;
+      }
+
+      const testMsg = `🔔 *ทดสอบการเชื่อมต่อระบบแจ้งเตือน Telegram*\n🏥 *ระบบตรวจเช็คอุปกรณ์รถพยาบาล รพ.เจาะไอร้อง*\n✅ การเชื่อมต่อสมบูรณ์เรียบร้อย!`;
+
+      try {
+        showToast('กำลังส่งข้อความทดสอบไปยัง Telegram...', 'info');
+        const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: testMsg,
+            parse_mode: 'Markdown'
+          })
+        });
+        const resData = await response.json();
+        if (resData.ok) {
+          showToast('🟢 ส่งข้อความทดสอบ Telegram สำเร็จ!', 'success');
+        } else {
+          showToast(`❌ ส่งไม่สำเร็จ: ${resData.description || 'เช็ค Token/Chat ID'}`, 'error');
+        }
+      } catch (err) {
+        showToast('❌ เกิดข้อผิดพลาดในการส่งไปยัง Telegram', 'error');
+      }
+    }
+
+    function initGoogleSheetOrLocal() {
+      const savedUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
+      localStorage.setItem('ambulance_google_sheet_url', savedUrl);
+
+      isGoogleSheetActive = true;
+      updateSyncBadge(true, 'Google Sheet & Telegram Sync Active');
+      fetchFromGoogleSheet();
     }
 
     function updateSyncBadge(isConnected, text) {
@@ -1685,7 +1867,7 @@ function doGet(e) {
     }
 
     async function fetchFromGoogleSheet() {
-      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url');
+      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
       if (!scriptUrl) return;
 
       try {
@@ -1700,7 +1882,7 @@ function doGet(e) {
           } else {
             loadLocalData();
           }
-          updateSyncBadge(true, 'Google Sheet Sync Active');
+          updateSyncBadge(true, 'Google Sheet Connected');
           refreshActiveViews();
         } else {
           loadLocalData();
@@ -1739,7 +1921,7 @@ function doGet(e) {
     }
 
     async function saveToGoogleSheet(record) {
-      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url');
+      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
       if (!scriptUrl) return;
 
       try {
@@ -1749,7 +1931,7 @@ function doGet(e) {
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'addInspection', record: record })
         });
-        showToast('🟢 ส่งข้อมูลไปยัง Google Sheet เรียบร้อยแล้ว', 'info');
+        showToast('🟢 บันทึกลง Google Sheet เรียบร้อยแล้ว', 'info');
       } catch (err) {
         console.warn('Failed to post to Google Sheet:', err);
         showToast('⚠️ ไม่สามารถส่งไป Google Sheet ได้ ข้อมูลยังคงเซฟอยู่ในเครื่อง', 'warning');
@@ -1757,9 +1939,19 @@ function doGet(e) {
     }
 
     function openConfigModal() {
-      const savedUrl = localStorage.getItem('ambulance_google_sheet_url') || '';
-      const inputEl = document.getElementById('cfgGoogleScriptUrl');
-      if (inputEl) inputEl.value = savedUrl;
+      const savedUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
+      const savedToken = localStorage.getItem('ambulance_telegram_token') || DEFAULT_TELEGRAM_TOKEN;
+      const savedChatId = localStorage.getItem('ambulance_telegram_chatid') || DEFAULT_TELEGRAM_CHAT_ID;
+
+      const inputUrl = document.getElementById('cfgGoogleScriptUrl');
+      if (inputUrl) inputUrl.value = savedUrl;
+
+      const inputToken = document.getElementById('cfgTelegramToken');
+      if (inputToken) inputToken.value = savedToken;
+
+      const inputChatId = document.getElementById('cfgTelegramChatId');
+      if (inputChatId) inputChatId.value = savedChatId;
+
       document.getElementById('configModal').classList.add('open');
     }
 
@@ -1769,21 +1961,36 @@ function doGet(e) {
 
     function saveGoogleSheetConfig() {
       const url = document.getElementById('cfgGoogleScriptUrl').value.trim();
+      const token = document.getElementById('cfgTelegramToken').value.trim();
+      const chatId = document.getElementById('cfgTelegramChatId').value.trim();
+
       if (!url) {
         showToast('กรุณากรอก Web App URL ของ Google Apps Script', 'error');
         return;
       }
+
       localStorage.setItem('ambulance_google_sheet_url', url);
+      localStorage.setItem('ambulance_telegram_token', token);
+      localStorage.setItem('ambulance_telegram_chatid', chatId);
+
       closeConfigModal();
-      showToast('บันทึกการเชื่อมต่อ Google Sheet เรียบร้อยแล้ว! กำลังเชื่อมต่อ...', 'success');
+      showToast('บันทึกการตั้งค่า Google Sheet & Telegram เรียบร้อยแล้ว!', 'success');
       setTimeout(() => initGoogleSheetOrLocal(), 500);
     }
 
     function clearGoogleSheetConfig() {
-      localStorage.removeItem('ambulance_google_sheet_url');
-      closeConfigModal();
-      showToast('สลับเป็น Local Storage Mode เรียบร้อยแล้ว', 'info');
-      initGoogleSheetOrLocal();
+      localStorage.setItem('ambulance_google_sheet_url', DEFAULT_GAS_URL);
+      localStorage.setItem('ambulance_telegram_token', DEFAULT_TELEGRAM_TOKEN);
+      localStorage.setItem('ambulance_telegram_chatid', DEFAULT_TELEGRAM_CHAT_ID);
+
+      const inputUrl = document.getElementById('cfgGoogleScriptUrl');
+      if (inputUrl) inputUrl.value = DEFAULT_GAS_URL;
+      const inputToken = document.getElementById('cfgTelegramToken');
+      if (inputToken) inputToken.value = DEFAULT_TELEGRAM_TOKEN;
+      const inputChatId = document.getElementById('cfgTelegramChatId');
+      if (inputChatId) inputChatId.value = DEFAULT_TELEGRAM_CHAT_ID;
+
+      showToast('คืนค่า URL และการตั้งค่า Telegram เป็นค่าเริ่มต้นเรียบร้อยแล้ว', 'info');
     }
 
     function copyAppsScriptCode() {
