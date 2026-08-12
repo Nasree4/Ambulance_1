@@ -54,41 +54,51 @@
             background: #cbd5e1;
             border-radius: 3px;
         }
+        /* Mobile Touch & Tap Optimizations */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Prevent iOS auto-zoom on input focus */
+        @media (max-width: 640px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
     </style>
 </head>
-<body class="h-full text-slate-800 antialiased font-sans flex flex-col min-h-screen">
+<body class="h-full text-slate-800 antialiased font-sans flex flex-col min-h-screen pb-20 sm:pb-0">
 
     <!-- Top Navigation Bar -->
     <header class="bg-ems-800 text-white sticky top-0 z-30 shadow-md no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-14 sm:h-16">
                 <!-- Logo & Title -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center shadow-inner border-2 border-white">
-                        <i class="fa-solid fa-truck-medical text-white text-lg"></i>
+                <div class="flex items-center space-x-2.5 sm:space-x-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 flex items-center justify-center shadow-inner border-2 border-white shrink-0">
+                        <i class="fa-solid fa-truck-medical text-white text-base sm:text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg leading-tight">Ambulance Daily Check</h1>
-                        <p class="text-xs text-ems-100">ระบบตรวจเช็กรถพยาบาลประจำวัน (BE-WAGON)</p>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight">Ambulance Check</h1>
+                        <p class="text-[10px] sm:text-xs text-ems-100">ตรวจเช็กรถพยาบาล (BE-WAGON)</p>
                     </div>
                 </div>
 
                 <!-- Live Status & Quick Actions -->
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-1.5 sm:space-x-3">
                     <div id="liveClock" class="hidden md:block text-right text-xs font-mono text-ems-100 bg-ems-900/50 px-3 py-1.5 rounded-md border border-ems-700">
                         --:--:--
                     </div>
-                    <button onclick="openGSheetModal()" class="px-3 py-1.5 text-xs font-medium bg-teal-700 hover:bg-teal-600 rounded-lg transition duration-200 flex items-center space-x-1.5 shadow" title="ตั้งค่าเชื่อมต่อ Google Sheet">
+                    <button onclick="openGSheetModal()" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium bg-teal-700 hover:bg-teal-600 active:scale-95 rounded-lg transition flex items-center space-x-1 shadow" title="ตั้งค่าเชื่อมต่อ Google Sheet">
                         <i class="fa-solid fa-table"></i>
                         <span class="hidden sm:inline">Google Sheet</span>
                     </button>
-                    <button onclick="resetChecklistWithModal()" class="px-3 py-1.5 text-xs font-medium bg-slate-700 hover:bg-slate-600 rounded-lg transition duration-200 flex items-center space-x-1.5">
+                    <button onclick="resetChecklistWithModal()" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium bg-slate-700 hover:bg-slate-600 active:scale-95 rounded-lg transition flex items-center space-x-1">
                         <i class="fa-solid fa-rotate-right"></i>
                         <span class="hidden sm:inline">รีเซ็ต</span>
                     </button>
-                    <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold bg-sky-600 hover:bg-sky-500 rounded-lg transition duration-200 flex items-center space-x-1.5 shadow">
+                    <button onclick="window.print()" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold bg-sky-600 hover:bg-sky-500 active:scale-95 rounded-lg transition flex items-center space-x-1 shadow">
                         <i class="fa-solid fa-print"></i>
-                        <span>พิมพ์ / PDF</span>
+                        <span class="hidden sm:inline">พิมพ์ / PDF</span>
                     </button>
                 </div>
             </div>
@@ -96,7 +106,7 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-4 sm:space-y-6 pb-24 sm:pb-6">
 
         <!-- Status Readiness Banner -->
         <div id="statusBanner" class="bg-emerald-50 border-l-4 border-emerald-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300">
@@ -131,51 +141,51 @@
         </div>
 
         <!-- Vehicle & Shift Metadata Card -->
-        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-5">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                <h3 class="font-bold text-slate-800 flex items-center space-x-2 text-base">
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-3.5 sm:p-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3.5">
+                <h3 class="font-bold text-slate-800 flex items-center space-x-2 text-sm sm:text-base">
                     <i class="fa-solid fa-id-card text-ems-600"></i>
-                    <span>ข้อมูลรถพยาบาลและการรับเวรปฏิบัติงาน</span>
+                    <span>ข้อมูลรถพยาบาลและการรับเวร</span>
                 </h3>
-                <button onclick="autoFillDemoData()" class="no-print text-xs text-ems-600 hover:text-ems-800 font-medium flex items-center space-x-1">
+                <button onclick="autoFillDemoData()" class="no-print text-xs text-ems-600 hover:text-ems-800 font-medium flex items-center space-x-1 py-1 px-2 rounded-lg bg-ems-50 active:scale-95 transition">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span>กรอกข้อมูลตัวอย่าง</span>
+                    <span>เติมตัวอย่าง</span>
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Vehicle Plate Option Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <!-- Vehicle Plate Option Buttons (Mobile 2x2 Layout) -->
                 <div class="sm:col-span-2 lg:col-span-4">
-                    <label class="block text-xs font-semibold text-slate-600 mb-2">เลือกรถพยาบาล *</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">เลือกรถพยาบาล *</label>
                     <input type="hidden" id="inputPlate" value="">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5" id="plateButtonGrid">
-                        <button type="button" onclick="selectPlate('คันที่ 1 (รถ Refer) รถส่งต่อผู้ป่วยวิกฤต')" class="plate-btn text-left p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-800 transition flex flex-col justify-between" data-plate="คันที่ 1 (รถ Refer) รถส่งต่อผู้ป่วยวิกฤต">
-                            <span class="font-bold text-xs flex items-center space-x-1.5"><i class="fa-solid fa-truck-medical text-red-500"></i><span>คันที่ 1 (รถ Refer)</span></span>
-                            <span class="text-[11px] opacity-75 mt-1">รถส่งต่อผู้ป่วยวิกฤต</span>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5" id="plateButtonGrid">
+                        <button type="button" onclick="selectPlate('คันที่ 1 (รถ Refer) รถส่งต่อผู้ป่วยวิกฤต')" class="plate-btn text-left p-2.5 sm:p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 active:scale-95 transition flex flex-col justify-between" data-plate="คันที่ 1 (รถ Refer) รถส่งต่อผู้ป่วยวิกฤต">
+                            <span class="font-bold text-xs flex items-center space-x-1"><i class="fa-solid fa-truck-medical text-red-500"></i><span>คันที่ 1 (Refer)</span></span>
+                            <span class="text-[10px] text-slate-500 mt-1 line-clamp-1">ส่งต่อผู้ป่วยวิกฤต</span>
                         </button>
-                        <button type="button" onclick="selectPlate('คันที่ 2 (รถ EMS) รถกู้ชีพฉุกเฉินออกรับเหตุ')" class="plate-btn text-left p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-800 transition flex flex-col justify-between" data-plate="คันที่ 2 (รถ EMS) รถกู้ชีพฉุกเฉินออกรับเหตุ">
-                            <span class="font-bold text-xs flex items-center space-x-1.5"><i class="fa-solid fa-truck-medical text-amber-500"></i><span>คันที่ 2 (รถ EMS)</span></span>
-                            <span class="text-[11px] opacity-75 mt-1">รถกู้ชีพฉุกเฉินออกรับเหตุ</span>
+                        <button type="button" onclick="selectPlate('คันที่ 2 (รถ EMS) รถกู้ชีพฉุกเฉินออกรับเหตุ')" class="plate-btn text-left p-2.5 sm:p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 active:scale-95 transition flex flex-col justify-between" data-plate="คันที่ 2 (รถ EMS) รถกู้ชีพฉุกเฉินออกรับเหตุ">
+                            <span class="font-bold text-xs flex items-center space-x-1"><i class="fa-solid fa-truck-medical text-amber-500"></i><span>คันที่ 2 (EMS)</span></span>
+                            <span class="text-[10px] text-slate-500 mt-1 line-clamp-1">กู้ชีพออกรับเหตุ</span>
                         </button>
-                        <button type="button" onclick="selectPlate('คันที่ 3 รถพยาบาลสำรอง/ทั่วไป')" class="plate-btn text-left p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-800 transition flex flex-col justify-between" data-plate="คันที่ 3 รถพยาบาลสำรอง/ทั่วไป">
-                            <span class="font-bold text-xs flex items-center space-x-1.5"><i class="fa-solid fa-truck-medical text-sky-500"></i><span>คันที่ 3</span></span>
-                            <span class="text-[11px] opacity-75 mt-1">รถพยาบาลสำรอง/ทั่วไป</span>
+                        <button type="button" onclick="selectPlate('คันที่ 3 รถพยาบาลสำรอง/ทั่วไป')" class="plate-btn text-left p-2.5 sm:p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 active:scale-95 transition flex flex-col justify-between" data-plate="คันที่ 3 รถพยาบาลสำรอง/ทั่วไป">
+                            <span class="font-bold text-xs flex items-center space-x-1"><i class="fa-solid fa-truck-medical text-sky-500"></i><span>คันที่ 3</span></span>
+                            <span class="text-[10px] text-slate-500 mt-1 line-clamp-1">สำรอง / ทั่วไป</span>
                         </button>
-                        <button type="button" onclick="selectPlate('คันที่ 4 รถพยาบาลสำรอง/ทั่วไป')" class="plate-btn text-left p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-800 transition flex flex-col justify-between" data-plate="คันที่ 4 รถพยาบาลสำรอง/ทั่วไป">
-                            <span class="font-bold text-xs flex items-center space-x-1.5"><i class="fa-solid fa-truck-medical text-emerald-500"></i><span>คันที่ 4</span></span>
-                            <span class="text-[11px] opacity-75 mt-1">รถพยาบาลสำรอง/ทั่วไป</span>
+                        <button type="button" onclick="selectPlate('คันที่ 4 รถพยาบาลสำรอง/ทั่วไป')" class="plate-btn text-left p-2.5 sm:p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 active:scale-95 transition flex flex-col justify-between" data-plate="คันที่ 4 รถพยาบาลสำรอง/ทั่วไป">
+                            <span class="font-bold text-xs flex items-center space-x-1"><i class="fa-solid fa-truck-medical text-emerald-500"></i><span>คันที่ 4</span></span>
+                            <span class="text-[10px] text-slate-500 mt-1 line-clamp-1">สำรอง / ทั่วไป</span>
                         </button>
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่และเวลาตรวจ *</label>
-                    <input type="datetime-local" id="inputDateTime" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none">
+                    <input type="datetime-local" id="inputDateTime" class="w-full text-base sm:text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">เวรปฏิบัติงาน *</label>
-                    <select id="inputShift" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none bg-white">
+                    <select id="inputShift" class="w-full text-base sm:text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none bg-white">
                         <option value="เช้า (08:00 - 16:00 น.)">เวรเช้า (08:00 - 16:00 น.)</option>
                         <option value="บ่าย (16:00 - 24:00 น.)">เวรบ่าย (16:00 - 24:00 น.)</option>
                         <option value="ดึก (00:00 - 08:00 น.)">เวรดึก (00:00 - 08:00 น.)</option>
@@ -185,14 +195,14 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">เลขกิโลเมตรเริ่มต้น (Odometer)</label>
                     <div class="relative">
-                        <input type="number" id="inputOdometer" placeholder="125430" class="w-full text-sm border border-slate-300 rounded-lg pl-3 pr-10 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none">
-                        <span class="absolute right-3 top-2 text-xs text-slate-400">กม.</span>
+                        <input type="number" id="inputOdometer" placeholder="125430" class="w-full text-base sm:text-sm border border-slate-300 rounded-lg pl-3 pr-10 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none">
+                        <span class="absolute right-3 top-2.5 text-xs text-slate-400">กม.</span>
                     </div>
                 </div>
 
                 <div class="sm:col-span-2 lg:col-span-4">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อพนักงานขับรถ / ผู้ส่งเวร-รับเวร *</label>
-                    <input type="text" id="inputDriver" placeholder="นายสมศักดิ์ ปลอดภัย" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none">
+                    <input type="text" id="inputDriver" placeholder="นายสมศักดิ์ ปลอดภัย" class="w-full text-base sm:text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-ems-500 focus:border-ems-500 transition outline-none">
                 </div>
             </div>
         </section>
@@ -311,6 +321,22 @@
         </div>
 
     </main>
+
+    <!-- Mobile Fixed Bottom Action Bar -->
+    <div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-2 z-40 shadow-lg no-print flex items-center justify-between gap-1.5">
+        <button id="mobileTabSwitchBtn" onclick="switchTab(currentTab === 1 ? 2 : 1)" class="flex-1 py-2.5 px-2 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center space-x-1 border border-slate-200">
+            <i class="fa-solid fa-arrows-rotate text-ems-600"></i>
+            <span id="mobileTabSwitchText">ไปห้องพยาบาล</span>
+        </button>
+        <button onclick="markAllPassCurrentTab()" class="py-2.5 px-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-1 shadow-sm">
+            <i class="fa-solid fa-check-double"></i>
+            <span>ผ่านทั้งหมด</span>
+        </button>
+        <button onclick="submitFullReport()" class="py-2.5 px-3 bg-ems-700 hover:bg-ems-800 active:scale-95 text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-1 shadow-md">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>ส่งรายงาน</span>
+        </button>
+    </div>
 
     <!-- Google Sheet Configuration Modal -->
     <div id="gsheetModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
@@ -459,7 +485,7 @@
                 if (!container) return;
 
                 const row = document.createElement('div');
-                row.className = 'p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/80 transition';
+                row.className = 'p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 hover:bg-slate-50/80 transition rounded-lg border-b border-slate-100 last:border-b-0';
                 row.id = `item-row-${item.id}`;
 
                 let specialWidget = '';
@@ -475,46 +501,163 @@
                             </select>
                         </div>
                     `;
-                } else if (item.isOxygen) {
-                    specialWidget = `
-                        <div class="mt-2 flex items-center space-x-2 text-xs">
-                            <span class="font-medium text-slate-600">แรงดันเกจ์ O2:</span>
-                            <input type="number" id="o2Input-${item.id}" value="1500" placeholder="PSI" onchange="handleOxygenChange(${item.id}, this.value)" class="w-24 border border-slate-300 rounded px-2 py-1 text-xs font-semibold outline-none focus:ring-1 focus:ring-ems-500">
-                            <span class="text-slate-500 font-mono">PSI (เกณฑ์ ≥ 1000)</span>
-                        </div>
-                    `;
                 }
 
                 row.innerHTML = `
-                    <div class="flex-1 pr-2">
-                        <div class="flex items-center space-x-2">
+                    <div class="flex-1 pr-1">
+                        <div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
                             <span class="text-xs font-bold text-slate-400 w-5">#${item.id}</span>
                             <h4 class="text-xs sm:text-sm font-bold text-slate-800">${item.name}</h4>
                             ${item.critical ? '<span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded border border-red-200">วิกฤต</span>' : ''}
                         </div>
-                        <p class="text-xs text-slate-500 mt-0.5 pl-7">${item.detail}</p>
-                        <div class="pl-7">${specialWidget}</div>
+                        <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 pl-6.5 sm:pl-7 leading-relaxed">${item.detail}</p>
+                        <div class="pl-6.5 sm:pl-7">${specialWidget}</div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pl-7 sm:pl-0">
-                        <!-- Buttons -->
-                        <div class="flex items-center space-x-1.5 self-start sm:self-auto">
-                            <button onclick="setItemStatus(${item.id}, 'pass')" id="btn-pass-${item.id}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition flex items-center space-x-1">
-                                <i class="fa-solid fa-check text-emerald-600"></i>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pl-6.5 sm:pl-0 w-full sm:w-auto">
+                        <!-- Touch Friendly Large Pass / Fail Buttons -->
+                        <div class="flex items-center space-x-2 w-full sm:w-auto">
+                            <button onclick="setItemStatus(${item.id}, 'pass')" id="btn-pass-${item.id}" class="flex-1 sm:flex-initial min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 active:scale-95 transition-all flex items-center justify-center space-x-1.5 shadow-sm">
+                                <i class="fa-solid fa-check text-emerald-600 text-sm"></i>
                                 <span>ปกติ</span>
                             </button>
-                            <button onclick="setItemStatus(${item.id}, 'fail')" id="btn-fail-${item.id}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition flex items-center space-x-1">
-                                <i class="fa-solid fa-xmark text-red-600"></i>
+                            <button onclick="setItemStatus(${item.id}, 'fail')" id="btn-fail-${item.id}" class="flex-1 sm:flex-initial min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 bg-slate-50 hover:bg-red-50 hover:text-red-700 hover:border-red-300 active:scale-95 transition-all flex items-center justify-center space-x-1.5 shadow-sm">
+                                <i class="fa-solid fa-xmark text-red-600 text-sm"></i>
                                 <span>ชำรุด</span>
                             </button>
                         </div>
                         <!-- Note Input -->
-                        <input type="text" id="note-${item.id}" value="${itemStates[item.id].note}" placeholder="ระบุเหตุผลถ้าชำรุด..." oninput="setItemNote(${item.id}, this.value)" class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 w-full sm:w-40 outline-none focus:border-ems-500 transition">
+                        <input type="text" id="note-${item.id}" value="${itemStates[item.id].note}" placeholder="ระบุเหตุผลถ้าชำรุด..." oninput="setItemNote(${item.id}, this.value)" class="text-base sm:text-xs border border-slate-200 rounded-xl px-3 py-2 sm:py-1.5 w-full sm:w-44 outline-none focus:border-ems-500 focus:ring-1 focus:ring-ems-500 transition shadow-sm">
                     </div>
                 `;
 
                 container.appendChild(row);
             });
+        }
+
+        // Set note of an item
+        function setItemNote(id, note) {
+            if (itemStates[id]) {
+                itemStates[id].note = note;
+            }
+        }
+
+        // Handle Fuel Level Dropdown Selection
+        function handleFuelChange(id, val) {
+            if (!itemStates[id]) return;
+            const noteEl = document.getElementById(`note-${id}`);
+            if (val === '1/2' || val === '1/4') {
+                setItemStatus(id, 'fail');
+                itemStates[id].note = `ระดับน้ำมัน ${val} (ต่ำกว่าเกณฑ์ 3/4)`;
+                if (noteEl) noteEl.value = `ระดับน้ำมัน ${val} (ต่ำกว่าเกณฑ์ 3/4)`;
+            } else {
+                setItemStatus(id, 'pass');
+                itemStates[id].note = `ระดับน้ำมัน ${val}`;
+                if (noteEl) noteEl.value = `ระดับน้ำมัน ${val}`;
+            }
+        }
+
+        // Mark all pass in current active tab
+        function markAllPassCurrentTab() {
+            checklistItems.forEach(item => {
+                let inTab = false;
+                if (currentTab === 1 && (item.category === 'BE' || item.category === 'WA' || item.category === 'GON')) {
+                    inTab = true;
+                } else if (currentTab === 2 && item.category === 'MedCompartment') {
+                    inTab = true;
+                }
+                if (inTab) {
+                    setItemStatus(item.id, 'pass');
+                }
+            });
+        }
+
+        // Update overall progress & readiness status banner
+        function updateOverallStatus() {
+            const total = checklistItems.length;
+            let checked = 0;
+            let passCount = 0;
+            let failCount = 0;
+            let hasCriticalFail = false;
+
+            checklistItems.forEach(item => {
+                const st = itemStates[item.id]?.status;
+                if (st) {
+                    checked++;
+                    if (st === 'pass') passCount++;
+                    if (st === 'fail') {
+                        failCount++;
+                        if (item.critical) hasCriticalFail = true;
+                    }
+                }
+            });
+
+            // Elements
+            const checkedCountEl = document.getElementById('checkedCount');
+            const totalCountEl = document.getElementById('totalCount');
+            const progressCircleEl = document.getElementById('progressCircle');
+            const progressPercentEl = document.getElementById('progressPercent');
+
+            const bannerEl = document.getElementById('statusBanner');
+            const iconContainer = document.getElementById('statusIcon');
+            const titleEl = document.getElementById('statusTitle');
+            const badgeEl = document.getElementById('statusBadge');
+            const descEl = document.getElementById('statusDesc');
+
+            if (checkedCountEl) checkedCountEl.textContent = checked;
+            if (totalCountEl) totalCountEl.textContent = total;
+
+            const percent = Math.round((checked / total) * 100);
+            if (progressPercentEl) progressPercentEl.textContent = `${percent}%`;
+            if (progressCircleEl) progressCircleEl.setAttribute('stroke-dasharray', `${percent}, 100`);
+
+            if (!bannerEl) return;
+
+            if (failCount > 0 && hasCriticalFail) {
+                // Critical Failure
+                bannerEl.className = 'bg-red-50 border-l-4 border-red-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
+                iconContainer.className = 'p-2.5 bg-red-500 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
+                iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                titleEl.className = 'text-base sm:text-lg font-bold text-red-900';
+                titleEl.textContent = 'งดปฏิบัติการชั่วคราว (OUT OF SERVICE)';
+                badgeEl.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-300';
+                badgeEl.textContent = 'ไม่ผ่านความปลอดภัย';
+                descEl.className = 'text-xs sm:text-sm text-red-700 mt-0.5';
+                descEl.textContent = 'พบอุปกรณ์หรือระบบตัวรถระดับวิกฤตชำรุด โปรดแก้ไข/ซ่อมแซมก่อนนำรถออกปฏิบัติการ';
+            } else if (failCount > 0) {
+                // Minor Failure
+                bannerEl.className = 'bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
+                iconContainer.className = 'p-2.5 bg-amber-500 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+                titleEl.className = 'text-base sm:text-lg font-bold text-amber-900';
+                titleEl.textContent = 'พร้อมแบบมีเงื่อนไข (Conditional Ready)';
+                badgeEl.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-300';
+                badgeEl.textContent = 'มีข้อบกพร่องเล็กน้อย';
+                descEl.className = 'text-xs sm:text-sm text-amber-700 mt-0.5';
+                descEl.textContent = 'สามารถออกปฏิบัติการได้ แต่มีรายการชำรุดเล็กน้อยที่ต้องติดตามแก้ไข';
+            } else if (checked === total) {
+                // 100% Pass
+                bannerEl.className = 'bg-emerald-50 border-l-4 border-emerald-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
+                iconContainer.className = 'p-2.5 bg-emerald-500 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                titleEl.className = 'text-base sm:text-lg font-bold text-emerald-900';
+                titleEl.textContent = 'พร้อมปฏิบัติการ 100% (Fully Operational)';
+                badgeEl.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+                badgeEl.textContent = 'ผ่านการตรวจครบ';
+                descEl.className = 'text-xs sm:text-sm text-emerald-700 mt-0.5';
+                descEl.textContent = 'ตัวรถและเครื่องมือแพทย์ทุกรายการอยู่ในสภาพพร้อมใช้งานฉุกเฉินตลอด 24 ชั่วโมง';
+            } else {
+                // In progress
+                bannerEl.className = 'bg-teal-50 border-l-4 border-teal-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
+                iconContainer.className = 'p-2.5 bg-teal-500 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
+                iconContainer.innerHTML = '<i class="fa-solid fa-clipboard-check"></i>';
+                titleEl.className = 'text-base sm:text-lg font-bold text-teal-900';
+                titleEl.textContent = 'กำลังดำเนินการตรวจเช็ก...';
+                badgeEl.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 border border-teal-300';
+                badgeEl.textContent = `ตรวจแล้ว ${checked}/${total}`;
+                descEl.className = 'text-xs sm:text-sm text-teal-700 mt-0.5';
+                descEl.textContent = 'กรุณาตรวจเช็กรายการให้ครบถ้วนทุกหมวดหมู่เพื่อยืนยันสถานะความพร้อม';
+            }
         }
 
         // Set status of an item
@@ -526,119 +669,16 @@
             const row = document.getElementById(`item-row-${id}`);
 
             if (status === 'pass') {
-                btnPass.className = 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold shadow-sm transition flex items-center space-x-1';
-                btnFail.className = 'px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-400 opacity-60 hover:opacity-100 transition flex items-center space-x-1';
-                row.className = 'p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-emerald-50/30 transition';
+                btnPass.className = 'flex-1 sm:flex-initial min-h-[42px] px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md active:scale-95 transition-all flex items-center justify-center space-x-1.5';
+                btnFail.className = 'flex-1 sm:flex-initial min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-400 bg-slate-100 opacity-60 active:scale-95 transition-all flex items-center justify-center space-x-1.5';
+                row.className = 'p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-emerald-50/40 border-l-4 border-l-emerald-500 transition-all duration-200 rounded-r-lg';
             } else if (status === 'fail') {
-                btnPass.className = 'px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-400 opacity-60 hover:opacity-100 transition flex items-center space-x-1';
-                btnFail.className = 'px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold shadow-sm transition flex items-center space-x-1';
-                row.className = 'p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-red-50/50 transition';
+                btnPass.className = 'flex-1 sm:flex-initial min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-400 bg-slate-100 opacity-60 active:scale-95 transition-all flex items-center justify-center space-x-1.5';
+                btnFail.className = 'flex-1 sm:flex-initial min-h-[42px] px-3.5 py-2 rounded-xl bg-red-600 text-white text-xs sm:text-sm font-bold shadow-md active:scale-95 transition-all flex items-center justify-center space-x-1.5';
+                row.className = 'p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-red-50/70 border-l-4 border-l-red-500 transition-all duration-200 rounded-r-lg';
             }
 
             updateOverallStatus();
-        }
-
-        function setItemNote(id, noteText) {
-            itemStates[id].note = noteText;
-        }
-
-        function handleFuelChange(id, value) {
-            if (value === '1/2' || value === '1/4') {
-                setItemStatus(id, 'fail');
-                document.getElementById(`note-${id}`).value = `น้ำมันเชื้อเพลิงเหลือเพียง ${value} (ต่ำกว่าเกณฑ์ 3/4)`;
-                setItemNote(id, `น้ำมันเชื้อเพลิงเหลือเพียง ${value} (ต่ำกว่าเกณฑ์ 3/4)`);
-            } else {
-                setItemStatus(id, 'pass');
-            }
-        }
-
-        function handleOxygenChange(id, psi) {
-            const val = parseInt(psi, 10);
-            if (isNaN(val) || val < 1000) {
-                setItemStatus(id, 'fail');
-                document.getElementById(`note-${id}`).value = `แรงดันออกซิเจนต่ำกว่าเกณฑ์ (${val || 0} PSI < 1000 PSI)`;
-                setItemNote(id, `แรงดันออกซิเจนต่ำกว่าเกณฑ์ (${val || 0} PSI < 1000 PSI)`);
-            } else {
-                setItemStatus(id, 'pass');
-            }
-        }
-
-        // Mark all items in the current active tab as 'Pass'
-        function markAllPassCurrentTab() {
-            checklistItems.forEach(item => {
-                const belongsToTab1 = ['BE', 'WA', 'GON'].includes(item.category);
-                const belongsToTab2 = ['MedCompartment', 'MedB', 'MedE', 'MedWA', 'MedGON'].includes(item.category);
-
-                if ((currentTab === 1 && belongsToTab1) || (currentTab === 2 && belongsToTab2)) {
-                    setItemStatus(item.id, 'pass');
-                }
-            });
-        }
-
-        // Calculate and Update Readiness Status Banner & Progress Bar
-        function updateOverallStatus() {
-            let passCount = 0;
-            let failCount = 0;
-            let pendingCount = 0;
-            let criticalDefects = [];
-
-            checklistItems.forEach(item => {
-                const st = itemStates[item.id].status;
-                if (st === 'pass') passCount++;
-                else if (st === 'fail') {
-                    failCount++;
-                    criticalDefects.push({ name: item.name, note: item.note || 'ไม่ได้ระบุเหตุผล', critical: item.critical });
-                } else pendingCount++;
-            });
-
-            // Update Counts Display
-            document.getElementById('checkedCount').textContent = passCount + failCount;
-            document.getElementById('totalCount').textContent = checklistItems.length;
-
-            const percentage = Math.round(((passCount + failCount) / checklistItems.length) * 100);
-            document.getElementById('progressPercent').textContent = `${percentage}%`;
-            document.getElementById('progressCircle').setAttribute('stroke-dasharray', `${percentage}, 100`);
-
-            // Update Status Banner Styling & Text
-            const banner = document.getElementById('statusBanner');
-            const icon = document.getElementById('statusIcon');
-            const title = document.getElementById('statusTitle');
-            const badge = document.getElementById('statusBadge');
-            const desc = document.getElementById('statusDesc');
-
-            const hasCriticalFail = criticalDefects.some(d => d.critical);
-
-            if (failCount > 0 && hasCriticalFail) {
-                banner.className = 'bg-red-50 border-l-4 border-red-600 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
-                icon.className = 'p-2.5 bg-red-600 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
-                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-                title.className = 'text-base sm:text-lg font-bold text-red-900';
-                title.textContent = 'งดปฏิบัติการชั่วคราว (OUT OF SERVICE)';
-                badge.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-300';
-                badge.textContent = 'พบอุปกรณ์วิกฤตชำรุด';
-                desc.className = 'text-xs sm:text-sm text-red-700 mt-0.5';
-                desc.textContent = 'พบรายการสำคัญวิกฤตชำรุด โปรดรีบแจ้งซ่อมหรือเปลี่ยนอุปกรณ์สำรองก่อนออกรับเคส!';
-            } else if (failCount > 0) {
-                banner.className = 'bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
-                icon.className = 'p-2.5 bg-amber-500 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
-                icon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
-                title.className = 'text-base sm:text-lg font-bold text-amber-900';
-                title.textContent = 'พร้อมแบบมีเงื่อนไข (Conditional Ready)';
-                badge.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-300';
-                badge.textContent = 'มีรายการย่อยต้องแก้ไข';
-                desc.className = 'text-xs sm:text-sm text-amber-700 mt-0.5';
-                desc.textContent = 'ตัวรถพร้อมใช้งานแต่มีเวชภัณฑ์หรือรายการทั่วไปบางรายการต้องเบิกเพิ่ม';
-            } else {
-                banner.className = 'bg-emerald-50 border-l-4 border-emerald-500 rounded-xl p-4 sm:p-5 shadow-sm transition-all duration-300';
-                icon.className = 'p-2.5 bg-emerald-500 text-white rounded-lg text-xl shadow-sm mt-0.5 sm:mt-0';
-                icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-                title.className = 'text-base sm:text-lg font-bold text-emerald-900';
-                title.textContent = 'พร้อมปฏิบัติการ 100% (Fully Operational)';
-                badge.className = 'px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
-                badge.textContent = 'พร้อมใช้งาน 24 ชม.';
-                desc.className = 'text-xs sm:text-sm text-emerald-700 mt-0.5';
-                desc.textContent = 'ตัวรถและเครื่องมือแพทย์ทุกรายการอยู่ในสภาพสมบูรณ์พร้อมปฏิบัติการฉุกเฉิน';
-            }
         }
 
         // Switch active tab view
@@ -656,6 +696,13 @@
                     content.classList.add('hidden');
                 }
             });
+
+            // Update mobile floating bar button text
+            const mobileText = document.getElementById('mobileTabSwitchText');
+            if (mobileText) {
+                mobileText.textContent = tabIndex === 1 ? 'ไปห้องพยาบาล' : 'ไปส่วนตัวรถ';
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
