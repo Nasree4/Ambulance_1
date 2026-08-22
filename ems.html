@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแบบประเมินความพึงพอใจ EMS 4 กลุ่มเป้าหมาย - โรงพยาบาลเจาะไอร้อง</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Inter for Web UI + Sarabun/TH Sarabun for Paper Forms) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <!-- Chart.js for Summary Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ems: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        hospital: {
+                            red: '#dc2626',
+                            blue: '#0284c7',
+                            dark: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sarabun: ['TH Sarabun PSK', 'TH Sarabun New', 'Sarabun', 'sans-serif'],
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-size: 15px;
+        }
+
+        /* Apply TH Sarabun Font strictly to Printable Forms & Paper content */
+        .paper-font, 
+        .a4-page, 
+        .a4-page input, 
+        .a4-page select, 
+        .a4-page textarea, 
+        .a4-page table, 
+        .a4-page th, 
+        .a4-page td, 
+        .a4-page h2, 
+        .a4-page h3, 
+        .a4-page p, 
+        .a4-page span {
+            font-family: 'TH Sarabun PSK', 'TH Sarabun New', 'Sarabun', sans-serif !important;
+        }
+
+        /* Printable A4 Page Format Rules & Page Break Enhancements */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm 15mm 12mm 15mm;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 14pt !important;
+                line-height: 1.4 !important;
+                font-family: 'TH Sarabun PSK', 'TH Sarabun New', 'Sarabun', sans-serif !important;
+            }
+
+            .a4-page, .a4-page * {
+                font-family: 'TH Sarabun PSK', 'TH Sarabun New', 'Sarabun', sans-serif !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            .a4-page {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-height: auto !important;
+                page-break-after: always !important;
+                break-after: page !important;
+            }
+
+            .a4-page:last-child {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+
+            /* Prevent element splitting across page breaks */
+            table, tr, th, td, 
+            .bg-slate-50, .bg-emerald-50, .bg-sky-50, .bg-indigo-50, .bg-rose-50, .bg-amber-50, 
+            .form-section, .a4-page > div {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            table, th, td {
+                border: 1px solid #333 !important;
+            }
+
+            th, td {
+                padding: 6px 8px !important;
+            }
+
+            .print-checkbox {
+                display: inline-block;
+                width: 14px;
+                height: 14px;
+                border: 1.5px solid #000;
+                margin-right: 4px;
+                vertical-align: middle;
+            }
+
+            .bg-emerald-50, .bg-slate-50, .bg-blue-50, .bg-sky-50, .bg-indigo-50, .bg-rose-50, .bg-amber-50 {
+                background-color: transparent !important;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        .a4-page {
+            background: white;
+            width: 210mm;
+            min-height: 290mm;
+            margin: 0 auto 2rem auto;
+            padding: 20mm 18mm;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        @media screen and (max-width: 850px) {
+            .a4-page {
+                width: 100%;
+                min-height: auto;
+                padding: 1.25rem;
+            }
+        }
+
+        .table-custom th, .table-custom td {
+            border: 1px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header (Screen Only) -->
+    <header class="no-print bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-truck-medical"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight">ระบบประเมินความพึงพอใจ EMS (Requirement 1.1.7)</h1>
+                        <p class="text-xs text-emerald-400">กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</p>
+                    </div>
+                </div>
+
+                <!-- Print & Action Controls -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openModal('sheetModal')" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-medium px-3.5 py-2 rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells"></i> เชื่อม Google Sheets
+                    </button>
+                    <button onclick="printActiveForm()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-medium px-3.5 py-2 rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> พิมพ์ฉบับที่เลือก
+                    </button>
+                    <button onclick="printAllForms()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs md:text-sm font-medium px-3.5 py-2 rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> พิมพ์ทั้งหมด (4 ฉบับ + สรุป)
+                    </button>
+                    <button onclick="exportToDocx()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs md:text-sm font-medium px-3.5 py-2 rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-word"></i> ส่งออกไฟล์ Word
+                    </button>
+                    <button onclick="openModal('qrModal')" class="bg-slate-700 hover:bg-slate-600 text-white text-xs md:text-sm font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-qrcode"></i> QR Code
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Header -->
+            <div class="mt-4 flex overflow-x-auto space-x-1 border-b border-slate-700 pb-1 scrollbar-none text-xs sm:text-sm">
+                <button onclick="switchTab('form1')" id="tab-form1" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition bg-emerald-600 text-white">
+                    <i class="fa-solid fa-user-nurse mr-1.5"></i> 1. ผู้ป่วยและญาติ
+                </button>
+                <button onclick="switchTab('form2')" id="tab-form2" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-network-wired mr-1.5"></i> 2. เครือข่าย EMS
+                </button>
+                <button onclick="switchTab('form3')" id="tab-form3" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-user-shield mr-1.5"></i> 3. บุคลากรภายใน
+                </button>
+                <button onclick="switchTab('form4')" id="tab-form4" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-hospital-user mr-1.5"></i> 4. หน่วยงานรับส่งต่อ
+                </button>
+                <button onclick="switchTab('complaint')" id="tab-complaint" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-bullhorn mr-1.5"></i> 5. บันทึกรับข้อร้องเรียน
+                </button>
+                <button onclick="switchTab('complaint-log')" id="tab-complaint-log" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-list-check mr-1.5"></i> 6. ทะเบียนและติดตามข้อร้องเรียน
+                </button>
+                <button onclick="switchTab('summary')" id="tab-summary" class="tab-btn px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition text-amber-400 hover:bg-slate-800 font-semibold">
+                    <i class="fa-solid fa-chart-pie mr-1.5"></i> 7. สรุปประมวลผล (รอบ 6 เดือน)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 py-6 px-2 sm:px-4 max-w-7xl mx-auto w-full">
+
+        <!-- ==================== FORM 1: ผู้ป่วยและญาติ ==================== -->
+        <div id="content-form1" class="form-content active-content">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-emerald-600 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-emerald-600 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">แบบประเมินความพึงพอใจผู้ป่วยและญาติ (External Patients & Families)</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                            <span class="text-xs text-slate-500 ml-1">(ตามเกณฑ์มาตรฐาน Requirement 1.1.7)</span>
+                        </p>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="bg-slate-50 p-2.5 rounded border border-slate-200 text-xs sm:text-sm mb-4">
+                        <p class="font-medium text-slate-700"><strong>คำชี้แจง:</strong> โปรดทำเครื่องหมาย <i class="fa-solid fa-check text-emerald-600 text-xs"></i> หรือระบุคะแนนในช่องที่ตรงกับความคิดเห็นของท่านมากที่สุด</p>
+                        <p class="text-slate-500 mt-1"><strong>เกณฑ์ประเมิน:</strong> 5 = มากที่สุด | 4 = มาก | 3 = ปานกลาง | 2 = น้อย | 1 = น้อยที่สุด</p>
+                    </div>
+
+                    <!-- Section 1: Demographic -->
+                    <div class="mb-4 text-xs sm:text-sm border-l-4 border-emerald-600 pl-3 py-1 bg-emerald-50/50">
+                        <h3 class="font-bold text-slate-800 mb-2">ส่วนที่ 1: ข้อมูลทั่วไปของผู้ตอบแบบประเมิน <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องเลือกให้ครบ</span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div>
+                                <span class="font-semibold text-slate-700">สถานะผู้ตอบ: <span class="text-rose-500">*</span></span>
+                                <div class="mt-1 space-y-1">
+                                    <label class="inline-flex items-center cursor-pointer mr-3">
+                                        <input type="radio" name="f1_role" value="ผู้ป่วย" class="form-radio text-emerald-600"> <span class="ml-1">ผู้ป่วย</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="f1_role" value="ญาติ / ผู้ดูแล" class="form-radio text-emerald-600"> <span class="ml-1">ญาติ / ผู้ดูแล</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-slate-700">พื้นที่เกิดเหตุ (ตำบล): <span class="text-rose-500">*</span></span>
+                                <div class="mt-1 flex flex-wrap gap-2">
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_subdistrict" value="จวบ"> <span class="ml-1">จวบ</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_subdistrict" value="บูกิต"> <span class="ml-1">บูกิต</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_subdistrict" value="มะรือโบออก"> <span class="ml-1">มะรือโบออก</span></label>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-slate-700">ประเภทผู้ป่วย: <span class="text-rose-500">*</span></span>
+                                <div class="mt-1 flex flex-wrap gap-2 text-xs">
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_patient_type" value="เจ็บป่วยฉุกเฉิน"> <span class="ml-1">เจ็บป่วยฉุกเฉิน</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_patient_type" value="อุบัติเหตุจราจร"> <span class="ml-1">อุบัติเหตุจราจร</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_patient_type" value="อุบัติเหตุทั่วไป"> <span class="ml-1">อุบัติเหตุทั่วไป</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f1_patient_type" value="อื่นๆ"> <span class="ml-1">อื่นๆ</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Rating Table -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2 border-l-4 border-emerald-600 pl-3 py-0.5">ส่วนที่ 2: ระดับความพึงพอใจต่อการให้บริการ <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องตอบทุกข้อ</span></h3>
+                        <table class="w-full text-xs sm:text-sm border-collapse table-custom">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700">
+                                    <th class="p-2 text-left w-7/12">รายการประเมิน</th>
+                                    <th class="p-2 text-center w-1/12">5<br><span class="text-[10px] font-normal">มากที่สุด</span></th>
+                                    <th class="p-2 text-center w-1/12">4<br><span class="text-[10px] font-normal">มาก</span></th>
+                                    <th class="p-2 text-center w-1/12">3<br><span class="text-[10px] font-normal">ปานกลาง</span></th>
+                                    <th class="p-2 text-center w-1/12">2<br><span class="text-[10px] font-normal">น้อย</span></th>
+                                    <th class="p-2 text-center w-1/12">1<br><span class="text-[10px] font-normal">น้อยที่สุด</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2"><strong>1. ความรวดเร็วในการบริการ:</strong> ทีมกู้ชีพ/รถพยาบาลไปถึงจุดเกิดเหตุทันเวลา และมีความรวดเร็วในการช่วยเหลือ</td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q1" value="5" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q1" value="4" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q1" value="3" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q1" value="2" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q1" value="1" class="w-4 h-4 text-emerald-600"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>2. การดูแลรักษาตามมาตรฐาน:</strong> บุคลากรมีความสุภาพ ให้เกียรติ ตรวจประเมินและให้การรักษาอย่างมืออาชีพ</td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q2" value="5" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q2" value="4" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q2" value="3" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q2" value="2" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q2" value="1" class="w-4 h-4 text-emerald-600"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>3. การสื่อสารและให้ข้อมูล:</strong> มีการอธิบายข้อมูล อาการ และขั้นตอนการช่วยเหลือให้ผู้ป่วย/ญาติเข้าใจ ลดความกังวล</td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q3" value="5" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q3" value="4" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q3" value="3" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q3" value="2" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q3" value="1" class="w-4 h-4 text-emerald-600"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>4. ความพร้อมของอุปกรณ์ยานพาหนะ:</strong> รถพยาบาลมีความสะอาด เครื่องมือทางการแพทย์มีความพร้อมใช้งานและทันสมัย</td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q4" value="5" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q4" value="4" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q4" value="3" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q4" value="2" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q4" value="1" class="w-4 h-4 text-emerald-600"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>5. ภาพรวมการให้บริการ:</strong> ความพึงพอใจในภาพรวมต่อการให้บริการกู้ชีพ/การแพทย์ฉุกเฉิน รพ.เจาะไอร้อง</td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q5" value="5" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q5" value="4" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q5" value="3" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q5" value="2" class="w-4 h-4 text-emerald-600"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f1_q5" value="1" class="w-4 h-4 text-emerald-600"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Section 3: Suggestions -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-1 border-l-4 border-emerald-600 pl-3 py-0.5">ส่วนที่ 3: ข้อเสนอแนะเพิ่มเติมเพื่อการพัฒนา</h3>
+                        <textarea id="f1_comment" class="w-full border border-slate-300 rounded p-2 text-xs sm:text-sm h-20 focus:ring-1 focus:ring-emerald-500 focus:outline-none" placeholder="แสดงความคิดเห็นหรือข้อเสนอแนะเพิ่มเติม..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Page Indicator & Action -->
+                <div>
+                    <div class="no-print flex justify-end gap-2 mb-2">
+                        <button onclick="saveFormResponse(1)" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded shadow transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> บันทึกข้อมูลแบบประเมินนี้
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2">
+                        <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                        <span>เอกสารฉบับที่ 1 | หน้า 1/1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== FORM 2: เครือข่าย EMS ==================== -->
+        <div id="content-form2" class="form-content hidden">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-sky-600 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-sky-600 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">แบบประเมินความพึงพอใจเครือข่าย EMS อำเภอเจาะไอร้อง</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                            <span class="text-xs text-slate-500 ml-1">(ตามเกณฑ์มาตรฐาน Requirement 1.1.7)</span>
+                        </p>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="bg-sky-50/60 p-2.5 rounded border border-sky-200 text-xs sm:text-sm mb-4">
+                        <p class="font-medium text-slate-700"><strong>คำชี้แจง:</strong> โปรดทำเครื่องหมาย <i class="fa-solid fa-check text-sky-600 text-xs"></i> ลงในช่องที่ตรงกับความคิดเห็นของหน่วยงานท่านมากที่สุด</p>
+                        <p class="text-slate-500 mt-1"><strong>เกณฑ์ประเมิน:</strong> 5 = มากที่สุด | 4 = มาก | 3 = ปานกลาง | 2 = น้อย | 1 = น้อยที่สุด</p>
+                    </div>
+
+                    <!-- Section 1: Demographic -->
+                    <div class="mb-4 text-xs sm:text-sm border-l-4 border-sky-600 pl-3 py-1 bg-sky-50/40">
+                        <h3 class="font-bold text-slate-800 mb-2">ส่วนที่ 1: ข้อมูลสังกัดหน่วยงานเครือข่าย <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องเลือก 1 แห่ง</span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <span class="font-semibold text-slate-700">หน่วยงาน รพ.สต. (5 แห่ง):</span>
+                                <div class="mt-1 grid grid-cols-2 gap-1.5 text-xs">
+                                    <label class="inline-flex items-center"><input type="radio" name="f2_org" value="รพ.สต.ไอสะเตีย"> <span class="ml-1">รพ.สต.ไอสะเตีย</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f2_org" value="รพ.สต.บูกิต"> <span class="ml-1">รพ.สต.บูกิต</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f2_org" value="รพ.สต.มะรือโบออก"> <span class="ml-1">รพ.สต.มะรือโบออก</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f2_org" value="รพ.สต.ปีแนมูดอ"> <span class="ml-1">รพ.สต.ปีแนมูดอ</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f2_org" value="รพ.สต.ปิเหล็ง"> <span class="ml-1">รพ.สต.ปิเหล็ง</span></label>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-slate-700">หน่วยงานกู้ชีพ อปท. (3 แห่ง):</span>
+                                <div class="mt-1 space-y-1 text-xs">
+                                    <label class="inline-flex items-center mr-3"><input type="radio" name="f2_org" value="อบต.จวบ"> <span class="ml-1">อบต.จวบ</span></label>
+                                    <label class="inline-flex items-center mr-3"><input type="radio" name="f2_org" value="อบต.บูกิต"> <span class="ml-1">อบต.บูกิต</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f2_org" value="อบต.มะรือโบออก"> <span class="ml-1">อบต.มะรือโบออก</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Rating Table -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2 border-l-4 border-sky-600 pl-3 py-0.5">ส่วนที่ 2: ระดับความพึงพอใจการปฏิบัติงานร่วมกัน <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องตอบทุกข้อ</span></h3>
+                        <table class="w-full text-xs sm:text-sm border-collapse table-custom">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700">
+                                    <th class="p-2 text-left w-7/12">รายการประเมิน</th>
+                                    <th class="p-2 text-center w-1/12">5<br><span class="text-[10px] font-normal">มากที่สุด</span></th>
+                                    <th class="p-2 text-center w-1/12">4<br><span class="text-[10px] font-normal">มาก</span></th>
+                                    <th class="p-2 text-center w-1/12">3<br><span class="text-[10px] font-normal">ปานกลาง</span></th>
+                                    <th class="p-2 text-center w-1/12">2<br><span class="text-[10px] font-normal">น้อย</span></th>
+                                    <th class="p-2 text-center w-1/12">1<br><span class="text-[10px] font-normal">น้อยที่สุด</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2"><strong>1. ระบบการประสานงาน:</strong> ระบบสั่งการและการรับแจ้งเหตุระหว่าง รพ.เจาะไอร้อง กับเครือข่าย รพ.สต./กู้ชีพ มีความรวดเร็ว ชัดเจน</td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q1" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q1" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q1" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q1" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q1" value="1"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>2. การสนับสนุนวิชาการ/ทรัพยากร:</strong> การให้คำปรึกษาทางการแพทย์ (Medical Direction) และสนับสนุนเวชภัณฑ์/อุปกรณ์อย่างเหมาะสม</td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q2" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q2" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q2" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q2" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q2" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>3. การรับช่วงดูแล (Handover):</strong> ทีม ALS รพ.เจาะไอร้อง มารับช่วงดูแลผู้ป่วย ณ จุดเกิดเหตุ/จุดนัดพบ ได้อย่างรวดเร็วและปลอดภัย</td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q3" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q3" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q3" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q3" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q3" value="1"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>4. สัมพันธภาพและการสื่อสาร:</strong> การให้เกียรติ พฤติกรรมบริการ และการสื่อสารสองทางอย่างเป็นมิตรระหว่างทีมงาน</td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q4" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q4" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q4" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q4" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q4" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>5. ภาพรวมระบบเครือข่าย:</strong> ความพึงพอใจในภาพรวมต่อการทำงานร่วมกันในระบบ EMS อำเภอเจาะไอร้อง</td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q5" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q5" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q5" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q5" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f2_q5" value="1"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Section 3: Suggestions -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-1 border-l-4 border-sky-600 pl-3 py-0.5">ส่วนที่ 3: ข้อเสนอแนะเพิ่มเติมในการพัฒนาระบบเครือข่าย</h3>
+                        <textarea id="f2_comment" class="w-full border border-slate-300 rounded p-2 text-xs sm:text-sm h-20 focus:ring-1 focus:ring-sky-500 focus:outline-none" placeholder="แสดงความคิดเห็นหรือข้อเสนอแนะในการพัฒนาระบบเครือข่าย..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Page Indicator & Action -->
+                <div>
+                    <div class="no-print flex justify-end gap-2 mb-2">
+                        <button onclick="saveFormResponse(2)" class="bg-sky-600 hover:bg-sky-700 text-white text-xs px-4 py-2 rounded shadow transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> บันทึกข้อมูลแบบประเมินนี้
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2">
+                        <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                        <span>เอกสารฉบับที่ 2 | หน้า 1/1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== FORM 3: บุคลากรภายใน ==================== -->
+        <div id="content-form3" class="form-content hidden">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-indigo-600 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-indigo-600 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">แบบประเมินความพึงพอใจบุคลากรภายใน (Internal Personnel)</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                            <span class="text-xs text-slate-500 ml-1">(ตามเกณฑ์มาตรฐาน Requirement 1.1.7)</span>
+                        </p>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="bg-indigo-50/60 p-2.5 rounded border border-indigo-200 text-xs sm:text-sm mb-4">
+                        <p class="font-medium text-slate-700"><strong>คำชี้แจง:</strong> โปรดทำเครื่องหมาย <i class="fa-solid fa-check text-indigo-600 text-xs"></i> ลงในช่องที่ตรงกับความคิดเห็นของท่านมากที่สุด</p>
+                        <p class="text-slate-500 mt-1"><strong>เกณฑ์ประเมิน:</strong> 5 = มากที่สุด | 4 = มาก | 3 = ปานกลาง | 2 = น้อย | 1 = น้อยที่สุด</p>
+                    </div>
+
+                    <!-- Section 1: Demographic -->
+                    <div class="mb-4 text-xs sm:text-sm border-l-4 border-indigo-600 pl-3 py-1 bg-indigo-50/40">
+                        <h3 class="font-bold text-slate-800 mb-2">ส่วนที่ 1: ข้อมูลตำแหน่งงาน <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องระบุ</span></h3>
+                        <div>
+                            <span class="font-semibold text-slate-700">ตำแหน่งการปฏิบัติงาน: <span class="text-rose-500">*</span></span>
+                            <div class="mt-1 flex flex-wrap gap-3 text-xs">
+                                <label class="inline-flex items-center"><input type="radio" name="f3_pos" value="พยาบาลวิชาชีพ / ENP"> <span class="ml-1">พยาบาลวิชาชีพ / ENP</span></label>
+                                <label class="inline-flex items-center"><input type="radio" name="f3_pos" value="นักฉุกเฉินการแพทย์ (Paramedic)"> <span class="ml-1">นักฉุกเฉินการแพทย์ (Paramedic)</span></label>
+                                <label class="inline-flex items-center"><input type="radio" name="f3_pos" value="เจ้าพนักงานฉุกเฉินการแพทย์ / EMT"> <span class="ml-1">เจ้าพนักงานฉุกเฉินการแพทย์ / EMT</span></label>
+                                <label class="inline-flex items-center"><input type="radio" name="f3_pos" value="พนักงานขับรถพยาบาล (พขร.)"> <span class="ml-1">พนักงานขับรถพยาบาล (พขร.)</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Rating Table -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2 border-l-4 border-indigo-600 pl-3 py-0.5">ส่วนที่ 2: ระดับความพึงพอใจต่อระบบงานภายใน <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องตอบทุกข้อ</span></h3>
+                        <table class="w-full text-xs sm:text-sm border-collapse table-custom">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700">
+                                    <th class="p-2 text-left w-7/12">รายการประเมิน</th>
+                                    <th class="p-2 text-center w-1/12">5<br><span class="text-[10px] font-normal">มากที่สุด</span></th>
+                                    <th class="p-2 text-center w-1/12">4<br><span class="text-[10px] font-normal">มาก</span></th>
+                                    <th class="p-2 text-center w-1/12">3<br><span class="text-[10px] font-normal">ปานกลาง</span></th>
+                                    <th class="p-2 text-center w-1/12">2<br><span class="text-[10px] font-normal">น้อย</span></th>
+                                    <th class="p-2 text-center w-1/12">1<br><span class="text-[10px] font-normal">น้อยที่สุด</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2"><strong>1. ระบบบริหารตารางเวร:</strong> การจัดตารางการปฏิบัติงานและการพักผ่อนมีความเหมาะสม เพียงพอ และเป็นธรรม</td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q1" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q1" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q1" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q1" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q1" value="1"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>2. ความปลอดภัยในการทำงาน:</strong> ความพร้อมของอุปกรณ์ PPE, ความปลอดภัยของรถพยาบาล และสถานที่พักเวร</td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q2" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q2" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q2" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q2" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q2" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>3. การสนับสนุนจากผู้บริหาร:</strong> ผู้บริหารเปิดรับฟังปัญหา (Two-way Communication) และสนับสนุนอุปกรณ์/ยาเพียงพอ</td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q3" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q3" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q3" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q3" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q3" value="1"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>4. การพัฒนาศักยภาพ:</strong> ได้รับการอบรมทักษะฉุกเฉิน (Mock Code, CPG) และสนับสนุนการต่อใบประกาศนียบัตรก่อนหมดอายุ (ข้อกำหนด 6.3.2)</td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q4" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q4" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q4" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q4" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q4" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>5. บรรยากาศองค์กร:</strong> ความสุข ความผูกพัน และความภาคภูมิใจในการทำงานร่วมกับทีม EMS รพ.เจาะไอร้อง</td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q5" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q5" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q5" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q5" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f3_q5" value="1"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Section 3: Suggestions -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-1 border-l-4 border-indigo-600 pl-3 py-0.5">ส่วนที่ 3: ข้อเสนอแนะเพื่อปรับปรุงสภาพแวดล้อมและการทำงานภายใน</h3>
+                        <textarea id="f3_comment" class="w-full border border-slate-300 rounded p-2 text-xs sm:text-sm h-20 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="ข้อเสนอแนะในการพัฒนาและปรับปรุงระบบงานภายใน..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Page Indicator & Action -->
+                <div>
+                    <div class="no-print flex justify-end gap-2 mb-2">
+                        <button onclick="saveFormResponse(3)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded shadow transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> บันทึกข้อมูลแบบประเมินนี้
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2">
+                        <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                        <span>เอกสารฉบับที่ 3 | หน้า 1/1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== FORM 4: หน่วยงานรับส่งต่อ ==================== -->
+        <div id="content-form4" class="form-content hidden">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-rose-600 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-rose-600 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">แบบประเมินความพึงพอใจหน่วยงานรับส่งต่อ</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                            <span class="text-xs text-slate-500 ml-1">(ตามเกณฑ์มาตรฐาน Requirement 1.1.7)</span>
+                        </p>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="bg-rose-50/60 p-2.5 rounded border border-rose-200 text-xs sm:text-sm mb-4">
+                        <p class="font-medium text-slate-700"><strong>คำชี้แจง:</strong> โปรดทำเครื่องหมาย <i class="fa-solid fa-check text-rose-600 text-xs"></i> ลงในช่องที่ตรงกับความคิดเห็นของท่านมากที่สุด</p>
+                        <p class="text-slate-500 mt-1"><strong>เกณฑ์ประเมิน:</strong> 5 = มากที่สุด | 4 = มาก | 3 = ปานกลาง | 2 = น้อย | 1 = น้อยที่สุด</p>
+                    </div>
+
+                    <!-- Section 1: Demographic -->
+                    <div class="mb-4 text-xs sm:text-sm border-l-4 border-rose-600 pl-3 py-1 bg-rose-50/40">
+                        <h3 class="font-bold text-slate-800 mb-2">ส่วนที่ 1: ข้อมูลผู้ตอบแบบประเมิน <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องกรอกให้ครบ</span></h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">ชื่อหน่วยงาน / โรงพยาบาลรับส่งต่อ: <span class="text-rose-500">*</span></label>
+                                <input type="text" id="f4_hospital_name" placeholder="ระบุชื่อโรงพยาบาล (เช่น รพ.นราธิวาสราชนครินทร์)" class="w-full border border-slate-300 rounded p-1.5 focus:ring-1 focus:ring-rose-500 bg-white">
+                            </div>
+                            <div>
+                                <span class="font-semibold text-slate-700 block mb-1">วิชาชีพของผู้ตอบ: <span class="text-rose-500">*</span></span>
+                                <div class="mt-1 flex flex-wrap gap-3 text-xs">
+                                    <label class="inline-flex items-center"><input type="radio" name="f4_prof" value="แพทย์ฉุกเฉิน / แพทย์เวร ER"> <span class="ml-1">แพทย์ฉุกเฉิน / แพทย์เวร ER</span></label>
+                                    <label class="inline-flex items-center"><input type="radio" name="f4_prof" value="พยาบาลวิชาชีพประจำ ER"> <span class="ml-1">พยาบาลวิชาชีพประจำ ER</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Rating Table -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2 border-l-4 border-rose-600 pl-3 py-0.5">ส่วนที่ 2: ระดับความพึงพอใจต่อกระบวนการส่งต่อผู้ป่วย <span class="text-rose-500 font-normal text-xs">*จำเป็นต้องตอบทุกข้อ</span></h3>
+                        <table class="w-full text-xs sm:text-sm border-collapse table-custom">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700">
+                                    <th class="p-2 text-left w-7/12">รายการประเมิน</th>
+                                    <th class="p-2 text-center w-1/12">5<br><span class="text-[10px] font-normal">มากที่สุด</span></th>
+                                    <th class="p-2 text-center w-1/12">4<br><span class="text-[10px] font-normal">มาก</span></th>
+                                    <th class="p-2 text-center w-1/12">3<br><span class="text-[10px] font-normal">ปานกลาง</span></th>
+                                    <th class="p-2 text-center w-1/12">2<br><span class="text-[10px] font-normal">น้อย</span></th>
+                                    <th class="p-2 text-center w-1/12">1<br><span class="text-[10px] font-normal">น้อยที่สุด</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2"><strong>1. การแจ้งล่วงหน้า (Pre-notification):</strong> แจ้งข้อมูลผู้ป่วยวิกฤต/Fast Track (Stroke, STEMI, Trauma, OHCA) ล่วงหน้าอย่างเหมาะสม</td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q1" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q1" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q1" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q1" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q1" value="1"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>2. คุณภาพการบันทึกข้อมูล:</strong> เอกสาร Run Report และแบบฟอร์มส่งมอบ ISBAR มีความถูกต้อง ครบถ้วน อ่านง่าย</td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q2" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q2" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q2" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q2" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q2" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>3. คุณภาพการดูแลรักษาเบื้องต้น:</strong> การดูแลผู้ป่วยระหว่างทางสอดคล้องตามมาตรฐาน CPG / Protocol</td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q3" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q3" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q3" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q3" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q3" value="1"></td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2"><strong>4. ความพร้อมของอุปกรณ์ตรึงกาย:</strong> การตรึงผู้ป่วย (Immobilization), การใส่สาย/ท่อต่าง ๆ มีความแน่นหนา ปลอดภัย</td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q4" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q4" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q4" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q4" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q4" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2"><strong>5. ภาพรวมการส่งต่อ:</strong> ความพึงพอใจต่อประสิทธิภาพการส่งต่อผู้ป่วยของหน่วย EMS รพ.เจาะไอร้อง</td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q5" value="5"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q5" value="4"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q5" value="3"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q5" value="2"></td>
+                                    <td class="text-center p-2"><input type="radio" name="f4_q5" value="1"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Section 3: Suggestions -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-1 border-l-4 border-rose-600 pl-3 py-0.5">ส่วนที่ 3: ข้อเสนอแนะเพื่อการพัฒนาระบบการส่งต่อรักษาร่วมกัน</h3>
+                        <textarea id="f4_comment" class="w-full border border-slate-300 rounded p-2 text-xs sm:text-sm h-20 focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="ข้อเสนอแนะสำหรับการรับส่งต่อผู้ป่วย..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Page Indicator & Action -->
+                <div>
+                    <div class="no-print flex justify-end gap-2 mb-2">
+                        <button onclick="saveFormResponse(4)" class="bg-rose-600 hover:bg-rose-700 text-white text-xs px-4 py-2 rounded shadow transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> บันทึกข้อมูลแบบประเมินนี้
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2">
+                        <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                        <span>เอกสารฉบับที่ 4 | หน้า 1/1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 5: รับข้อร้องเรียน / ข้อเสนอแนะเร่งด่วน ==================== -->
+        <div id="content-complaint" class="form-content hidden">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-rose-700 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-rose-700 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">แบบฟอร์มบันทึกรับข้อร้องเรียน / ข้อเสนอแนะปรับปรุงบริการ EMS</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                        </p>
+                    </div>
+
+                    <!-- Intake Form -->
+                    <form id="complaintForm" onsubmit="event.preventDefault(); saveComplaint();" class="space-y-4 text-xs sm:text-sm">
+                        <!-- Reporter Info -->
+                        <div class="bg-rose-50/50 p-3 rounded-lg border border-rose-200">
+                            <h3 class="font-bold text-slate-800 mb-2 border-l-4 border-rose-600 pl-2">ส่วนที่ 1: ข้อมูลผู้แจ้งข้อร้องเรียน / ผู้รับเรื่อง</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">วันที่รับเรื่อง / เวลาเกิดเหตุ:</label>
+                                    <input type="datetime-local" id="c_date" required class="w-full border border-slate-300 rounded p-1.5 focus:ring-1 focus:ring-rose-500">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">ผู้แจ้ง (ชื่อ-สกุล/หน่วยงาน):</label>
+                                    <input type="text" id="c_reporter" placeholder="ระบุชื่อ หรือ 'ไม่ประสงค์ออกนาม'" class="w-full border border-slate-300 rounded p-1.5 focus:ring-1 focus:ring-rose-500">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ติดต่อ:</label>
+                                    <input type="text" id="c_phone" placeholder="08X-XXX-XXXX" class="w-full border border-slate-300 rounded p-1.5 focus:ring-1 focus:ring-rose-500">
+                                </div>
+                            </div>
+
+                            <div class="mt-2.5">
+                                <div>
+                                    <span class="block font-semibold text-slate-700 mb-1">ประเภทผู้ร้องเรียน:</span>
+                                    <div class="flex flex-wrap gap-3 text-xs">
+                                        <label class="inline-flex items-center"><input type="radio" name="c_type" value="ผู้ป่วย/ญาติ" checked> <span class="ml-1">ผู้ป่วย/ญาติ</span></label>
+                                        <label class="inline-flex items-center"><input type="radio" name="c_type" value="เครือข่าย EMS/รพ.สต."> <span class="ml-1">เครือข่าย/รพ.สต.</span></label>
+                                        <label class="inline-flex items-center"><input type="radio" name="c_type" value="บุคลากรภายใน"> <span class="ml-1">บุคลากรภายใน</span></label>
+                                        <label class="inline-flex items-center"><input type="radio" name="c_type" value="หน่วยส่งต่อ"> <span class="ml-1">หน่วยส่งต่อ</span></label>
+                                        <label class="inline-flex items-center"><input type="radio" name="c_type" value="ประชาชนทั่วไป"> <span class="ml-1">ประชาชนทั่วไป</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category & Details -->
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-2 border-l-4 border-rose-600 pl-2">ส่วนที่ 2: หมวดหมู่และรายละเอียดข้อร้องเรียน</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2 text-xs">
+                                <label class="p-2 border rounded bg-slate-50 flex items-center cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="c_category" value="พฤติกรรมบริการ / สื่อสาร" checked>
+                                    <span class="ml-2 font-medium">1. พฤติกรรมบริการ / พฤติกรรมบริการและการสื่อสาร</span>
+                                </label>
+                                <label class="p-2 border rounded bg-slate-50 flex items-center cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="c_category" value="ความรวดเร็ว / ระยะเวลาตอบสนอง">
+                                    <span class="ml-2 font-medium">2. ความรวดเร็ว / ล่าช้าในการออกรับผู้ป่วย</span>
+                                </label>
+                                <label class="p-2 border rounded bg-slate-50 flex items-center cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="c_category" value="คุณภาพการรักษา / CPG">
+                                    <span class="ml-2 font-medium">3. คุณภาพการดูแลรักษาเบื้องต้น</span>
+                                </label>
+                                <label class="p-2 border rounded bg-slate-50 flex items-center cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="c_category" value="ความพร้อมอุปกรณ์ / รถพยาบาล">
+                                    <span class="ml-2 font-medium">4. ความพร้อมของอุปกรณ์/ยานพาหนะ</span>
+                                </label>
+                                <label class="p-2 border rounded bg-slate-50 flex items-center cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="c_category" value="การประสานงาน / ส่งต่อ">
+                                    <span class="ml-2 font-medium">5. การประสานงานเครือข่าย/จุดส่งต่อ</span>
+                                </label>
+                                <label class="p-2 border rounded bg-slate-50 flex items-center cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="c_category" value="อื่นๆ">
+                                    <span class="ml-2 font-medium">6. อื่นๆ</span>
+                                </label>
+                            </div>
+
+                            <div class="mt-2">
+                                <label class="block font-semibold text-slate-700 mb-1">รายละเอียดข้อร้องเรียน / เหตุการณ์:</label>
+                                <textarea id="c_details" required rows="3" class="w-full border border-slate-300 rounded p-2 text-xs sm:text-sm focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="ระบุรายละเอียดเหตุการณ์ สถานที่ เกิดขึ้นอย่างไร..."></textarea>
+                            </div>
+
+                            <div class="mt-2">
+                                <label class="block font-semibold text-slate-700 mb-1">แนวทางแก้ไขเบื้องต้น / ผู้รับเรื่องแก้ปัญหา:</label>
+                                <textarea id="c_action" rows="2" class="w-full border border-slate-300 rounded p-2 text-xs sm:text-sm focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="ระบุการชี้แจงเบื้องต้น หรือแผนการแก้ไขจัดการ..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="no-print flex justify-end gap-2 pt-2">
+                            <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs sm:text-sm px-5 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-floppy-disk"></i> บันทึกรับข้อร้องเรียน
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2 mt-4">
+                    <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                    <span>เอกสารรับข้อร้องเรียน | หน้า 1/1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 6: ทะเบียนรับและติดตามข้อร้องเรียน EMS ==================== -->
+        <div id="content-complaint-log" class="form-content hidden">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-rose-700 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-rose-700 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">ทะเบียนรับและติดตามข้อร้องเรียน / ข้อเสนอแนะบริการ EMS</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                        </p>
+                    </div>
+
+                    <!-- Filter & Statistics Bar (Screen only) -->
+                    <div class="no-print bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4">
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-center shadow-sm">
+                                <span class="text-xs text-slate-500 font-medium block">ข้อร้องเรียนทั้งหมด</span>
+                                <span id="stat-total" class="text-lg font-bold text-slate-800">0</span>
+                            </div>
+                            <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-center shadow-sm">
+                                <span class="text-xs text-amber-700 font-medium block">รับเรื่องแล้ว</span>
+                                <span id="stat-received" class="text-lg font-bold text-amber-800">0</span>
+                            </div>
+                            <div class="bg-sky-50 p-2.5 rounded-lg border border-sky-200 text-center shadow-sm">
+                                <span class="text-xs text-sky-700 font-medium block">กำลังตรวจสอบ</span>
+                                <span id="stat-progress" class="text-lg font-bold text-sky-800">0</span>
+                            </div>
+                            <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 text-center shadow-sm">
+                                <span class="text-xs text-emerald-700 font-medium block">แก้ไขเรียบร้อย</span>
+                                <span id="stat-resolved" class="text-lg font-bold text-emerald-800">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Filter Inputs -->
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <div class="flex-1 min-w-[180px]">
+                                <input type="text" id="logSearch" onkeyup="renderComplaintsTable()" placeholder="ค้นหารหัส, ผู้แจ้ง, รายละเอียด..." class="w-full border border-slate-300 rounded px-2.5 py-1.5 bg-white focus:ring-1 focus:ring-rose-500 focus:outline-none">
+                            </div>
+                            <select id="logStatusFilter" onchange="renderComplaintsTable()" class="border border-slate-300 rounded px-2.5 py-1.5 bg-white focus:ring-1 focus:ring-rose-500 focus:outline-none">
+                                <option value="ALL">ทุกสถานะ</option>
+                                <option value="รับเรื่องแล้ว">รับเรื่องแล้ว</option>
+                                <option value="กำลังตรวจสอบ">กำลังตรวจสอบ</option>
+                                <option value="แก้ไขเรียบร้อย">แก้ไขเรียบร้อย</option>
+                            </select>
+                            <select id="logCategoryFilter" onchange="renderComplaintsTable()" class="border border-slate-300 rounded px-2.5 py-1.5 bg-white focus:ring-1 focus:ring-rose-500 focus:outline-none">
+                                <option value="ALL">ทุกหมวดหมู่</option>
+                                <option value="พฤติกรรมบริการ / สื่อสาร">พฤติกรรมบริการ / สื่อสาร</option>
+                                <option value="ความรวดเร็ว / ระยะเวลาตอบสนอง">ความรวดเร็ว / ล่าช้า</option>
+                                <option value="คุณภาพการรักษา / CPG">คุณภาพการดูแลรักษา</option>
+                                <option value="ความพร้อมอุปกรณ์ / รถพยาบาล">ความพร้อมอุปกรณ์/ยานพาหนะ</option>
+                                <option value="การประสานงาน / ส่งต่อ">การประสานงาน/ส่งต่อ</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                            <button onclick="switchTab('complaint')" class="bg-rose-600 hover:bg-rose-700 text-white font-medium px-3 py-1.5 rounded transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> บันทึกเรื่องใหม่
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Register Log Table -->
+                    <div class="overflow-x-auto mb-4">
+                        <table class="w-full text-xs border-collapse table-custom">
+                            <thead>
+                                <tr class="bg-rose-100/80 text-slate-800">
+                                    <th class="p-2 text-center w-16">รหัส</th>
+                                    <th class="p-2 text-left w-28">วัน-เวลา</th>
+                                    <th class="p-2 text-left w-32">หมวดหมู่</th>
+                                    <th class="p-2 text-left">รายละเอียดเรื่องร้องเรียนและการดำเนินการแก้ไข</th>
+                                    <th class="p-2 text-center w-28">สถานะติดตาม</th>
+                                    <th class="p-2 text-center w-16 no-print">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mainComplaintsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-slate-400">ยังไม่มีข้อมูลข้อร้องเรียนในระบบ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sign-off Block for Print -->
+                    <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-2 gap-6 text-xs">
+                        <div class="text-center">
+                            <p>ลงชื่อ ........................................................... ผู้รับเรื่อง/บันทึก</p>
+                            <p class="mt-1 text-slate-500">( ........................................................... )</p>
+                            <p class="mt-1 text-slate-600">เจ้าพนักงานฉุกเฉินการแพทย์ / พยาบาลวิชาชีพ</p>
+                        </div>
+                        <div class="text-center">
+                            <p>ลงชื่อ ........................................................... ผู้ตรวจสอบ/อนุมัติการแก้ไข</p>
+                            <p class="mt-1 text-slate-500">( ........................................................... )</p>
+                            <p class="mt-1 text-slate-600">หัวหน้ากลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2 mt-4">
+                    <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                    <span>ทะเบียนควบคุมข้อร้องเรียน EMS | หน้า 1/1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 7: สรุปประมวลผล (รอบ 6 เดือน) ==================== -->
+        <div id="content-summary" class="form-content hidden">
+            <div class="a4-page paper-font flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <div class="text-center border-b-2 border-amber-500 pb-3 mb-4">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <span class="inline-block w-3 h-3 rounded-full bg-amber-500 no-print"></span>
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900">สรุปผลการประเมินความพึงพอใจ EMS 4 กลุ่มเป้าหมาย (รอบ 6 เดือน)</h2>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600">
+                            <strong>กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง จังหวัดนราธิวาส</strong>
+                            <span class="text-xs text-slate-500 ml-1">(เป้าหมาย KPI &ge; 85%)</span>
+                        </p>
+                    </div>
+
+                    <!-- Evaluation Round Selector & Data Actions (Screen only) -->
+                    <div class="no-print bg-amber-50 p-3 rounded-lg border border-amber-200 mb-4 flex flex-wrap justify-between items-center gap-3">
+                        <div class="flex items-center gap-3 text-xs sm:text-sm">
+                            <span class="font-bold text-slate-800"><i class="fa-solid fa-calendar-days text-amber-600 mr-1"></i> เลือกรอบการประเมิน:</span>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="eval_period" value="1" checked class="form-radio text-amber-600">
+                                <span class="ml-1 font-medium">รอบที่ 1 (1 ต.ค. - 31 มี.ค.)</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="eval_period" value="2" class="form-radio text-amber-600">
+                                <span class="ml-1 font-medium">รอบที่ 2 (1 เม.ย. - 30 ก.ย.)</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button onclick="exportBackupJSON()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded transition shadow flex items-center gap-1">
+                                <i class="fa-solid fa-file-code"></i> สำรอง JSON
+                            </button>
+                            <button onclick="exportBackupCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded transition shadow flex items-center gap-1">
+                                <i class="fa-solid fa-file-csv"></i> สำรอง CSV
+                            </button>
+                            <button onclick="loadDemoData()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded transition shadow flex items-center gap-1">
+                                <i class="fa-solid fa-database"></i> โหลดข้อมูลตัวอย่าง
+                            </button>
+                            <button onclick="resetData()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded transition flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-left"></i> รีเซ็ต
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Summary Table -->
+                    <div class="mb-5">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">ตารางสรุปคะแนนความพึงพอใจแยกตามกลุ่มเป้าหมาย</h3>
+                        <table class="w-full text-xs sm:text-sm border-collapse table-custom">
+                            <thead>
+                                <tr class="bg-amber-100/70 text-slate-800">
+                                    <th class="p-2 text-left w-5/12">กลุ่มเป้าหมาย</th>
+                                    <th class="p-2 text-center w-2/12">จำนวนตอบ (N)</th>
+                                    <th class="p-2 text-center w-2/12">คะแนนเฉลี่ย (&bar;X)</th>
+                                    <th class="p-2 text-center w-2/12">ร้อยละ (%)</th>
+                                    <th class="p-2 text-center w-2/12">สรุปผล (&ge; 85%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2 font-medium">1. ผู้ป่วยและญาติ (External Patients & Families)</td>
+                                    <td class="text-center p-2" id="s1-n">0</td>
+                                    <td class="text-center p-2 font-semibold" id="s1-x">0.00</td>
+                                    <td class="text-center p-2 font-bold text-emerald-700" id="s1-p">0.0%</td>
+                                    <td class="text-center p-2" id="s1-status">-</td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2 font-medium">2. เครือข่าย EMS (รพ.สต. 5 แห่ง + กู้ชีพ 3 แห่ง)</td>
+                                    <td class="text-center p-2" id="s2-n">0</td>
+                                    <td class="text-center p-2 font-semibold" id="s2-x">0.00</td>
+                                    <td class="text-center p-2 font-bold text-emerald-700" id="s2-p">0.0%</td>
+                                    <td class="text-center p-2" id="s2-status">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium">3. บุคลากรภายใน EMS (ENP, Paramedic, EMT, พขร.)</td>
+                                    <td class="text-center p-2" id="s3-n">0</td>
+                                    <td class="text-center p-2 font-semibold" id="s3-x">0.00</td>
+                                    <td class="text-center p-2 font-bold text-emerald-700" id="s3-p">0.0%</td>
+                                    <td class="text-center p-2" id="s3-status">-</td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2 font-medium">4. หน่วยงานรับส่งต่อ (โรงพยาบาลรับส่งต่อ)</td>
+                                    <td class="text-center p-2" id="s4-n">0</td>
+                                    <td class="text-center p-2 font-semibold" id="s4-x">0.00</td>
+                                    <td class="text-center p-2 font-bold text-emerald-700" id="s4-p">0.0%</td>
+                                    <td class="text-center p-2" id="s4-status">-</td>
+                                </tr>
+                                <tr class="bg-amber-50/80 font-bold border-t-2 border-amber-300">
+                                    <td class="p-2 text-amber-900">ภาพรวมเฉลี่ยรวมทุกกลุ่มเป้าหมาย</td>
+                                    <td class="text-center p-2 text-amber-900" id="s-total-n">0</td>
+                                    <td class="text-center p-2 text-amber-900" id="s-total-x">0.00</td>
+                                    <td class="text-center p-2 text-amber-900 text-sm" id="s-total-p">0.0%</td>
+                                    <td class="text-center p-2" id="s-total-status">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="mb-5 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 mb-2">แผนภูมิเปรียบเทียบร้อยละความพึงพอใจ 4 กลุ่มเป้าหมาย</h3>
+                        <div class="h-56 relative w-full">
+                            <canvas id="summaryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Qualitative Analysis -->
+                    <div class="space-y-3 text-xs sm:text-sm mb-4">
+                        <h3 class="font-bold text-slate-800 border-l-4 border-amber-500 pl-2">สรุปจุดแข็งและข้อเสนอแนะเพื่อการพัฒนา (OFI)</h3>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">1. จุดแข็งที่พบ (Strengths):</label>
+                            <textarea class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-1 focus:ring-amber-500 focus:outline-none" rows="2" placeholder="ระบุจุดแข็งและสิ่งที่ได้รับคำชมเชยมากที่สุด..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">2. ประเด็นที่ต้องพัฒนาเร่งด่วน (Priority Improvements):</label>
+                            <textarea class="w-full border border-slate-300 rounded p-2 text-xs focus:ring-1 focus:ring-amber-500 focus:outline-none" rows="2" placeholder="ระบุสิ่งที่ต้องปรับปรุงแก้ไขจากข้อร้องเรียนและข้อเสนอแนะ..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Sign-off Block -->
+                    <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-2 gap-6 text-xs">
+                        <div class="text-center">
+                            <p>ลงชื่อ ........................................................... ผู้รายงาน</p>
+                            <p class="mt-1 text-slate-500">( ........................................................... )</p>
+                            <p class="mt-1 text-slate-600">ตำแหน่ง เจ้าพนักงานฉุกเฉินการแพทย์ / พยาบาลวิชาชีพ</p>
+                        </div>
+                        <div class="text-center">
+                            <p>ลงชื่อ ........................................................... ผู้รับรอง</p>
+                            <p class="mt-1 text-slate-500">( ........................................................... )</p>
+                            <p class="mt-1 text-slate-600">หัวหน้ากลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-between items-center text-[11px] text-slate-500 border-t pt-2 mt-4">
+                    <span>งานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</span>
+                    <span>รายงานสรุปประจำรอบ 6 เดือน | หน้า 1/1</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- QR Code & Share Modal -->
+    <div id="qrModal" class="no-print fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 text-center relative">
+            <button onclick="closeModal('qrModal')" class="absolute top-3 right-4 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800">สแกนเพื่อทำแบบประเมิน</h3>
+            <p class="text-xs text-slate-500 mt-1">สามารถนำ QR Code นี้ไปแปะบนรถพยาบาล หรือจุดบริการได้</p>
+            
+            <div class="my-4 bg-slate-100 p-4 rounded-lg inline-block border">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://ehealth.moph.go.th/ems-satisfaction" alt="QR Code EMS Satisfaction" class="w-44 h-44 mx-auto">
+            </div>
+
+            <div class="flex gap-2 justify-center">
+                <button onclick="copyShareUrl()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-lg font-medium transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-link"></i> คัดลอกลิงก์
+                </button>
+                <button onclick="closeModal('qrModal')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-4 py-2 rounded-lg font-medium transition">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Sheets Setup Modal -->
+    <div id="sheetModal" class="no-print fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 text-left max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel text-emerald-600"></i> ตั้งค่าเชื่อมต่อ Google Sheets (แยกตามแบบประเมิน)
+                </h3>
+                <button onclick="closeModal('sheetModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-700">
+                <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                    <label class="block font-bold text-emerald-900 mb-1">Web App URL จาก Google Apps Script:</label>
+                    <input type="url" id="googleSheetUrl" value="https://script.google.com/macros/s/AKfycbxZJLtJh9e5iSZFa43FErlPNtGZjjQi-apXyCxEzHMoYeBVQq9B-BAuZh0mfUODfaBM1w/exec" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" class="w-full border border-slate-300 rounded p-2 text-xs font-mono bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    <p class="text-[11px] text-emerald-700 mt-1">เมื่อใส่ Web App URL แล้ว ข้อมูลการบันทึกแบบประเมินทั้ง 4 ฉบับและข้อร้องเรียนจะถูกส่งไปบันทึกลงใน Google Sheet อัตโนมัติ โดยแยกแท็บตามแบบประเมิน</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-list-ol text-emerald-600 mr-1"></i> ขั้นตอนการติดตั้งสคริปต์ใน Google Sheets (ทำครั้งเดียว):</h4>
+                    <ol class="list-decimal list-inside space-y-1 pl-1 text-xs text-slate-600">
+                        <li>เปิด Google Sheets ของคุณ -> ไปที่เมนู <strong>ส่วนขยาย (Extensions)</strong> -> <strong>Apps Script</strong></li>
+                        <li>ลบโค้ดเดิมออกทั้งหมด แล้วนำโค้ดด้านล่างนี้ไปวางแทนที่</li>
+                        <li>กดปุ่ม <strong>ทำให้ใช้ได้อย่างเป็นทางการ (Deploy)</strong> -> เลือก <strong>การทําการแจ้งใหม่ (New deployment)</strong></li>
+                        <li>ตั้งค่าประเภทเป็น <strong>เว็บแอป (Web app)</strong></li>
+                        <li><strong class="text-rose-600">สำคัญมาก:</strong> ตั้งค่า "เรียกใช้ในฐานะ (Execute as)" = <strong>ฉัน (Me)</strong> และ "ผู้มีสิทธิ์เข้าถึง (Who has access)" = <strong>ทุกคน (Anyone)</strong></li>
+                        <li>กดคัดลอก URL ของ Web App มาวางในช่องด้านบนแล้วกด <strong>"บันทึกการตั้งค่า"</strong></li>
+                    </ol>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-slate-800 text-xs">โค้ด Google Apps Script (สำเนาไปวางใน Apps Script):</span>
+                        <button onclick="copyScriptCode()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] px-2.5 py-1 rounded transition">
+                            <i class="fa-regular fa-copy mr-1"></i> คัดลอกโค้ด
+                        </button>
+                    </div>
+                    <pre id="gasScriptCode" class="bg-slate-900 text-emerald-400 p-3 rounded text-[11px] font-mono overflow-x-auto max-h-48 border select-all">function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(10000);
+  try {
+    var rawContent = e.postData ? e.postData.contents : "";
+    if (!rawContent) {
+      return ContentService.createTextOutput(JSON.stringify({result: "error", message: "No post data"})).setMimeType(ContentService.MimeType.JSON);
+    }
+    var data = JSON.parse(rawContent);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) {
+      return ContentService.createTextOutput(JSON.stringify({result: "error", message: "No active spreadsheet"})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var sheetName = "";
+    var headers = [];
+    var rowData = [];
+
+    if (data.formType === "f1") {
+      sheetName = "1.ผู้ป่วยและญาติ";
+      headers = ["วัน-เวลา", "สถานะผู้ตอบ", "ตำบล", "ประเภทผู้ป่วย", "ข้อ 1 ความรวดเร็ว", "ข้อ 2 การดูแล", "ข้อ 3 การสื่อสาร", "ข้อ 4 อุปกรณ์", "ข้อ 5 ภาพรวม", "คะแนนเฉลี่ย", "ข้อเสนอแนะ"];
+      rowData = [data.date, data.role, data.subdistrict, data.patientType, data.scores[0], data.scores[1], data.scores[2], data.scores[3], data.scores[4], data.avg, data.comment];
+    } else if (data.formType === "f2") {
+      sheetName = "2.เครือข่าย EMS";
+      headers = ["วัน-เวลา", "หน่วยงาน", "ข้อ 1 ประสานงาน", "ข้อ 2 วิชาการ/ทรัพยากร", "ข้อ 3 การรับช่วงดูแล", "ข้อ 4 สัมพันธภาพ", "ข้อ 5 ภาพรวม", "คะแนนเฉลี่ย", "ข้อเสนอแนะ"];
+      rowData = [data.date, data.org, data.scores[0], data.scores[1], data.scores[2], data.scores[3], data.scores[4], data.avg, data.comment];
+    } else if (data.formType === "f3") {
+      sheetName = "3.บุคลากรภายใน";
+      headers = ["วัน-เวลา", "ตำแหน่ง", "ข้อ 1 ตารางเวร", "ข้อ 2 ความปลอดภัย", "ข้อ 3 การสนับสนุน", "ข้อ 4 พัฒนาศักยภาพ", "ข้อ 5 บรรยากาศ", "คะแนนเฉลี่ย", "ข้อเสนอแนะ"];
+      rowData = [data.date, data.pos, data.scores[0], data.scores[1], data.scores[2], data.scores[3], data.scores[4], data.avg, data.comment];
+    } else if (data.formType === "f4") {
+      sheetName = "4.หน่วยงานรับส่งต่อ";
+      headers = ["วัน-เวลา", "ชื่อโรงพยาบาล", "วิชาชีพ", "ข้อ 1 แจ้งล่วงหน้า", "ข้อ 2 บันทึกข้อมูล", "ข้อ 3 คุณภาพรักษา", "ข้อ 4 ความพร้อมอุปกรณ์", "ข้อ 5 ภาพรวม", "คะแนนเฉลี่ย", "ข้อเสนอแนะ"];
+      rowData = [data.date, data.hospital, data.prof, data.scores[0], data.scores[1], data.scores[2], data.scores[3], data.scores[4], data.avg, data.comment];
+    } else if (data.formType === "complaint") {
+      sheetName = "5.ข้อร้องเรียน";
+      headers = ["รหัส", "วัน-เวลาเกิดเหตุ", "ผู้แจ้ง", "เบอร์โทร", "ประเภทผู้ร้อง", "หมวดหมู่", "รายละเอียด", "การแก้ไขเบื้องต้น", "สถานะ"];
+      rowData = [data.id, data.date, data.reporter, data.phone, data.type, data.category, data.details, data.action, data.status];
+    } else if (data.formType === "test") {
+      sheetName = "ทดสอบการเชื่อมต่อ";
+      headers = ["วัน-เวลา", "สถานะ"];
+      rowData = [data.date, "เชื่อมต่อสำเร็จ"];
+    }
+
+    var sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      sheet = ss.insertSheet(sheetName);
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#dcfce7");
+    }
+
+    sheet.appendRow(rowData);
+    return ContentService.createTextOutput(JSON.stringify({result: "success"})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({result: "error", error: err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}</pre>
+                </div>
+            </div>
+
+            <div class="mt-5 flex gap-2 justify-between items-center pt-3 border-t">
+                <button onclick="testGoogleSheetConnection()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs px-3.5 py-2 rounded font-medium transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-paper-plane"></i> ทดสอบการส่งข้อมูล
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeModal('sheetModal')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-4 py-2 rounded">ยกเลิก</button>
+                    <button onclick="saveGoogleSheetSettings()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-5 py-2 rounded font-medium shadow">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการตั้งค่า
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="no-print fixed bottom-5 right-5 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-xl text-sm flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-msg">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Storage key for local data management
+        const STORAGE_KEY = 'ems_satisfaction_data_v1';
+        const SHEET_URL_KEY = 'ems_google_sheet_url_v1';
+        const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxZJLtJh9e5iSZFa43FErlPNtGZjjQi-apXyCxEzHMoYeBVQq9B-BAuZh0mfUODfaBM1w/exec';
+
+        // Initial Data Structure
+        let surveyData = {
+            f1: [],
+            f2: [],
+            f3: [],
+            f4: [],
+            complaints: []
+        };
+
+        let summaryChart = null;
+
+        // Switch Active Form/Tab View
+        function switchTab(tabId) {
+            document.querySelectorAll('.form-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('active-content');
+            });
+
+            const target = document.getElementById(`content-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('active-content');
+            }
+
+            // Reset tab button styling
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'bg-sky-600', 'bg-indigo-600', 'bg-rose-600', 'bg-rose-700', 'bg-rose-800', 'bg-amber-600', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+
+            // Highlight selected tab button
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-300');
+                activeBtn.classList.add('text-white');
+                if (tabId === 'form1') activeBtn.classList.add('bg-emerald-600');
+                else if (tabId === 'form2') activeBtn.classList.add('bg-sky-600');
+                else if (tabId === 'form3') activeBtn.classList.add('bg-indigo-600');
+                else if (tabId === 'form4') activeBtn.classList.add('bg-rose-600');
+                else if (tabId === 'complaint') activeBtn.classList.add('bg-rose-700');
+                else if (tabId === 'complaint-log') activeBtn.classList.add('bg-rose-800');
+                else if (tabId === 'summary') activeBtn.classList.add('bg-amber-600');
+            }
+
+            if (tabId === 'summary') {
+                updateSummaryData();
+            }
+            if (tabId === 'complaint-log' || tabId === 'summary') {
+                renderComplaintsTable();
+            }
+        }
+
+        // Local Storage Handlers
+        function loadSavedData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    surveyData = {
+                        f1: parsed.f1 || [],
+                        f2: parsed.f2 || [],
+                        f3: parsed.f3 || [],
+                        f4: parsed.f4 || [],
+                        complaints: parsed.complaints || []
+                    };
+                }
+            } catch (e) {
+                console.error('Error loading saved data:', e);
+            }
+        }
+
+        function saveDataToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(surveyData));
+                updateSummaryData();
+            } catch (e) {
+                console.error('Error saving data:', e);
+            }
+        }
+
+        // Printing Handlers
+        function printActiveForm() {
+            window.print();
+        }
+
+        function printAllForms() {
+            const hiddenForms = document.querySelectorAll('.form-content.hidden');
+            hiddenForms.forEach(el => el.classList.remove('hidden'));
+            window.print();
+            hiddenForms.forEach(el => el.classList.add('hidden'));
+            
+            // Re-activate active tab
+            const activeContent = document.querySelector('.form-content.active-content');
+            if (activeContent) activeContent.classList.remove('hidden');
+        }
+
+        // Export Active Form / Summary to Clean MS Word (.doc)
+        function exportToDocx() {
+            const activeContent = document.querySelector('.form-content.active-content');
+            if (!activeContent) return;
+
+            // Clone active element to preserve original DOM
+            const clone = activeContent.cloneNode(true);
+
+            // Strip non-printable UI buttons
+            clone.querySelectorAll('.no-print').forEach(el => el.remove());
+
+            // Convert interactive radio buttons to readable brackets
+            clone.querySelectorAll('input[type="radio"]').forEach(radio => {
+                const span = document.createElement('span');
+                span.innerText = radio.checked ? ' [✓] ' : ' [   ] ';
+                if (radio.parentNode) radio.parentNode.replaceChild(span, radio);
+            });
+
+            // Convert text inputs to plain text
+            clone.querySelectorAll('input[type="text"], input[type="datetime-local"]').forEach(input => {
+                const span = document.createElement('span');
+                span.innerText = input.value || '........................................';
+                if (input.parentNode) input.parentNode.replaceChild(span, input);
+            });
+
+            // Convert textareas to pre-formatted text block
+            clone.querySelectorAll('textarea').forEach(textarea => {
+                const div = document.createElement('div');
+                div.style.whiteSpace = 'pre-wrap';
+                div.innerText = textarea.value || '........................................................................................................................';
+                if (textarea.parentNode) textarea.parentNode.replaceChild(div, textarea);
+            });
+
+            // Convert Canvas Chart to Image if present
+            if (summaryChart && clone.querySelector('#summaryChart')) {
+                const canvas = clone.querySelector('#summaryChart');
+                const img = document.createElement('img');
+                img.src = summaryChart.toBase64Image();
+                img.style.maxWidth = '100%';
+                if (canvas.parentNode) canvas.parentNode.replaceChild(img, canvas);
+            }
+
+            const htmlHeader = `<html xmlns:o='urn:schemas-microsoft-office:office' xmlns:w='urn:schemas-microsoft-office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset='utf-8'>
+                <title>EMS Satisfaction Form</title>
+                <style>
+                    body { font-family: 'TH Sarabun PSK', 'TH Sarabun New', 'Sarabun', sans-serif; font-size: 16pt; line-height: 1.3; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; }
+                    th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+                    th { background-color: #f1f5f9; text-align: center; }
+                    .text-center { text-align: center; }
+                    .font-bold { font-weight: bold; }
+                </style>
+            </head>
+            <body>`;
+
+            const htmlFooter = `</body></html>`;
+            const fullHtml = htmlHeader + clone.innerHTML + htmlFooter;
+
+            const blob = new Blob(['\ufeff' + fullHtml], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `EMS_Evaluation_${Date.now()}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('ส่งออกไฟล์ Word (.doc) เรียบร้อยแล้ว');
+        }
+
+        // New Feature Recommendation 4: Backup Data Exporters (JSON & CSV)
+        function exportBackupJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(surveyData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `ems_satisfaction_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('สำรองข้อมูลสำรองไฟล์ JSON สำเร็จ');
+        }
+
+        function exportBackupCSV() {
+            let csvContent = "\ufeff"; // UTF-8 BOM for Thai encoding in Excel
+            csvContent += "=== สรุปผลภาพรวมคะแนนความพึงพอใจ EMS ===\n";
+            csvContent += "กลุ่มเป้าหมาย,จำนวนผู้ตอบ (N),คะแนนเฉลี่ย (X-bar),ร้อยละ (%),สถานะ KPI\n";
+            
+            const labels = ["", "1. ผู้ป่วยและญาติ", "2. เครือข่าย EMS", "3. บุคลากรภายใน", "4. หน่วยงานรับส่งต่อ"];
+            [1, 2, 3, 4].forEach(num => {
+                const list = surveyData[`f${num}`] || [];
+                const n = list.length;
+                let avg = 0;
+                let pct = 0;
+                if (n > 0) {
+                    avg = list.reduce((acc, curr) => acc + curr.avg, 0) / n;
+                    pct = (avg / 5) * 100;
+                }
+                const status = n === 0 ? '-' : (pct >= 85 ? 'บรรลุ' : 'ไม่บรรลุ');
+                csvContent += `"${labels[num]}",${n},${avg.toFixed(2)},${pct.toFixed(1)}%,"${status}"\n`;
+            });
+
+            csvContent += "\n=== รายการข้อร้องเรียนทั้งหมด ===\n";
+            csvContent += "รหัส,วัน-เวลา,ผู้แจ้ง,เบอร์โทร,ประเภทผู้ร้อง,หมวดหมู่,รายละเอียด,การแก้ไข,สถานะ\n";
+            (surveyData.complaints || []).forEach(c => {
+                const safeDetails = (c.details || '').replace(/"/g, '""');
+                const safeAction = (c.action || '').replace(/"/g, '""');
+                csvContent += `"${c.id}","${c.date || ''}","${c.reporter || ''}","${c.phone || ''}","${c.type || ''}","${c.category || ''}","${safeDetails}","${safeAction}","${c.status || ''}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `ems_satisfaction_data_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('ส่งออกไฟล์ CSV สำหรับ Excel สำเร็จ!');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedData();
+            initChart();
+            updateSummaryData();
+            renderComplaintsTable();
+
+            // Set updated Google Sheet Web App URL
+            localStorage.setItem(SHEET_URL_KEY, DEFAULT_SHEET_URL);
+            const savedUrl = DEFAULT_SHEET_URL;
+            const input = document.getElementById('googleSheetUrl');
+            if (input) input.value = savedUrl;
+
+            // Set default date for complaint form
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const dateInput = document.getElementById('c_date');
+            if (dateInput) dateInput.value = now.toISOString().slice(0, 16);
+        });
+
+        // Google Sheets Integration Settings
+        function saveGoogleSheetSettings() {
+            const urlInput = document.getElementById('googleSheetUrl');
+            const url = urlInput ? urlInput.value.trim() : DEFAULT_SHEET_URL;
+            localStorage.setItem(SHEET_URL_KEY, url);
+            closeModal('sheetModal');
+            showToast(url ? 'บันทึกการตั้งค่า Google Sheets เรียบร้อยแล้ว' : 'ยกเลิกการเชื่อมต่อ Google Sheets');
+        }
+
+        // Post data payload to Google Sheets Web App with connectivity detection (Recommendation 2)
+        async function sendToGoogleSheet(payload) {
+            const webhookUrl = localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL;
+            if (!webhookUrl) return;
+
+            if (!navigator.onLine) {
+                showToast('ออฟไลน์: บันทึกข้อมูลลงในเครื่องแล้ว จะซิงค์ลง Google Sheets เมื่อเชื่อมต่อเน็ต', 'error');
+                return;
+            }
+
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+            } catch(e) {
+                console.error("Failed to post to Google Sheets", e);
+                showToast('ไม่สามารถซิงค์ Google Sheets ได้ (บันทึกลงเครื่องแล้ว)', 'error');
+            }
+        }
+
+        async function testGoogleSheetConnection() {
+            const urlInput = document.getElementById('googleSheetUrl');
+            const url = urlInput ? urlInput.value.trim() : '';
+
+            if (!url) {
+                showToast('กรุณากรอก Web App URL จาก Google Apps Script', 'error');
+                return;
+            }
+
+            showToast('กำลังส่งข้อมูลทดสอบไปยัง Google Sheets...');
+            
+            const testPayload = {
+                formType: 'test',
+                date: new Date().toLocaleString('th-TH')
+            };
+
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(testPayload)
+                });
+                showToast('ส่งข้อมูลทดสอบเรียบร้อย! โปรดเปิดตรวจสอบแท็บ "ทดสอบการเชื่อมต่อ" ใน Google Sheet');
+            } catch (err) {
+                console.error('Test connection error:', err);
+                showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ Google Sheets', 'error');
+            }
+        }
+
+        // Save Response Handler with Demographic Validation (Recommendation 1)
+        function saveFormResponse(formNum) {
+            const formPrefix = `f${formNum}`;
+
+            // Validation Section 1: Demographic Data Check
+            if (formNum === 1) {
+                const role = document.querySelector('input[name="f1_role"]:checked');
+                const subdistrict = document.querySelector('input[name="f1_subdistrict"]:checked');
+                const patientType = document.querySelector('input[name="f1_patient_type"]:checked');
+                if (!role || !subdistrict || !patientType) {
+                    showToast('กรุณาเลือกข้อมูลส่วนที่ 1 ให้ครบถ้วน (สถานะผู้ตอบ, ตำบล, ประเภทผู้ป่วย)', 'error');
+                    return;
+                }
+            } else if (formNum === 2) {
+                const org = document.querySelector('input[name="f2_org"]:checked');
+                if (!org) {
+                    showToast('กรุณาเลือกสังกัดหน่วยงานเครือข่ายในส่วนที่ 1', 'error');
+                    return;
+                }
+            } else if (formNum === 3) {
+                const pos = document.querySelector('input[name="f3_pos"]:checked');
+                if (!pos) {
+                    showToast('กรุณาเลือกตำแหน่งการปฏิบัติงานในส่วนที่ 1', 'error');
+                    return;
+                }
+            } else if (formNum === 4) {
+                const hosp = document.getElementById('f4_hospital_name')?.value.trim();
+                const prof = document.querySelector('input[name="f4_prof"]:checked');
+                if (!hosp || !prof) {
+                    showToast('กรุณากรอกชื่อโรงพยาบาลและเลือกวิชาชีพในส่วนที่ 1', 'error');
+                    return;
+                }
+            }
+
+            // Validation Section 2: Rating Scores Check
+            let scores = [];
+            for (let i = 1; i <= 5; i++) {
+                const selected = document.querySelector(`input[name="${formPrefix}_q${i}"]:checked`);
+                if (selected) {
+                    scores.push(parseInt(selected.value));
+                }
+            }
+
+            if (scores.length < 5) {
+                showToast('กรุณากรอกคะแนนประเมินให้ครบถ้วนทั้ง 5 ข้อในส่วนที่ 2', 'error');
+                return;
+            }
+
+            const totalScore = scores.reduce((a, b) => a + b, 0);
+            const avgScore = totalScore / 5;
+            const nowFormatted = new Date().toLocaleString('th-TH');
+
+            const commentEl = document.getElementById(`f${formNum}_comment`);
+            const commentVal = commentEl ? commentEl.value.trim() : '';
+
+            // Construct payload according to form type
+            let payload = {
+                formType: formPrefix,
+                date: nowFormatted,
+                scores: scores,
+                avg: avgScore.toFixed(2),
+                comment: commentVal || '-'
+            };
+
+            if (formNum === 1) {
+                payload.role = document.querySelector('input[name="f1_role"]:checked')?.value || '-';
+                payload.subdistrict = document.querySelector('input[name="f1_subdistrict"]:checked')?.value || '-';
+                payload.patientType = document.querySelector('input[name="f1_patient_type"]:checked')?.value || '-';
+            } else if (formNum === 2) {
+                payload.org = document.querySelector('input[name="f2_org"]:checked')?.value || '-';
+            } else if (formNum === 3) {
+                payload.pos = document.querySelector('input[name="f3_pos"]:checked')?.value || '-';
+            } else if (formNum === 4) {
+                payload.hospital = document.getElementById('f4_hospital_name')?.value.trim() || '-';
+                payload.prof = document.querySelector('input[name="f4_prof"]:checked')?.value || '-';
+            }
+
+            surveyData[formPrefix].push({
+                date: new Date().toISOString(),
+                scores: scores,
+                avg: avgScore
+            });
+
+            saveDataToStorage();
+
+            // Send payload to Google Sheets
+            sendToGoogleSheet(payload);
+
+            const isSheetConnected = !!localStorage.getItem(SHEET_URL_KEY);
+            showToast(`บันทึกแบบประเมินฉบับที่ ${formNum} สำเร็จ! ${isSheetConnected ? '(ซิงค์ลง Google Sheets เรียบร้อย)' : ''}`);
+            
+            // Clear inputs for next entry
+            for (let i = 1; i <= 5; i++) {
+                const checkedRadio = document.querySelector(`input[name="${formPrefix}_q${i}"]:checked`);
+                if (checkedRadio) checkedRadio.checked = false;
+            }
+
+            if (formNum === 1) {
+                document.querySelectorAll('input[name="f1_role"], input[name="f1_subdistrict"], input[name="f1_patient_type"]').forEach(r => r.checked = false);
+            } else if (formNum === 2) {
+                document.querySelectorAll('input[name="f2_org"]').forEach(r => r.checked = false);
+            } else if (formNum === 3) {
+                document.querySelectorAll('input[name="f3_pos"]').forEach(r => r.checked = false);
+            } else if (formNum === 4) {
+                const hospInput = document.getElementById('f4_hospital_name');
+                if (hospInput) hospInput.value = '';
+                document.querySelectorAll('input[name="f4_prof"]').forEach(r => r.checked = false);
+            }
+
+            if (commentEl) commentEl.value = '';
+        }
+
+        // Complaint Intake Logic
+        function saveComplaint() {
+            const date = document.getElementById('c_date').value;
+            const reporter = document.getElementById('c_reporter').value || 'ไม่ประสงค์ออกนาม';
+            const phone = document.getElementById('c_phone').value || '-';
+            const type = document.querySelector('input[name="c_type"]:checked')?.value || 'ผู้ป่วย/ญาติ';
+            const category = document.querySelector('input[name="c_category"]:checked')?.value || 'พฤติกรรมบริการ';
+            const details = document.getElementById('c_details').value;
+            const action = document.getElementById('c_action').value || '-';
+
+            if (!details) {
+                showToast('กรุณากรอกรายละเอียดข้อร้องเรียน', 'error');
+                return;
+            }
+
+            const complaintItem = {
+                id: 'CMP-' + String(Date.now()).slice(-4),
+                date: date,
+                reporter: reporter,
+                phone: phone,
+                type: type,
+                category: category,
+                details: details,
+                action: action,
+                status: 'รับเรื่องแล้ว'
+            };
+
+            if (!surveyData.complaints) surveyData.complaints = [];
+            surveyData.complaints.unshift(complaintItem);
+
+            saveDataToStorage();
+            renderComplaintsTable();
+
+            // Sync to Google Sheet
+            sendToGoogleSheet({
+                formType: 'complaint',
+                ...complaintItem
+            });
+
+            const isSheetConnected = !!localStorage.getItem(SHEET_URL_KEY);
+            showToast(`บันทึกข้อร้องเรียนรหัส ${complaintItem.id} เรียบร้อย ${isSheetConnected ? '(ซิงค์ลง Google Sheets)' : ''}`);
+
+            // Reset form
+            document.getElementById('c_details').value = '';
+            document.getElementById('c_action').value = '';
+
+            // Automatically switch to complaint log tab
+            switchTab('complaint-log');
+        }
+
+        function renderComplaintsTable() {
+            const mainTbody = document.getElementById('mainComplaintsTableBody');
+            const summaryTbody = document.getElementById('complaintsTableBody');
+            const countEl = document.getElementById('complaintCount');
+
+            const list = surveyData.complaints || [];
+
+            // Update Statistics Counters
+            const statTotal = document.getElementById('stat-total');
+            const statReceived = document.getElementById('stat-received');
+            const statProgress = document.getElementById('stat-progress');
+            const statResolved = document.getElementById('stat-resolved');
+
+            if (statTotal) statTotal.innerText = list.length;
+            if (statReceived) statReceived.innerText = list.filter(c => c.status === 'รับเรื่องแล้ว').length;
+            if (statProgress) statProgress.innerText = list.filter(c => c.status === 'กำลังตรวจสอบ').length;
+            if (statResolved) statResolved.innerText = list.filter(c => c.status === 'แก้ไขเรียบร้อย').length;
+
+            if (countEl) countEl.innerText = list.length;
+
+            // Filter logic for main complaint log table
+            const searchQuery = (document.getElementById('logSearch')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('logStatusFilter')?.value || 'ALL';
+            const categoryFilter = document.getElementById('logCategoryFilter')?.value || 'ALL';
+
+            const filteredList = list.filter(item => {
+                const matchesSearch = !searchQuery || 
+                    item.id.toLowerCase().includes(searchQuery) ||
+                    item.reporter.toLowerCase().includes(searchQuery) ||
+                    item.details.toLowerCase().includes(searchQuery) ||
+                    item.category.toLowerCase().includes(searchQuery);
+
+                const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
+                const matchesCategory = categoryFilter === 'ALL' || item.category === categoryFilter;
+
+                return matchesSearch && matchesStatus && matchesCategory;
+            });
+
+            // Generate HTML for tables
+            const generateRowsHtml = (dataArray) => {
+                if (dataArray.length === 0) {
+                    return `<tr><td colspan="6" class="text-center p-4 text-slate-400">ไม่พบข้อมูลข้อร้องเรียนที่ตรงตามเงื่อนไข</td></tr>`;
+                }
+
+                return dataArray.map((item) => {
+                    let statusBg = 'bg-amber-100 text-amber-800 border-amber-300';
+                    if (item.status === 'กำลังตรวจสอบ') statusBg = 'bg-sky-100 text-sky-800 border-sky-300';
+                    if (item.status === 'แก้ไขเรียบร้อย') statusBg = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+
+                    return `
+                        <tr class="hover:bg-slate-50 border-b">
+                            <td class="p-2 text-center font-mono font-bold text-rose-700">${item.id}</td>
+                            <td class="p-2">${item.date ? item.date.replace('T', ' ') : '-'}</td>
+                            <td class="p-2 font-medium">${item.category}</td>
+                            <td class="p-2">
+                                <p class="font-semibold text-slate-800">${item.details}</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">ผู้แจ้ง: ${item.reporter} (${item.type}) | เบอร์: ${item.phone}</p>
+                                ${item.action !== '-' ? `<p class="text-[10px] text-emerald-700 mt-0.5"><strong>การดำเนินการ:</strong> ${item.action}</p>` : ''}
+                            </td>
+                            <td class="p-2 text-center">
+                                <select onchange="updateComplaintStatus('${item.id}', this.value)" class="text-xs border rounded p-1 ${statusBg}">
+                                    <option value="รับเรื่องแล้ว" ${item.status === 'รับเรื่องแล้ว' ? 'selected' : ''}>รับเรื่องแล้ว</option>
+                                    <option value="กำลังตรวจสอบ" ${item.status === 'กำลังตรวจสอบ' ? 'selected' : ''}>กำลังตรวจสอบ</option>
+                                    <option value="แก้ไขเรียบร้อย" ${item.status === 'แก้ไขเรียบร้อย' ? 'selected' : ''}>แก้ไขเรียบร้อย</option>
+                                </select>
+                            </td>
+                            <td class="p-2 text-center no-print">
+                                <button onclick="deleteComplaint('${item.id}')" class="text-rose-600 hover:text-rose-800 p-1" title="ลบข้อมูล">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            if (mainTbody) mainTbody.innerHTML = generateRowsHtml(filteredList);
+            if (summaryTbody) summaryTbody.innerHTML = generateRowsHtml(list);
+        }
+
+        function updateComplaintStatus(id, newStatus) {
+            const item = (surveyData.complaints || []).find(c => c.id === id);
+            if (item) {
+                item.status = newStatus;
+                saveDataToStorage();
+                renderComplaintsTable();
+                showToast(`อัปเดตสถานะเรื่อง ${id} เป็น "${newStatus}" เรียบร้อย`);
+            }
+        }
+
+        function deleteComplaint(id) {
+            surveyData.complaints = (surveyData.complaints || []).filter(c => c.id !== id);
+            saveDataToStorage();
+            renderComplaintsTable();
+            showToast(`ลบข้อร้องเรียนรหัส ${id} เรียบร้อยแล้ว`);
+        }
+
+        // Load Pre-populated Sample Data for Demo
+        function loadDemoData() {
+            surveyData = {
+                f1: Array.from({length: 32}, () => ({ avg: 4.2 + Math.random() * 0.7, scores: [4,5,4,5,4] })),
+                f2: Array.from({length: 12}, () => ({ avg: 4.4 + Math.random() * 0.5, scores: [5,4,5,4,5] })),
+                f3: Array.from({length: 18}, () => ({ avg: 4.1 + Math.random() * 0.8, scores: [4,4,4,5,4] })),
+                f4: Array.from({length: 15}, () => ({ avg: 4.5 + Math.random() * 0.4, scores: [5,5,4,5,5] })),
+                complaints: [
+                    {
+                        id: 'CMP-1001',
+                        date: '2026-07-15T10:30',
+                        reporter: 'ญาติผู้ป่วย (ตำบลจวบ)',
+                        phone: '081-234-XXXX',
+                        type: 'ผู้ป่วย/ญาติ',
+                        category: 'ความรวดเร็ว / ระยะเวลาตอบสนอง',
+                        details: 'รถพยาบาลเข้าถึงจุดเกิดเหตุในหมู่บ้านลึกช้ากว่าปกติประมาณ 15 นาที',
+                        action: 'ทบทวนพิกัด GPS กับศูนย์รับแจ้งเหตุ และแจ้งเส้นทางลัดเพิ่มเติมแก่ พขร.',
+                        status: 'แก้ไขเรียบร้อย'
+                    },
+                    {
+                        id: 'CMP-1002',
+                        date: '2026-07-18T14:15',
+                        reporter: 'พยาบาล รพ.สต.บูกิต',
+                        phone: '073-511-XXXX',
+                        type: 'เครือข่าย EMS/รพ.สต.',
+                        category: 'พฤติกรรมบริการ / สื่อสาร',
+                        details: 'การสื่อสารทางวิทยุสื่อสารช่วงส่งต่อข้อมูลมีการพูดกระแทกเสียงเล็กน้อย',
+                        action: 'หัวหน้างานพูดคุยปรับทัศนคติการใช้คำพูดและระดับเสียงในช่องวิทยุ',
+                        status: 'แก้ไขเรียบร้อย'
+                    }
+                ]
+            };
+            saveDataToStorage();
+            updateSummaryData();
+            renderComplaintsTable();
+            showToast('โหลดข้อมูลตัวอย่างเรียบร้อยแล้ว');
+        }
+
+        function resetData() {
+            surveyData = { f1: [], f2: [], f3: [], f4: [], complaints: [] };
+            saveDataToStorage();
+            updateSummaryData();
+            renderComplaintsTable();
+            showToast('รีเซ็ตข้อมูลทั้งหมดเรียบร้อยแล้ว');
+        }
+
+        // Helper function to safely set innerText with null check
+        function setSafeText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+        }
+
+        // Helper function to safely set className with null check
+        function setSafeClass(id, className) {
+            const el = document.getElementById(id);
+            if (el) el.className = className;
+        }
+
+        // Update Dashboard Calculation
+        function updateSummaryData() {
+            let overallTotalN = 0;
+            let overallSumScore = 0;
+
+            [1, 2, 3, 4].forEach(num => {
+                const list = surveyData[`f${num}`] || [];
+                const n = list.length;
+                let avg = 0;
+                let pct = 0;
+
+                if (n > 0) {
+                    const sumAvg = list.reduce((acc, curr) => acc + curr.avg, 0);
+                    avg = sumAvg / n;
+                    pct = (avg / 5) * 100;
+                    overallTotalN += n;
+                    overallSumScore += sumAvg;
+                }
+
+                setSafeText(`s${num}-n`, n);
+                setSafeText(`s${num}-x`, avg.toFixed(2));
+                setSafeText(`s${num}-p`, `${pct.toFixed(1)}%`);
+
+                if (n === 0) {
+                    setSafeText(`s${num}-status`, '-');
+                    setSafeClass(`s${num}-status`, 'text-center p-2 text-slate-400');
+                } else if (pct >= 85) {
+                    setSafeText(`s${num}-status`, 'บรรลุ');
+                    setSafeClass(`s${num}-status`, 'text-center p-2 text-emerald-600 font-bold');
+                } else {
+                    setSafeText(`s${num}-status`, 'ไม่บรรลุ');
+                    setSafeClass(`s${num}-status`, 'text-center p-2 text-rose-600 font-bold');
+                }
+            });
+
+            // Calculate Overall
+            let overallAvg = 0;
+            let overallPct = 0;
+            if (overallTotalN > 0) {
+                overallAvg = overallSumScore / overallTotalN;
+                overallPct = (overallAvg / 5) * 100;
+            }
+
+            setSafeText('s-total-n', overallTotalN);
+            setSafeText('s-total-x', overallAvg.toFixed(2));
+            setSafeText('s-total-p', `${overallPct.toFixed(1)}%`);
+
+            if (overallTotalN === 0) {
+                setSafeText('s-total-status', '-');
+                setSafeClass('s-total-status', 'text-center p-2 text-slate-400');
+            } else if (overallPct >= 85) {
+                setSafeText('s-total-status', 'บรรลุเป้าหมาย');
+                setSafeClass('s-total-status', 'text-center p-2 text-emerald-600 font-bold');
+            } else {
+                setSafeText('s-total-status', 'ไม่บรรลุเป้าหมาย');
+                setSafeClass('s-total-status', 'text-center p-2 text-rose-600 font-bold');
+            }
+
+            updateChart();
+        }
+
+        // Initialize Summary Chart
+        function initChart() {
+            const canvas = document.getElementById('summaryChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            summaryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['1. ผู้ป่วย/ญาติ', '2. เครือข่าย EMS', '3. บุคลากรภายใน', '4. หน่วยส่งต่อ'],
+                    datasets: [{
+                        label: 'ร้อยละความพึงพอใจ (%)',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#10b981', '#0284c7', '#6366f1', '#f43f5e'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: value => value + '%'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            if (!summaryChart) return;
+            const p1 = parseFloat(document.getElementById('s1-p')?.innerText) || 0;
+            const p2 = parseFloat(document.getElementById('s2-p')?.innerText) || 0;
+            const p3 = parseFloat(document.getElementById('s3-p')?.innerText) || 0;
+            const p4 = parseFloat(document.getElementById('s4-p')?.innerText) || 0;
+
+            summaryChart.data.datasets[0].data = [p1, p2, p3, p4];
+            summaryChart.update();
+        }
+
+        // Modal Controls
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+        }
+
+        function copyShareUrl() {
+            const url = "https://ehealth.moph.go.th/ems-satisfaction";
+            const textarea = document.createElement('textarea');
+            textarea.value = url;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('คัดลอกลิงก์เรียบร้อยแล้ว');
+        }
+
+        function copyScriptCode() {
+            const scriptCode = document.getElementById('gasScriptCode')?.innerText;
+            if (scriptCode) {
+                navigator.clipboard.writeText(scriptCode);
+                showToast('คัดลอกโค้ด Google Apps Script แล้ว');
+            }
+        }
+
+        // Custom Notification Toast
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = msg;
+            if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-circle-exclamation text-rose-400';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3200);
+        }
+    </script>
+</body>
+</html>
