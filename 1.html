@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบประเมินความพึงพอใจผู้ป่วยและญาติ - EMS โรงพยาบาลเจาะไอร้อง</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ems: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .rating-btn input[type="radio"]:checked + label {
+            background-color: #16a34a;
+            color: #ffffff;
+            border-color: #16a34a;
+            box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-10 flex flex-col items-center">
+
+    <!-- Header Banner -->
+    <header class="w-full bg-slate-900 text-white shadow-md sticky top-0 z-30 border-b-4 border-emerald-500">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-xl shadow">
+                <i class="fa-solid fa-truck-medical"></i>
+            </div>
+            <div>
+                <h1 class="text-base font-bold leading-tight">โรงพยาบาลเจาะไอร้อง</h1>
+                <p class="text-xs text-emerald-400">กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ (EMS)</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-2xl px-4 pt-6">
+
+        <!-- Form Header Card -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-5 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-2">
+                แบบประเมินฉบับที่ 1
+            </span>
+            <h2 class="text-lg font-bold text-slate-900 mb-1">แบบประเมินความพึงพอใจผู้ป่วยและญาติ</h2>
+            <p class="text-xs text-slate-500">เกณฑ์มาตรฐาน Requirement 1.1.7 | EMS รพ.เจาะไอร้อง</p>
+            <div class="mt-3 bg-emerald-50/70 p-3 rounded-xl border border-emerald-100 text-left text-xs text-slate-600">
+                <p class="font-medium text-emerald-900"><i class="fa-solid fa-circle-info mr-1"></i> คำชี้แจง:</p>
+                <p class="mt-0.5">โปรดประเมินตามความเป็นจริง เพื่อนำผลไปปรับปรุงบริการกู้ชีพให้ดียิ่งขึ้น (5 = มากที่สุด, 1 = น้อยที่สุด)</p>
+            </div>
+        </div>
+
+        <!-- Survey Form -->
+        <form id="surveyForm" onsubmit="event.preventDefault(); submitForm();" class="space-y-5">
+
+            <!-- Section 1: Demographic -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <h3 class="text-sm font-bold text-slate-800 border-l-4 border-emerald-600 pl-2.5 flex items-center justify-between">
+                    <span>ส่วนที่ 1: ข้อมูลทั่วไป</span>
+                    <span class="text-rose-500 text-xs font-normal">*จำเป็น</span>
+                </h3>
+
+                <!-- Role -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">1. สถานะผู้ตอบแบบประเมิน: <span class="text-rose-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="role" value="ผู้ป่วย" class="w-4 h-4 text-emerald-600" required>
+                            <span class="ml-2 font-medium">ผู้ป่วย</span>
+                        </label>
+                        <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="role" value="ญาติ / ผู้ดูแล" class="w-4 h-4 text-emerald-600">
+                            <span class="ml-2 font-medium">ญาติ / ผู้ดูแล</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Subdistrict -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">2. พื้นที่เกิดเหตุ (ตำบล): <span class="text-rose-500">*</span></label>
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition justify-center">
+                            <input type="radio" name="subdistrict" value="จวบ" class="w-4 h-4 text-emerald-600" required>
+                            <span class="ml-1.5 font-medium">จวบ</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition justify-center">
+                            <input type="radio" name="subdistrict" value="บูกิต" class="w-4 h-4 text-emerald-600">
+                            <span class="ml-1.5 font-medium">บูกิต</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition justify-center">
+                            <input type="radio" name="subdistrict" value="มะรือโบออก" class="w-4 h-4 text-emerald-600">
+                            <span class="ml-1.5 font-medium">มะรือโบออก</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Patient Type -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">3. ประเภทผู้ป่วย: <span class="text-rose-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="patientType" value="เจ็บป่วยฉุกเฉิน" class="w-4 h-4 text-emerald-600" required>
+                            <span class="ml-2 font-medium">เจ็บป่วยฉุกเฉิน</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="patientType" value="อุบัติเหตุจราจร" class="w-4 h-4 text-emerald-600">
+                            <span class="ml-2 font-medium">อุบัติเหตุจราจร</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="patientType" value="อุบัติเหตุทั่วไป" class="w-4 h-4 text-emerald-600">
+                            <span class="ml-2 font-medium">อุบัติเหตุทั่วไป</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="patientType" value="อื่นๆ" class="w-4 h-4 text-emerald-600">
+                            <span class="ml-2 font-medium">อื่นๆ</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Ratings -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-5">
+                <h3 class="text-sm font-bold text-slate-800 border-l-4 border-emerald-600 pl-2.5 flex items-center justify-between">
+                    <span>ส่วนที่ 2: ระดับความพึงพอใจ</span>
+                    <span class="text-rose-500 text-xs font-normal">*ตอบทุกข้อ</span>
+                </h3>
+
+                <!-- Question Item Template -->
+                <script>
+                    const questions = [
+                        { id: 'q1', title: '1. ความรวดเร็วในการบริการ', desc: 'ทีมกู้ชีพ/รถพยาบาลไปถึงจุดเกิดเหตุทันเวลา และมีความรวดเร็วในการช่วยเหลือ' },
+                        { id: 'q2', title: '2. การดูแลรักษาตามมาตรฐาน', desc: 'บุคลากรมีความสุภาพ ให้เกียรติ ตรวจประเมินและให้การรักษาอย่างมืออาชีพ' },
+                        { id: 'q3', title: '3. การสื่อสารและให้ข้อมูล', desc: 'มีการอธิบายข้อมูล อาการ และขั้นตอนการช่วยเหลือให้ผู้ป่วย/ญาติเข้าใจ ลดความกังวล' },
+                        { id: 'q4', title: '4. ความพร้อมของยานพาหนะ', desc: 'รถพยาบาลมีความสะอาด เครื่องมือทางการแพทย์มีความพร้อมใช้งานและทันสมัย' },
+                        { id: 'q5', title: '5. ภาพรวมการให้บริการ', desc: 'ความพึงพอใจในภาพรวมต่อการให้บริการกู้ชีพ/การแพทย์ฉุกเฉิน รพ.เจาะไอร้อง' }
+                    ];
+                </script>
+
+                <div id="questionsContainer" class="space-y-4">
+                    <!-- Dynamic rendering via JS -->
+                </div>
+            </div>
+
+            <!-- Section 3: Suggestions -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-2">
+                <h3 class="text-sm font-bold text-slate-800 border-l-4 border-emerald-600 pl-2.5">
+                    ส่วนที่ 3: ข้อเสนอแนะเพิ่มเติม
+                </h3>
+                <textarea id="comment" rows="3" class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="แสดงความคิดเห็น ข้อเสนอแนะ หรือคำชมเชยแก่ทีมกู้ชีพ..."></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center space-x-2 text-sm">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>ส่งแบบประเมินความพึงพอใจ</span>
+            </button>
+        </form>
+    </main>
+
+    <!-- Thank You / Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-bounce-short">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">บันทึกข้อมูลเรียบร้อยแล้ว</h3>
+            <p class="text-xs text-slate-500 mt-1">ขอบพระคุณสำหรับข้อมูลการประเมินและการเสนอแนะ ทีมงาน EMS โรงพยาบาลเจาะไอร้องจะนำไปพัฒนาปรับปรุงบริการให้ดียิ่งขึ้นครับ</p>
+            <button onclick="window.location.reload()" class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition">
+                เสร็จสิ้น / ทำแบบประเมินใหม่
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZJLtJh9e5iSZFa43FErlPNtGZjjQi-apXyCxEzHMoYeBVQq9B-BAuZh0mfUODfaBM1w/exec";
+
+        // Render Rating Questions
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('questionsContainer');
+            questions.forEach((q) => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2";
+                item.innerHTML = `
+                    <div>
+                        <p class="text-xs font-bold text-slate-800">${q.title}</p>
+                        <p class="text-[11px] text-slate-500 leading-tight">${q.desc}</p>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1.5 pt-1 text-center text-xs">
+                        ${[5, 4, 3, 2, 1].map(score => `
+                            <div class="rating-btn">
+                                <input type="radio" id="${q.id}_${score}" name="${q.id}" value="${score}" class="hidden" required>
+                                <label for="${q.id}_${score}" class="block py-2 rounded-lg border border-slate-300 bg-white cursor-pointer font-bold transition hover:bg-emerald-50">
+                                    ${score}
+                                    <span class="block text-[9px] font-normal text-slate-400">
+                                        ${score === 5 ? 'มากสุด' : score === 1 ? 'น้อยสุด' : ''}
+                                    </span>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        });
+
+        // Submit Logic
+        async function submitForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังบันทึกข้อมูล...</span>`;
+
+            const role = document.querySelector('input[name="role"]:checked')?.value || '-';
+            const subdistrict = document.querySelector('input[name="subdistrict"]:checked')?.value || '-';
+            const patientType = document.querySelector('input[name="patientType"]:checked')?.value || '-';
+            const comment = document.getElementById('comment').value.trim() || '-';
+
+            const scores = [];
+            for (let i = 1; i <= 5; i++) {
+                const val = document.querySelector(`input[name="q${i}"]:checked`)?.value;
+                if (val) scores.push(parseInt(val));
+            }
+
+            if (scores.length < 5) {
+                alert('กรุณาเลือกคะแนนประเมินให้ครบทั้ง 5 ข้อ');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i><span>ส่งแบบประเมินความพึงพอใจ</span>`;
+                return;
+            }
+
+            const avg = (scores.reduce((a, b) => a + b, 0) / 5).toFixed(2);
+            const nowFormatted = new Date().toLocaleString('th-TH');
+
+            const payload = {
+                formType: 'f1',
+                date: nowFormatted,
+                role: role,
+                subdistrict: subdistrict,
+                patientType: patientType,
+                scores: scores,
+                avg: avg,
+                comment: comment
+            };
+
+            // Save locally
+            try {
+                const storageKey = 'ems_f1_responses';
+                const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                existing.push(payload);
+                localStorage.setItem(storageKey, JSON.stringify(existing));
+            } catch(e) { console.error('LocalStorage error', e); }
+
+            // Post to Google Apps Script Web App
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+            } catch(e) { console.error('Sync error', e); }
+
+            // Show success
+            document.getElementById('successModal').classList.remove('hidden');
+            document.getElementById('successModal').classList.add('flex');
+        }
+    </script>
+</body>
+</html>

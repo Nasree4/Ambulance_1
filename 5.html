@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบฟอร์มแจ้งข้อร้องเรียน / ข้อเสนอแนะปรับปรุงบริการ - EMS โรงพยาบาลเจาะไอร้อง</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ems: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .category-radio input[type="radio"]:checked + label {
+            background-color: #fff1f2;
+            border-color: #e11d48;
+            color: #be123c;
+            box-shadow: 0 2px 4px rgba(225, 29, 72, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-10 flex flex-col items-center">
+
+    <header class="w-full bg-slate-900 text-white shadow-md sticky top-0 z-30 border-b-4 border-rose-600">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-rose-600 flex items-center justify-center text-white font-bold text-xl shadow">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div>
+                <h1 class="text-base font-bold leading-tight">โรงพยาบาลเจาะไอร้อง</h1>
+                <p class="text-xs text-rose-300">ศูนย์รับเรื่องร้องเรียน / ข้อเสนอแนะบริการ EMS</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-2xl px-4 pt-6">
+
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-5 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold mb-2">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> ช่องทางรับข้อร้องเรียน
+            </span>
+            <h2 class="text-lg font-bold text-slate-900 mb-1">แบบฟอร์มแจ้งข้อร้องเรียน / ข้อเสนอแนะปรับปรุงบริการ EMS</h2>
+            <p class="text-xs text-slate-500">กลุ่มงานการแพทย์ฉุกเฉินและส่งต่อ โรงพยาบาลเจาะไอร้อง</p>
+            <div class="mt-3 bg-rose-50/70 p-3 rounded-xl border border-rose-100 text-left text-xs text-slate-600">
+                <p class="font-medium text-rose-900"><i class="fa-solid fa-circle-info mr-1"></i> คำชี้แจง:</p>
+                <p class="mt-0.5">ข้อมูลของท่านจะถูกเก็บไว้เป็นความลับ และนำไปปรับปรุงคุณภาพบริการกู้ชีพและการรับส่งต่อผู้ป่วยให้มีประสิทธิภาพสูงสุด</p>
+            </div>
+        </div>
+
+        <form id="complaintForm" onsubmit="event.preventDefault(); submitForm();" class="space-y-5">
+
+            <!-- Section 1: Reporter Info -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <h3 class="text-sm font-bold text-slate-800 border-l-4 border-rose-600 pl-2.5 flex items-center justify-between">
+                    <span>ส่วนที่ 1: ข้อมูลผู้แจ้งและวันเวลาเกิดเหตุ</span>
+                    <span class="text-rose-500 text-xs font-normal">*จำเป็น</span>
+                </h3>
+
+                <!-- Incident Date/Time -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">วันที่และเวลาที่เกิดเหตุ / รับเรื่อง: <span class="text-rose-500">*</span></label>
+                    <input type="datetime-local" id="c_date" required class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none bg-slate-50">
+                </div>
+
+                <!-- Reporter Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อ-สกุล ผู้แจ้ง / หน่วยงาน:</label>
+                    <input type="text" id="c_reporter" placeholder="ระบุชื่อ-สกุล หรือพิมพ์ 'ไม่ประสงค์ออกนาม'" class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ติดต่อกลับ:</label>
+                    <input type="tel" id="c_phone" placeholder="08X-XXX-XXXX" class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                </div>
+
+                <!-- Reporter Type -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">ประเภทผู้ร้องเรียน / ผู้แจ้ง: <span class="text-rose-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="c_type" value="ผู้ป่วย/ญาติ" checked class="w-4 h-4 text-rose-600">
+                            <span class="ml-2 font-medium">ผู้ป่วย / ญาติ</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="c_type" value="เครือข่าย EMS/รพ.สต." class="w-4 h-4 text-rose-600">
+                            <span class="ml-2 font-medium">เครือข่าย EMS / รพ.สต.</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="c_type" value="บุคลากรภายใน" class="w-4 h-4 text-rose-600">
+                            <span class="ml-2 font-medium">บุคลากรภายใน</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition">
+                            <input type="radio" name="c_type" value="หน่วยส่งต่อ" class="w-4 h-4 text-rose-600">
+                            <span class="ml-2 font-medium">โรงพยาบาลรับส่งต่อ</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:bg-slate-100 transition col-span-2">
+                            <input type="radio" name="c_type" value="ประชาชนทั่วไป" class="w-4 h-4 text-rose-600">
+                            <span class="ml-2 font-medium">ประชาชนทั่วไป</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Category & Details -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                <h3 class="text-sm font-bold text-slate-800 border-l-4 border-rose-600 pl-2.5 flex items-center justify-between">
+                    <span>ส่วนที่ 2: รายละเอียดข้อร้องเรียน</span>
+                    <span class="text-rose-500 text-xs font-normal">*จำเป็น</span>
+                </h3>
+
+                <!-- Complaint Category -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">หมวดหมู่ข้อร้องเรียน / ประเด็นที่ต้องการให้ปรับปรุง: <span class="text-rose-500">*</span></label>
+                    <div class="space-y-2 text-xs">
+                        <div class="category-radio">
+                            <input type="radio" id="cat1" name="c_category" value="พฤติกรรมบริการ / สื่อสาร" checked class="hidden">
+                            <label for="cat1" class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer font-medium transition">
+                                <i class="fa-solid fa-comments text-rose-500 w-6 text-center text-sm mr-2"></i>
+                                <span>1. พฤติกรรมบริการ / พฤติกรรมบริการและการสื่อสาร</span>
+                            </label>
+                        </div>
+                        <div class="category-radio">
+                            <input type="radio" id="cat2" name="c_category" value="ความรวดเร็ว / ระยะเวลาตอบสนอง" class="hidden">
+                            <label for="cat2" class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer font-medium transition">
+                                <i class="fa-solid fa-gauge-high text-rose-500 w-6 text-center text-sm mr-2"></i>
+                                <span>2. ความรวดเร็ว / ล่าช้าในการออกรับผู้ป่วย</span>
+                            </label>
+                        </div>
+                        <div class="category-radio">
+                            <input type="radio" id="cat3" name="c_category" value="คุณภาพการรักษา / CPG" class="hidden">
+                            <label for="cat3" class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer font-medium transition">
+                                <i class="fa-solid fa-kit-medical text-rose-500 w-6 text-center text-sm mr-2"></i>
+                                <span>3. คุณภาพการดูแลรักษาเบื้องต้น</span>
+                            </label>
+                        </div>
+                        <div class="category-radio">
+                            <input type="radio" id="cat4" name="c_category" value="ความพร้อมอุปกรณ์ / รถพยาบาล" class="hidden">
+                            <label for="cat4" class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer font-medium transition">
+                                <i class="fa-solid fa-truck-medical text-rose-500 w-6 text-center text-sm mr-2"></i>
+                                <span>4. ความพร้อมของอุปกรณ์ / ยานพาหนะ</span>
+                            </label>
+                        </div>
+                        <div class="category-radio">
+                            <input type="radio" id="cat5" name="c_category" value="การประสานงาน / ส่งต่อ" class="hidden">
+                            <label for="cat5" class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer font-medium transition">
+                                <i class="fa-solid fa-network-wired text-rose-500 w-6 text-center text-sm mr-2"></i>
+                                <span>5. การประสานงานเครือข่าย / จุดส่งต่อ</span>
+                            </label>
+                        </div>
+                        <div class="category-radio">
+                            <input type="radio" id="cat6" name="c_category" value="อื่นๆ" class="hidden">
+                            <label for="cat6" class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer font-medium transition">
+                                <i class="fa-solid fa-circle-ellipsis text-rose-500 w-6 text-center text-sm mr-2"></i>
+                                <span>6. อื่นๆ</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incident Details -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">รายละเอียดข้อร้องเรียน / เหตุการณ์ที่เกิดขึ้น: <span class="text-rose-500">*</span></label>
+                    <textarea id="c_details" required rows="4" class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="โปรดระบุรายละเอียดเหตุการณ์ สถานที่ เกิดขึ้นเมื่อไหร่ อย่างไร..."></textarea>
+                </div>
+
+                <!-- Initial Action / Expectation -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">แนวทางแก้ไขที่เสนอแนะ / ความต้องการของผู้แจ้ง:</label>
+                    <textarea id="c_action" rows="2" class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="ข้อเสนอแนะสำหรับการปรับปรุงแก้ไข หรือสิ่งที่ต้องการให้โรงพยาบาลดำเนินการ..."></textarea>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center space-x-2 text-sm">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>ส่งข้อร้องเรียน / ข้อเสนอแนะ</span>
+            </button>
+        </form>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">บันทึกข้อร้องเรียนเรียบร้อยแล้ว</h3>
+            <p class="text-xs text-slate-500 mt-1">รหัสรับเรื่อง: <strong id="modalComplaintId" class="text-rose-600 font-mono text-sm">CMP-XXXX</strong></p>
+            <p class="text-xs text-slate-500 mt-2">ขอบคุณสำหรับข้อมูลข้อร้องเรียน/ข้อเสนอแนะ ทีมงาน EMS โรงพยาบาลเจาะไอร้องจะดำเนินการ ตรวจสอบและแก้ไขปรับปรุงบริการโดยเร่งด่วนครับ</p>
+            <button onclick="window.location.reload()" class="mt-5 w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2.5 rounded-xl transition">
+                เสร็จสิ้น / แจ้งเรื่องใหม่
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZJLtJh9e5iSZFa43FErlPNtGZjjQi-apXyCxEzHMoYeBVQq9B-BAuZh0mfUODfaBM1w/exec";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default datetime to now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const dateInput = document.getElementById('c_date');
+            if (dateInput) dateInput.value = now.toISOString().slice(0, 16);
+        });
+
+        async function submitForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังบันทึกข้อมูล...</span>`;
+
+            const date = document.getElementById('c_date').value;
+            const reporter = document.getElementById('c_reporter').value.trim() || 'ไม่ประสงค์ออกนาม';
+            const phone = document.getElementById('c_phone').value.trim() || '-';
+            const type = document.querySelector('input[name="c_type"]:checked')?.value || 'ผู้ป่วย/ญาติ';
+            const category = document.querySelector('input[name="c_category"]:checked')?.value || 'พฤติกรรมบริการ / สื่อสาร';
+            const details = document.getElementById('c_details').value.trim();
+            const action = document.getElementById('c_action').value.trim() || '-';
+
+            if (!details) {
+                const errorMsg = document.createElement('p');
+                errorMsg.className = "text-xs text-rose-600 mt-1 font-semibold";
+                errorMsg.innerText = "กรุณากรอกรายละเอียดข้อร้องเรียน";
+                document.getElementById('c_details').parentNode.appendChild(errorMsg);
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i><span>ส่งข้อร้องเรียน / ข้อเสนอแนะ</span>`;
+                return;
+            }
+
+            const complaintId = 'CMP-' + String(Date.now()).slice(-4);
+
+            const payload = {
+                formType: 'complaint',
+                id: complaintId,
+                date: date,
+                reporter: reporter,
+                phone: phone,
+                type: type,
+                category: category,
+                details: details,
+                action: action,
+                status: 'รับเรื่องแล้ว'
+            };
+
+            // Save locally into unified ems_satisfaction_data_v1 storage
+            try {
+                const storageKey = 'ems_satisfaction_data_v1';
+                const existing = JSON.parse(localStorage.getItem(storageKey) || '{"f1":[],"f2":[],"f3":[],"f4":[],"complaints":[]}');
+                if (!existing.complaints) existing.complaints = [];
+                existing.complaints.unshift(payload);
+                localStorage.setItem(storageKey, JSON.stringify(existing));
+            } catch(e) { 
+                console.error('LocalStorage error', e); 
+            }
+
+            // Post to Google Apps Script Web App
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+            } catch(e) { 
+                console.error('Sync error', e); 
+            }
+
+            // Show success modal
+            document.getElementById('modalComplaintId').innerText = complaintId;
+            document.getElementById('successModal').classList.remove('hidden');
+            document.getElementById('successModal').classList.add('flex');
+        }
+    </script>
+</body>
+</html>
