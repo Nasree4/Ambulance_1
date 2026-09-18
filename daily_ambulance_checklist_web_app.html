@@ -457,36 +457,15 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs & Application Logic -->
+    <!-- Supabase SDKs & Application Logic -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            signInAnonymously, 
-            signInWithCustomToken, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            onSnapshot 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-        // Firebase Configuration
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ambulance-hub-app';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyCtcZnLhLVyUp8yYq6rR9lqs4DT3Xmo1eg",
-            authDomain: "gen-lang-client-0196543437.firebaseapp.com",
-            projectId: "gen-lang-client-0196543437",
-            storageBucket: "gen-lang-client-0196543437.firebasestorage.app",
-            messagingSenderId: "359061100335",
-            appId: "1:359061100335:web:4cced2292fbafac3cdf3da"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        // Supabase Configuration
+        // กรุณาแทนที่ด้วย URL และ Anon Key ของโปรเจกต์ Supabase ของคุณ
+        const supabaseUrl = "https://jtzvekmckceacydjonhu.supabase.co";
+        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0enZla21ja2NlYWN5ZGpvbmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NDcwNDMsImV4cCI6MjEwNTMyMzA0M30.M0BXl4KCPdfErSWS3NM9UHehJbT0IBz11WE5dAnDtcI";
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
         let currentUser = null;
         let cloudHistory = [];
@@ -554,45 +533,40 @@
 
         async function initAuth() {
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                const { data, error } = await supabase.auth.signInAnonymously();
+                if (error) throw error;
+                currentUser = data.user;
+                subscribeToInspections();
             } catch (e) {
-                try {
-                    await signInAnonymously(auth);
-                } catch (anonErr) {
-                    console.error("Auth failed:", anonErr);
-                }
+                console.error("Auth failed:", e);
             }
         }
 
         function subscribeToInspections() {
             if (!currentUser) return;
-            const inspectionsCol = collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
-            onSnapshot(inspectionsCol, (snapshot) => {
-                const logs = [];
-                snapshot.forEach(docSnap => {
-                    logs.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                // Sort in memory by createdAt descending
-                logs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                cloudHistory = logs;
-                localStorage.setItem('ambulance_inspection_history', JSON.stringify(logs));
-                loadInspectionHistory();
-            }, (err) => {
-                console.warn("Real-time sync snapshot note:", err);
-                loadInspectionHistory();
+            
+            // Initial fetch
+            supabase.from('inspections').select('*').order('createdAt', { ascending: false }).then(({ data, error }) => {
+                if (!error && data) {
+                    cloudHistory = data;
+                    localStorage.setItem('ambulance_inspection_history', JSON.stringify(data));
+                    loadInspectionHistory();
+                }
             });
-        }
 
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                subscribeToInspections();
-            }
-        });
+            // Subscribe to real-time changes
+            supabase.channel('public:inspections')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'inspections' }, payload => {
+                    supabase.from('inspections').select('*').order('createdAt', { ascending: false }).then(({ data, error }) => {
+                        if (!error && data) {
+                            cloudHistory = data;
+                            localStorage.setItem('ambulance_inspection_history', JSON.stringify(data));
+                            loadInspectionHistory();
+                        }
+                    });
+                })
+                .subscribe();
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             initDateTime();
@@ -1088,16 +1062,16 @@
                 createdAt: Date.now()
             };
 
-            // 1. Save to Cloud Firestore
+            // 1. Save to Supabase
             if (currentUser) {
                 try {
-                    const inspectionsCol = collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
-                    await addDoc(inspectionsCol, {
+                    const { error } = await supabase.from('inspections').insert([{
                         ...payload,
-                        userId: currentUser.uid
-                    });
-                } catch (fsErr) {
-                    console.error("Firestore submission error:", fsErr);
+                        userId: currentUser.id
+                    }]);
+                    if (error) console.error("Supabase submission error:", error);
+                } catch (sbErr) {
+                    console.error("Supabase submission error:", sbErr);
                 }
             }
 
@@ -1107,7 +1081,7 @@
             // 3. Send Telegram Notification
             sendTelegramMessage(payload);
 
-            showAlertModal("ส่งรายงานสำเร็จ!", `บันทึกข้อมูลขึ้น Cloud Firestore และส่งแจ้งเตือน Telegram เรียบร้อยแล้ว\nสถานะ: ${finalStatusText}`);
+            showAlertModal("ส่งรายงานสำเร็จ!", `บันทึกข้อมูลขึ้น Supabase และส่งแจ้งเตือน Telegram เรียบร้อยแล้ว\nสถานะ: ${finalStatusText}`);
         }
 
         async function sendTelegramMessage(data) {
