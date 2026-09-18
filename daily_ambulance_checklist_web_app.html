@@ -2,43 +2,64 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Daily Ambulance Checklist (BE-WAGON & Clinical)</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- FontAwesome & Phosphor Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Google Fonts: Sukhumvit / Kanit / Sarabun / Prompt -->
+    <!-- Google Fonts: Prompt & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        periwinkle: {
-                            50: '#F0F3FF',
-                            100: '#E0E7FF',
+                        brand: {
+                            50: '#F0F4FF',
+                            100: '#DDE6FF',
+                            200: '#C2D3FF',
                             500: '#4F75FF',
-                            600: '#3B59FF',
-                            700: '#2841E0'
+                            600: '#3D62F5',
+                            700: '#2A4FE0'
                         },
                         sage: {
-                            50: '#F2F8F1',
-                            100: '#E1EFE0',
-                            500: '#60A355',
-                            600: '#4D8A43',
-                            700: '#3B6E32'
+                            50: '#F0FDF4',
+                            100: '#DCFCE7',
+                            500: '#22C55E',
+                            600: '#16A34A',
+                            700: '#15803D'
                         },
-                        pastelBg: '#F5F7FC'
+                        coral: {
+                            50: '#FFF1F2',
+                            100: '#FFE4E6',
+                            500: '#F43F5E',
+                            600: '#E11D48'
+                        },
+                        amberTone: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            500: '#F59E0B',
+                            600: '#D97706'
+                        },
+                        surface: '#FFFFFF',
+                        bgWash: '#F8FAFC'
                     },
                     fontFamily: {
-                        sans: ['Prompt', 'sans-serif']
+                        sans: ['Prompt', 'Plus Jakarta Sans', 'sans-serif'],
+                        num: ['Plus Jakarta Sans', 'Prompt', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'soft-sm': '0 2px 8px -2px rgba(15, 23, 42, 0.04), 0 1px 4px -1px rgba(15, 23, 42, 0.02)',
+                        'soft-md': '0 12px 32px -4px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03)',
+                        'soft-lg': '0 20px 40px -8px rgba(15, 23, 42, 0.08), 0 6px 16px -4px rgba(15, 23, 42, 0.04)',
+                        'floating': '0 24px 48px -12px rgba(79, 117, 255, 0.28)'
                     }
                 }
             }
@@ -46,430 +67,541 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Prompt', sans-serif;
-            background-color: #F5F7FC;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --app-bg: #F8FAFC;
         }
 
-        /* Smooth tab transition */
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: radial-gradient(circle at 10% 0%, rgba(79, 117, 255, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 20%, rgba(34, 197, 94, 0.04) 0%, transparent 40%),
+                        #F8FAFC;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        /* Smooth Tab Switch */
         .tab-content {
             display: none;
         }
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.25s ease-in-out;
+            animation: modernFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+        @keyframes modernFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Selected Vehicle Pill Card */
+        .plate-chip.selected {
+            border-color: #4F75FF !important;
+            background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%) !important;
+            box-shadow: 0 10px 25px -5px rgba(79, 117, 255, 0.22);
+        }
+        .plate-chip.selected .plate-indicator {
+            background-color: #4F75FF !important;
+            color: #FFFFFF !important;
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #F1F5F9;
+            width: 4px;
+            height: 4px;
         }
         ::-webkit-scrollbar-thumb {
             background: #CBD5E1;
             border-radius: 9999px;
         }
 
-        /* Active Plate Card Styling */
-        .plate-card.selected {
-            border-color: #4F75FF !important;
-            background-color: #F0F3FF !important;
-            box-shadow: 0 4px 12px rgba(79, 117, 255, 0.18);
+        /* Hide scrollbars for clean tab rails */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        /* Print styles */
         @media print {
             .no-print { display: none !important; }
-            .print-only { display: block !important; }
             body { background: white !important; }
-            .card-shadow { box-shadow: none !important; border: 1px solid #E2E8F0 !important; }
         }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen pb-28 md:pb-12">
+<body class="text-slate-800 antialiased pb-32 md:pb-16 selection:bg-brand-100 selection:text-brand-700">
 
-    <!-- Top Navigation Header -->
-    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 shadow-sm no-print">
+    <header class="glass-header sticky top-0 z-40 no-print transition-all duration-300">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-periwinkle-500 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-periwinkle-500/20">
-                    <i class="fa-solid font-bold fa-truck-medical text-lg"></i>
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/25 ring-4 ring-brand-50">
+                    <i class="fa-solid fa-truck-medical text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-bold text-slate-800 leading-tight">Ambulance Check</h1>
-                    <p class="text-xs text-slate-500 font-medium">ตรวจเช็กรถพยาบาล (BE-WAGON)</p>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none">Ambulance Hub</h1>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-50 text-brand-600 border border-brand-200/60">BE-WAGON</span>
+                    </div>
+                    <p class="text-[12px] text-slate-500 font-medium mt-0.5 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+                        ระบบตรวจเช็กรถพยาบาลและอุปกรณ์ประจำวัน
+                    </p>
                 </div>
             </div>
 
-            <!-- Top Actions -->
+            <!-- Header Quick Actions -->
             <div class="flex items-center space-x-2">
-                <button onclick="autoFillDemoData()" title="สุ่มข้อมูลตัวอย่าง" class="p-2 rounded-xl text-slate-500 hover:text-periwinkle-600 hover:bg-periwinkle-50 transition active:scale-95 text-xs font-medium flex items-center gap-1.5 border border-slate-200/80">
-                    <i class="fa-solid fa-wand-magic-sparkles text-periwinkle-500"></i>
+                <button onclick="autoFillDemoData()" title="สุ่มข้อมูลตัวอย่าง" class="h-9 px-3 rounded-xl text-slate-600 hover:text-brand-600 hover:bg-brand-50 border border-slate-200/80 bg-white shadow-soft-sm transition-all duration-150 active:scale-95 text-xs font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-brand-500"></i>
                     <span class="hidden sm:inline">ตัวอย่าง</span>
                 </button>
-                <button onclick="openGSheetModal()" title="ตั้งค่า Google Sheet" class="p-2 rounded-xl text-slate-500 hover:text-green-600 hover:bg-green-50 transition active:scale-95 text-xs font-medium flex items-center gap-1.5 border border-slate-200/80">
-                    <i class="fa-solid fa-file-excel text-green-600"></i>
-                    <span class="hidden sm:inline">Sheet URL</span>
-                </button>
-                <button onclick="window.print()" title="พิมพ์ / PDF" class="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition active:scale-95 text-xs font-medium border border-slate-200/80">
+                <button onclick="window.print()" title="พิมพ์หรือส่งออก PDF" class="h-9 w-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80 bg-white shadow-soft-sm transition-all duration-150 active:scale-95 text-xs flex items-center justify-center">
                     <i class="fa-solid fa-print"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-3 sm:px-4 pt-4 space-y-4">
+    <main class="max-w-4xl mx-auto px-3.5 sm:px-5 pt-4 space-y-4">
 
-        <!-- Tab Switcher -->
-        <div class="bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between no-print gap-1">
-            <button onclick="switchTab('tab-vehicle')" id="nav-tab-vehicle" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 bg-periwinkle-500 text-white shadow-sm">
-                <i class="fa-solid fa-van-shuttle"></i>
+        <!-- Modern Segmented Pill Tabs -->
+        <div class="p-1.5 bg-slate-200/70 backdrop-blur-md rounded-2xl flex items-center gap-1 no-print shadow-inner border border-slate-200/50">
+            <button onclick="switchTab('tab-vehicle')" id="nav-tab-vehicle" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 bg-white text-brand-600 shadow-soft-sm">
+                <i class="fa-solid fa-van-shuttle text-xs sm:text-sm"></i>
                 <span>1. ตัวรถ (BE-WAGON)</span>
             </button>
-            <button onclick="switchTab('tab-clinical')" id="nav-tab-clinical" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-50">
-                <i class="fa-solid fa-bed-pulse"></i>
+            <button onclick="switchTab('tab-clinical')" id="nav-tab-clinical" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+                <i class="fa-solid fa-bed-pulse text-xs sm:text-sm"></i>
                 <span>2. ห้องพยาบาล</span>
             </button>
-            <button onclick="switchTab('tab-history')" id="nav-tab-history" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-50">
-                <i class="fa-solid fa-clock-rotate-left"></i>
+            <button onclick="switchTab('tab-history')" id="nav-tab-history" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+                <i class="fa-solid fa-clock-rotate-left text-xs sm:text-sm"></i>
                 <span>3. ประวัติย้อนหลัง</span>
             </button>
         </div>
 
-        <!-- Overall Status Banner -->
-        <div id="overallStatusBanner" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 transition-all duration-300">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center space-x-2.5">
-                    <span id="statusBadgeIcon" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                    </span>
+        <!-- Cockpit Status & Readiness Card -->
+        <div id="overallStatusBanner" class="glass-panel rounded-3xl p-4 sm:p-5 shadow-soft-md border border-slate-200/70 transition-all duration-300">
+            <div class="flex items-center justify-between gap-3 mb-3.5">
+                <div class="flex items-center space-x-3.5">
+                    <div id="statusBadgeIcon" class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 flex items-center justify-center text-lg shadow-soft-sm">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
                     <div>
-                        <h3 id="statusTitle" class="text-sm font-bold text-slate-800">กำลังประมวลผลความพร้อม...</h3>
-                        <p id="statusSubtitle" class="text-xs text-slate-500">กรุณาทำรายการตรวจเช็กให้ครบถ้วน</p>
+                        <div class="flex items-center gap-2">
+                            <h3 id="statusTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-tight">กำลังตรวจสอบความพร้อม...</h3>
+                        </div>
+                        <p id="statusSubtitle" class="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">ตรวจเช็กให้ครบทั้ง 21 รายการก่อนเริ่มออกปฏิบัติการ</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <span id="progressPercent" class="text-lg font-bold text-periwinkle-600">0%</span>
-                    <p id="progressCount" class="text-[11px] text-slate-400">0/21 ข้อ</p>
+
+                <!-- Circular / Numeric Progress Badge -->
+                <div class="text-right shrink-0 bg-slate-50/80 px-3 py-2 rounded-2xl border border-slate-200/60">
+                    <span id="progressPercent" class="text-xl sm:text-2xl font-extrabold text-brand-600 font-num tracking-tight">0%</span>
+                    <p id="progressCount" class="text-[11px] font-semibold text-slate-400">0 จาก 21 ข้อ</p>
                 </div>
             </div>
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-periwinkle-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+
+            <!-- High Precision Progress Bar -->
+            <div class="w-full bg-slate-100/90 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
+                <div id="progressBar" class="bg-gradient-to-r from-brand-500 to-indigo-600 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%"></div>
             </div>
         </div>
 
-        <!-- Vehicle & Operator Info Card -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-id-card text-periwinkle-500"></i>
-                    <span>ข้อมูลการรับเวร / ข้อมูลรถ</span>
-                </h2>
-                <span id="liveClock" class="text-xs font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
-                    00:00:00
-                </span>
+        <!-- Vehicle Metadata & Dispatcher Card -->
+        <div class="glass-panel rounded-3xl p-4 sm:p-5 shadow-soft-md border border-slate-200/70 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-car-side"></i>
+                    </span>
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">ข้อมูลรถและผลัดการปฏิบัติงาน</h2>
+                        <p class="text-[11px] text-slate-500">เลือกคันรถที่ต้องตรวจและบันทึกผู้รับเวร</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/60 text-xs font-semibold text-slate-600">
+                    <i class="fa-regular fa-clock text-brand-500"></i>
+                    <span id="liveClock" class="font-num">00:00:00</span>
+                </div>
             </div>
 
-            <!-- Vehicle Selection Cards (2x2 Grid) -->
+            <!-- Vehicle Quick Selection Cards (2x2 Modern Grid) -->
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-2">
-                    เลือกรถพยาบาล <span class="text-rose-500">*</span>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                    เลือกรถพยาบาลประจำเวร <span class="text-rose-500">*</span>
                 </label>
-                <div class="grid grid-cols-2 gap-2.5">
-                    <button type="button" onclick="selectPlate('คันที่ 1 (รถ Refer) รถส่งต่อผู้ป่วยวิกฤต')" id="plate-btn-1" class="plate-card border-2 border-slate-200/80 bg-white p-3 rounded-xl text-left transition hover:border-periwinkle-300 flex flex-col justify-between h-full">
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
+                    <!-- Car 1 -->
+                    <button type="button" onclick="selectPlate('คันที่ 1 (รถ Refer) รถส่งต่อผู้ป่วยวิกฤต')" id="plate-btn-1" class="plate-chip group relative border-2 border-slate-200/80 bg-white p-3 sm:p-3.5 rounded-2xl text-left transition-all duration-200 hover:border-brand-300 hover:shadow-soft-sm active:scale-[0.98] flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-slate-800">คันที่ 1</span>
-                                <span class="text-[10px] bg-rose-50 text-rose-600 font-semibold px-1.5 py-0.5 rounded">Refer</span>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-sm sm:text-base text-slate-900 group-hover:text-brand-600 transition-colors">คันที่ 1</span>
+                                <span class="plate-indicator text-[10px] bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-lg border border-rose-200/60">Refer</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-tight">รถส่งต่อผู้ป่วยวิกฤต</p>
+                            <p class="text-xs text-slate-500 line-clamp-1">รถส่งต่อผู้ป่วยวิกฤต</p>
                         </div>
                     </button>
 
-                    <button type="button" onclick="selectPlate('คันที่ 2 (รถ EMS) รถกู้ชีพฉุกเฉินออกรับเหตุ')" id="plate-btn-2" class="plate-card border-2 border-slate-200/80 bg-white p-3 rounded-xl text-left transition hover:border-periwinkle-300 flex flex-col justify-between h-full">
+                    <!-- Car 2 -->
+                    <button type="button" onclick="selectPlate('คันที่ 2 (รถ EMS) รถกู้ชีพฉุกเฉินออกรับเหตุ')" id="plate-btn-2" class="plate-chip group relative border-2 border-slate-200/80 bg-white p-3 sm:p-3.5 rounded-2xl text-left transition-all duration-200 hover:border-brand-300 hover:shadow-soft-sm active:scale-[0.98] flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-slate-800">คันที่ 2</span>
-                                <span class="text-[10px] bg-amber-50 text-amber-600 font-semibold px-1.5 py-0.5 rounded">EMS</span>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-sm sm:text-base text-slate-900 group-hover:text-brand-600 transition-colors">คันที่ 2</span>
+                                <span class="plate-indicator text-[10px] bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-lg border border-amber-200/60">EMS</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-tight">รถกู้ชีพฉุกเฉินออกรับเหตุ</p>
+                            <p class="text-xs text-slate-500 line-clamp-1">รถกู้ชีพฉุกเฉินออกรับเหตุ</p>
                         </div>
                     </button>
 
-                    <button type="button" onclick="selectPlate('คันที่ 3 รถพยาบาลสำรอง/ทั่วไป')" id="plate-btn-3" class="plate-card border-2 border-slate-200/80 bg-white p-3 rounded-xl text-left transition hover:border-periwinkle-300 flex flex-col justify-between h-full">
+                    <!-- Car 3 -->
+                    <button type="button" onclick="selectPlate('คันที่ 3 รถพยาบาลสำรอง/ทั่วไป')" id="plate-btn-3" class="plate-chip group relative border-2 border-slate-200/80 bg-white p-3 sm:p-3.5 rounded-2xl text-left transition-all duration-200 hover:border-brand-300 hover:shadow-soft-sm active:scale-[0.98] flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-slate-800">คันที่ 3</span>
-                                <span class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded">สำรอง</span>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-sm sm:text-base text-slate-900 group-hover:text-brand-600 transition-colors">คันที่ 3</span>
+                                <span class="plate-indicator text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-lg border border-slate-200/60">สำรอง</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-tight">รถพยาบาลสำรอง/ทั่วไป</p>
+                            <p class="text-xs text-slate-500 line-clamp-1">รถสำรอง / ภารกิจทั่วไป</p>
                         </div>
                     </button>
 
-                    <button type="button" onclick="selectPlate('คันที่ 4 รถพยาบาลสำรอง/ทั่วไป')" id="plate-btn-4" class="plate-card border-2 border-slate-200/80 bg-white p-3 rounded-xl text-left transition hover:border-periwinkle-300 flex flex-col justify-between h-full">
+                    <!-- Car 4 -->
+                    <button type="button" onclick="selectPlate('คันที่ 4 รถพยาบาลสำรอง/ทั่วไป')" id="plate-btn-4" class="plate-chip group relative border-2 border-slate-200/80 bg-white p-3 sm:p-3.5 rounded-2xl text-left transition-all duration-200 hover:border-brand-300 hover:shadow-soft-sm active:scale-[0.98] flex flex-col justify-between">
                         <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-slate-800">คันที่ 4</span>
-                                <span class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded">สำรอง</span>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-sm sm:text-base text-slate-900 group-hover:text-brand-600 transition-colors">คันที่ 4</span>
+                                <span class="plate-indicator text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-lg border border-slate-200/60">สำรอง</span>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-tight">รถพยาบาลสำรอง/ทั่วไป</p>
+                            <p class="text-xs text-slate-500 line-clamp-1">รถสำรอง / ภารกิจทั่วไป</p>
                         </div>
                     </button>
                 </div>
                 <input type="hidden" id="selectedPlateValue" value="">
             </div>
 
-            <!-- Form Details Inputs -->
+            <!-- Inputs Details Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่และเวลาตรวจ</label>
-                    <input type="datetime-local" id="inputDateTime" class="w-full text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-periwinkle-500 focus:bg-white transition">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">วันที่และเวลาตรวจ</label>
+                    <div class="relative">
+                        <input type="datetime-local" id="inputDateTime" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 font-medium focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-50 transition">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">เวรปฏิบัติงาน</label>
-                    <select id="inputShift" class="w-full text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-periwinkle-500 focus:bg-white transition">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">เวรปฏิบัติงาน</label>
+                    <select id="inputShift" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 font-medium focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-50 transition appearance-none">
                         <option value="เช้า (08:00 - 16:00)">เช้า (08:00 - 16:00 น.)</option>
                         <option value="บ่าย (16:00 - 24:00)">บ่าย (16:00 - 24:00 น.)</option>
                         <option value="ดึก (24:00 - 08:00)">ดึก (24:00 - 08:00 น.)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">เลขกิโลเมตรเริ่มเวร (Odometer)</label>
-                    <input type="number" id="inputOdometer" placeholder="เช่น 124500" class="w-full text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-periwinkle-500 focus:bg-white transition">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">เลขกิโลเมตรเริ่มเวร (Odometer)</label>
+                    <input type="number" id="inputOdometer" placeholder="เช่น 124500" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 font-num focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-50 transition">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อผู้รับเวร / พนักงานขับรถ <span class="text-rose-500">*</span></label>
-                    <input type="text" id="inputDriver" placeholder="ชื่อ-นามสกุล ผู้ปฏิบัติงาน" class="w-full text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-periwinkle-500 focus:bg-white transition">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">ชื่อผู้รับเวร / พนักงานขับรถ <span class="text-rose-500">*</span></label>
+                    <input type="text" id="inputDriver" placeholder="ระบุชื่อ-นามสกุล ผู้ปฏิบัติหน้าที่" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 font-medium focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-50 transition">
                 </div>
             </div>
         </div>
 
         <!-- TAB 1: VEHICLE & BE-WAGON -->
-        <div id="tab-vehicle" class="tab-content active space-y-4">
-            <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex items-center justify-between">
+        <div id="tab-vehicle" class="tab-content active space-y-3.5">
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 shadow-soft-sm border border-slate-200/70 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-slate-800">1. ส่วนตัวรถและระบบขับขี่ (BE-WAGON)</h2>
-                    <p class="text-xs text-slate-500">18 รายการตรวจเช็กความพร้อมเชิงกล</p>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900">1. ส่วนตัวรถและระบบขับขี่ (BE-WAGON)</h2>
+                        <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 font-num">18 รายการ</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">ตรวจสอบความพร้อมทางกลไกและระบบส่งสัญญาณความปลอดภัย</p>
                 </div>
-                <button onclick="markAllPassCurrentTab('vehicle')" class="text-xs bg-sage-50 text-sage-600 hover:bg-sage-100 font-semibold px-3 py-1.5 rounded-xl border border-sage-200 transition active:scale-95 flex items-center gap-1.5">
-                    <i class="fa-solid fa-check-double"></i>
-                    <span>ปกติทั้งหมด</span>
+                <button onclick="markAllPassCurrentTab('vehicle')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-3.5 py-2 rounded-xl border border-emerald-200/80 transition-all duration-150 active:scale-95 flex items-center gap-1.5 shadow-soft-sm">
+                    <i class="fa-solid fa-check-double text-emerald-600"></i>
+                    <span class="hidden xs:inline">ปกติทั้งหมด</span>
                 </button>
             </div>
 
-            <div id="vehicleChecklistContainer" class="space-y-3">
-                <!-- Vehicle Items rendered dynamically via JS -->
-            </div>
+            <!-- Vehicle Items Render Container -->
+            <div id="vehicleChecklistContainer" class="space-y-3"></div>
         </div>
 
         <!-- TAB 2: CLINICAL / PATIENT COMPARTMENT -->
-        <div id="tab-clinical" class="tab-content space-y-4">
-            <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex items-center justify-between">
+        <div id="tab-clinical" class="tab-content space-y-3.5">
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 shadow-soft-sm border border-slate-200/70 flex items-center justify-between">
                 <div>
-                    <h2 class="text-base font-bold text-slate-800">2. ส่วนห้องพยาบาล (Patient Compartment)</h2>
-                    <p class="text-xs text-slate-500">3 รายการอุปกรณ์สำคัญหลัก</p>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900">2. ส่วนห้องพยาบาล (Patient Compartment)</h2>
+                        <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 font-num">3 รายการ</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">ตรวจสอบอุปกรณ์หลักในการรองรับและดูแลผู้ป่วย</p>
                 </div>
-                <button onclick="markAllPassCurrentTab('clinical')" class="text-xs bg-sage-50 text-sage-600 hover:bg-sage-100 font-semibold px-3 py-1.5 rounded-xl border border-sage-200 transition active:scale-95 flex items-center gap-1.5">
-                    <i class="fa-solid fa-check-double"></i>
-                    <span>ปกติทั้งหมด</span>
+                <button onclick="markAllPassCurrentTab('clinical')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-3.5 py-2 rounded-xl border border-emerald-200/80 transition-all duration-150 active:scale-95 flex items-center gap-1.5 shadow-soft-sm">
+                    <i class="fa-solid fa-check-double text-emerald-600"></i>
+                    <span class="hidden xs:inline">ปกติทั้งหมด</span>
                 </button>
             </div>
 
-            <div id="clinicalChecklistContainer" class="space-y-3">
-                <!-- Clinical Items rendered dynamically via JS -->
-            </div>
+            <!-- Clinical Items Render Container -->
+            <div id="clinicalChecklistContainer" class="space-y-3"></div>
 
-            <!-- Submit & Save Actions Bar at bottom of Tab 2 -->
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
-                <label class="block text-xs font-bold text-slate-700">หมายเหตุเพิ่มเติม / ข้อบกพร่องที่ต้องแก้ไขด่วน</label>
-                <textarea id="generalNotes" rows="2" placeholder="ระบุรายละเอียดเพิ่มเติม หรือคำขอซ่อมบำรุง..." class="w-full text-base sm:text-sm bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-periwinkle-500 focus:bg-white transition"></textarea>
+            <!-- Final Notes & Submission Section at Bottom of Tab 2 -->
+            <div class="glass-panel rounded-3xl p-4 sm:p-5 shadow-soft-md border border-slate-200/70 space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">หมายเหตุเพิ่มเติม / ข้อบกพร่องที่ต้องแจ้งฝ่ายช่าง</label>
+                <textarea id="generalNotes" rows="2" placeholder="ระบุอาการชำรุด หรือคำแนะนำการใช้งานเพิ่มเติม..." class="w-full text-sm bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-50 transition"></textarea>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
-                    <button onclick="saveToLocalStorageDraft()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition active:scale-98 flex items-center justify-center gap-2">
+                    <button onclick="saveToLocalStorageDraft()" class="w-full py-3.5 px-4 rounded-2xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60 transition active:scale-[0.98] flex items-center justify-center gap-2">
                         <i class="fa-solid fa-floppy-disk text-slate-500"></i>
-                        <span>บันทึกดราฟต์ไว้ชั่วคราว</span>
+                        <span>บันทึกแบบร่าง (Draft)</span>
                     </button>
-                    <button onclick="submitFinalReport()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-periwinkle-500 to-indigo-600 text-white hover:opacity-95 shadow-md shadow-periwinkle-500/20 transition active:scale-98 flex items-center justify-center gap-2">
+                    <button onclick="submitFinalReport()" class="w-full py-3.5 px-4 rounded-2xl font-bold text-sm bg-gradient-to-r from-brand-600 to-indigo-600 text-white hover:opacity-95 shadow-floating transition active:scale-[0.98] flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i>
-                        <span>ส่งรายงาน (Sheet & Telegram)</span>
+                        <span>ส่งรายงาน (Cloud & Telegram)</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- TAB 3: INSPECTION HISTORY -->
-        <div id="tab-history" class="tab-content space-y-4">
-            <!-- History Summary Stats -->
-            <div class="grid grid-cols-3 gap-2 sm:gap-3">
-                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                    <span class="text-xs font-semibold text-slate-400 block mb-1">การตรวจทั้งหมด</span>
-                    <span id="statTotalInspections" class="text-lg sm:text-xl font-bold text-slate-800">0</span>
+        <div id="tab-history" class="tab-content space-y-3.5">
+            <!-- Modern Analytics Strip -->
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
+                <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-slate-200/60 shadow-soft-sm text-center">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">การตรวจทั้งหมด</span>
+                    <span id="statTotalInspections" class="text-xl sm:text-2xl font-black text-slate-900 font-num">0</span>
                 </div>
-                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                    <span class="text-xs font-semibold text-slate-400 block mb-1">พร้อมใช้งาน (%)</span>
-                    <span id="statPassRate" class="text-lg sm:text-xl font-bold text-sage-600">0%</span>
+                <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-slate-200/60 shadow-soft-sm text-center">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">พร้อมใช้งาน 100%</span>
+                    <span id="statPassRate" class="text-xl sm:text-2xl font-black text-emerald-600 font-num">0%</span>
                 </div>
-                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                    <span class="text-xs font-semibold text-slate-400 block mb-1">รายการชำรุดสะสม</span>
-                    <span id="statDefectCount" class="text-lg sm:text-xl font-bold text-rose-500">0</span>
+                <div class="glass-panel p-3.5 sm:p-4 rounded-2xl border border-slate-200/60 shadow-soft-sm text-center">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">ชำรุดสะสม</span>
+                    <span id="statDefectCount" class="text-xl sm:text-2xl font-black text-rose-500 font-num">0</span>
                 </div>
             </div>
 
-            <!-- History Search & Filter -->
-            <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex flex-col sm:flex-row gap-2 justify-between">
+            <!-- History Search & Filter Panel -->
+            <div class="glass-panel rounded-2xl p-3 shadow-soft-sm border border-slate-200/60 flex flex-col sm:flex-row gap-2 justify-between">
                 <div class="relative flex-1">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="historySearchInput" onkeyup="filterHistoryLogs()" placeholder="ค้นหาตามชื่อผู้ตรวจ หรือทะเบียนรถ..." class="w-full text-xs pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-periwinkle-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="historySearchInput" onkeyup="filterHistoryLogs()" placeholder="ค้นหาชื่อผู้ตรวจ หรือทะเบียนรถ..." class="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
                 </div>
                 <div class="flex gap-2">
-                    <select id="historyFilterStatus" onchange="filterHistoryLogs()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none flex-1 sm:flex-none">
-                        <option value="ALL">สถานะทั้งหมด</option>
+                    <select id="historyFilterStatus" onchange="filterHistoryLogs()" class="text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 font-medium focus:outline-none focus:border-brand-500 flex-1 sm:flex-none">
+                        <option value="ALL">ทุกสถานะ</option>
                         <option value="OPERATIONAL">🟢 พร้อมปฏิบัติการ</option>
-                        <option value="CONDITIONAL">🟡 พร้อมแบบมีเงื่อนไข</option>
+                        <option value="CONDITIONAL">🟡 มีเงื่อนไข</option>
                         <option value="OUT_OF_SERVICE">🔴 งดปฏิบัติการ</option>
                     </select>
-                    <button onclick="fetchHistoryFromGSheet()" title="ดึงข้อมูลล่าสุดจาก Google Sheet" class="text-xs bg-periwinkle-50 text-periwinkle-600 hover:bg-periwinkle-100 font-semibold px-3 py-2 rounded-xl border border-periwinkle-200 transition active:scale-95 flex items-center gap-1.5 shrink-0">
+                    <button onclick="loadInspectionHistory()" title="รีเฟรชข้อมูลประวัติ" class="text-xs font-bold bg-brand-50 text-brand-600 hover:bg-brand-100 px-3.5 py-2 rounded-xl border border-brand-200/80 transition active:scale-95 flex items-center gap-1.5 shrink-0 shadow-soft-sm">
                         <i class="fa-solid fa-arrows-rotate"></i>
-                        <span>ดึงจาก Sheet</span>
+                        <span>รีเฟรช</span>
                     </button>
                 </div>
             </div>
 
-            <!-- History Log List Container -->
-            <div id="historyLogsList" class="space-y-3">
-                <!-- Rendered dynamically via JS -->
-            </div>
+            <!-- Logs List Container -->
+            <div id="historyLogsList" class="space-y-3"></div>
         </div>
 
     </main>
 
-    <!-- Mobile Fixed Bottom Floating Navigation & Action Bar -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-3 shadow-lg z-30 no-print">
-        <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
-            <button onclick="toggleMobileNavTab()" id="btnMobileNavToggle" class="flex-1 py-3 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-1.5">
-                <i class="fa-solid fa-arrow-right-arrow-left text-periwinkle-500"></i>
+    <!-- Modern Floating Pill Dock (Mobile & Tablet) -->
+    <div class="fixed bottom-3 left-0 right-0 px-4 z-40 no-print">
+        <div class="max-w-md mx-auto glass-panel border border-white/80 rounded-3xl p-2 shadow-2xl flex items-center justify-between gap-2 ring-1 ring-slate-900/5">
+            <button onclick="toggleMobileNavTab()" id="btnMobileNavToggle" class="flex-1 py-3 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm rounded-2xl transition active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-repeat text-brand-500"></i>
                 <span id="txtMobileNavToggle">ไปห้องพยาบาล</span>
             </button>
-            <button onclick="markAllPassCurrentTab(currentTab === 'tab-vehicle' ? 'vehicle' : 'clinical')" class="py-3 px-3 bg-sage-50 text-sage-600 font-bold text-xs sm:text-sm rounded-xl border border-sage-200 hover:bg-sage-100 transition active:scale-95 flex items-center gap-1">
-                <i class="fa-solid fa-check-double"></i>
+            <button onclick="markAllPassCurrentTab(currentTab === 'tab-vehicle' ? 'vehicle' : 'clinical')" class="py-3 px-3.5 bg-emerald-50 text-emerald-700 font-bold text-xs sm:text-sm rounded-2xl border border-emerald-200/60 hover:bg-emerald-100 transition active:scale-95 flex items-center gap-1.5">
+                <i class="fa-solid fa-check-double text-emerald-600"></i>
                 <span class="hidden xs:inline">ผ่านทั้งหมด</span>
             </button>
-            <button onclick="submitFinalReport()" class="flex-1 py-3 px-3 bg-gradient-to-r from-periwinkle-500 to-indigo-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-periwinkle-500/20 transition active:scale-95 flex items-center justify-center gap-1.5">
-                <i class="fa-solid fa-paper-plane"></i>
+            <button onclick="submitFinalReport()" class="flex-1 py-3 px-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md shadow-brand-500/25 transition active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
                 <span>ส่งรายงาน</span>
             </button>
         </div>
     </div>
 
-    <!-- Modal: Google Sheets URL Settings -->
-    <div id="modalGSheet" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-file-excel text-green-600"></i>
-                    <span>ตั้งค่า Google Sheet Web App URL</span>
-                </h3>
-                <button onclick="closeGSheetModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+    <!-- Modal: Universal Alert Dialog -->
+    <div id="modalAlert" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-3.5">
+            <div id="modalAlertIcon" class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-2xl bg-brand-50 text-brand-600 border border-brand-100">
+                <i class="fa-solid fa-circle-check"></i>
             </div>
-
-            <p class="text-xs text-slate-600 leading-relaxed">
-                ระบบถูกตั้งค่า URL ค่าเริ่มต้นเรียบร้อยแล้ว หากต้องการเปลี่ยน Web App URL สามารถวางลิงก์ที่สร้างจาก Google Apps Script ได้ที่ช่องด้านล่าง:
-            </p>
-
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Google Apps Script Web App URL</label>
-                <input type="text" id="inputGSheetUrl" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-periwinkle-500">
+                <h3 id="modalAlertTitle" class="font-bold text-lg text-slate-900">แจ้งเตือน</h3>
+                <p id="modalAlertMessage" class="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">ข้อความแจ้งเตือน</p>
             </div>
-
-            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-[11px] text-slate-500 space-y-1">
-                <p class="font-semibold text-slate-700">คำแนะนำ Google Apps Script (รองรับการดึงประวัติย้อนหลัง):</p>
-                <p class="leading-relaxed">โปรดตรวจสอบว่าใน Apps Script ของท่านมีฟังก์ชันทั้ง <code class="bg-slate-200 px-1 rounded text-slate-700">doPost(e)</code> สำหรับบันทึก และ <code class="bg-slate-200 px-1 rounded text-slate-700">doGet(e)</code> สำหรับส่งคืนประวัติ JSON กลับมายัง Web App</p>
-            </div>
-
-            <div class="flex gap-2 pt-1">
-                <button onclick="saveGSheetUrl()" class="flex-1 py-2.5 bg-periwinkle-500 text-white font-bold text-xs rounded-xl shadow-sm hover:bg-periwinkle-600">
-                    บันทึก URL
-                </button>
-                <button onclick="closeGSheetModal()" class="py-2.5 px-4 bg-slate-100 text-slate-600 font-bold text-xs rounded-xl">
-                    ยกเลิก
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: General Alert / Info -->
-    <div id="modalAlert" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 text-center space-y-3">
-            <div id="modalAlertIcon" class="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-xl bg-periwinkle-50 text-periwinkle-500">
-                <i class="fa-solid fa-circle-info"></i>
-            </div>
-            <h3 id="modalAlertTitle" class="font-bold text-base text-slate-800">แจ้งเตือน</h3>
-            <p id="modalAlertMessage" class="text-xs text-slate-600 leading-relaxed">ข้อความแจ้งเตือน</p>
-            <button onclick="closeAlertModal()" class="w-full py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl">
-                ตกลง
+            <button onclick="closeAlertModal()" class="w-full py-3 bg-slate-900 hover:bg-black text-white font-bold text-xs sm:text-sm rounded-xl transition">
+                รับทราบ
             </button>
         </div>
     </div>
 
-    <script>
-        // Default Configuration
-        const DEFAULT_GSHEET_URL = "https://script.google.com/macros/s/AKfycbxVM6z6fHPPx3CifgOMoPe1D8ISZmbVeB-cJNhbtPANjefcWuI-Fpae_Pm7hNMTncjonA/exec";
+    <!-- Firebase SDKs & Application Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ambulance-hub-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyCtcZnLhLVyUp8yYq6rR9lqs4DT3Xmo1eg",
+            authDomain: "gen-lang-client-0196543437.firebaseapp.com",
+            projectId: "gen-lang-client-0196543437",
+            storageBucket: "gen-lang-client-0196543437.firebasestorage.app",
+            messagingSenderId: "359061100335",
+            appId: "1:359061100335:web:4cced2292fbafac3cdf3da"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let cloudHistory = [];
+
         const TELEGRAM_BOT_TOKEN = "8767296623:AAGRsnjD41DKw_9fLNrH3vQNRlxihEhaDw0";
         const TELEGRAM_CHAT_ID = "-5593653503";
 
         let currentTab = 'tab-vehicle';
 
-        // Checklist Items Definition (Total 21 Items)
+        // 21 Checklist Items (18 BE-WAGON + 3 Clinical)
         const checklistItems = [
-            // Vehicle Section (#1 to #18)
-            { id: 1, section: 'vehicle', code: 'B1', title: 'น้ำมันเบรก & แป้นเบรก', isCritical: true, desc: 'ระดับน้ำมันเบรกอยู่ระหว่าง MAX-MIN / แป้นเบรกไม่จมลึก' },
-            { id: 2, section: 'vehicle', code: 'B2', title: 'ระบบเบรกมือ (Parking Brake)', isCritical: true, desc: 'ล็อกตัวรถได้สนิทบนทางลาดเอียง ระยะดึงไม่สูงเกินไป' },
-            { id: 3, section: 'vehicle', code: 'B3', title: 'ประตูสไลด์ & ประตูท้าย', isCritical: false, desc: 'เปิด-ปิดลื่นไหล ล็อกได้แน่นหนา ป้องกันการเปิดขณะนำส่ง' },
-            { id: 4, section: 'vehicle', code: 'E1', title: 'สัญญาณไฟฉุกเฉิน (Siren Light)', isCritical: true, desc: 'ไฟวับวาบหลังคา / ไฟรอบคัน (Scene Light) สว่างครบทุกดวง' },
-            { id: 5, section: 'vehicle', code: 'E2', title: 'สัญญาณเสียงไซเรน & ไมค์ PA', isCritical: true, desc: 'เสียง Wail, Yelp, Hi-Lo ดังชัดเจน ไมค์พูดออกเสียงได้' },
-            { id: 6, section: 'vehicle', code: 'E3', title: 'ระบบไฟส่องสว่างตัวรถ', isCritical: false, desc: 'ไฟหน้า (สูง-ต่ำ), ไฟเลี้ยว, ไฟเบรก, ไฟถอย, ไฟสปอตไลท์' },
-            { id: 7, section: 'vehicle', code: 'E4', title: 'ระบบแบตเตอรี่คู่ & Shoreline', isCritical: false, desc: 'สวิตช์สลับแบตเตอรี่ทำงานปกติ เสียบไฟบ้านชาร์จเข้าปกติ' },
-            { id: 8, section: 'vehicle', code: 'W1', title: 'หม้อน้ำ & ถังพักน้ำสำรอง', isCritical: false, desc: 'ระดับน้ำ Coolant อยู่ในเกณฑ์ ไม่มีคราบน้ำรั่วซึมใต้หม้อน้ำ' },
-            { id: 9, section: 'vehicle', code: 'W2', title: 'น้ำฉีดกระจก & ใบปัดน้ำฝน', isCritical: false, desc: 'น้ำเต็มถังฉีด, ยางปัดกระจกหน้า-หลังไม่ฉีกขาด ปัดสะอาด' },
-            { id: 10, section: 'vehicle', code: 'A1', title: 'ความดันลมยาง 4 ล้อ + ยางอะไหล่', isCritical: true, desc: 'แรงดันลมยางตามมาตรฐานรถพยาบาล (เติมขณะยางเย็น)' },
-            { id: 11, section: 'vehicle', code: 'A2', title: 'สภาพดอกยาง & น็อตล้อ', isCritical: true, desc: 'ดอกยางลึกไม่ต่ำกว่า 3 มม. ไม่มีรอยปูดบวม น็อตล้อแน่นครบ' },
-            { id: 12, section: 'vehicle', code: 'A3', title: 'ช่วงล่าง / ระบบถุงลม (Air Sus.)', isCritical: false, desc: 'ตัวรถไม่เอียง โช้คอัพไม่มีน้ำมันรั่ว ถุงลมปรับระดับนุ่มนวลปกติ' },
-            { id: 13, section: 'vehicle', code: 'G1', title: 'ปริมาณน้ำมันเชื้อเพลิง', isCritical: true, desc: 'ต้องไม่ต่ำกว่า 3/4 ของถัง (พร้อมออกปฏิบัติการต่อเนื่อง)' },
-            { id: 14, section: 'vehicle', code: 'O1', title: 'น้ำมันเครื่อง (Engine Oil)', isCritical: false, desc: 'วัดขณะเครื่องเย็น ระดับอยู่ระหว่าง F-L (หรือ MAX-MIN)' },
-            { id: 15, section: 'vehicle', code: 'O2', title: 'น้ำมันเกียร์ & น้ำมันพาวเวอร์', isCritical: false, desc: 'ระดับน้ำมันอยู่ในเกณฑ์ สีปกติ ไม่ดำไหม้ ไม่มีคราบรั่วหยด' },
-            { id: 16, section: 'vehicle', code: 'N1', title: 'เสียงเครื่องยนต์ & สายพาน', isCritical: false, desc: 'ไม่มีเสียงสายพานลื่น/หย่อน ไม่มีเสียงเคาะผิดปกติในห้องเครื่อง' },
-            { id: 17, section: 'vehicle', code: 'N2', title: 'แอร์ห้องขับ & แอร์ห้องพยาบาล', isCritical: false, desc: 'พัดลมแอร์ทำงานครบทุกสปีด คอมเพรสเซอร์ทำงาน เย็นเร็ว' },
-            { id: 18, section: 'vehicle', code: 'N3', title: 'ระบบ GPS & วิทยุสื่อสาร', isCritical: false, desc: 'วิทยุแม่ข่าย/พกพารับ-ส่งได้ชัดเจน ระบบ GPS สัญญาณปกติ' },
+            // Vehicle Section (B, E, W, A, G, O, N)
+            { id: 1, section: 'vehicle', letter: 'B', code: 'B1', title: 'น้ำมันเบรก & แป้นเบรก', isCritical: true, desc: 'ระดับน้ำมันเบรกอยู่ระหว่าง MAX-MIN และแป้นเบรกไม่จมลึก' },
+            { id: 2, section: 'vehicle', letter: 'B', code: 'B2', title: 'ระบบเบรกมือ (Parking Brake)', isCritical: true, desc: 'ล็อกตัวรถได้สนิทบนทางลาดเอียง ระยะดึงไม่สูงผิดปกติ' },
+            { id: 3, section: 'vehicle', letter: 'B', code: 'B3', title: 'ประตูสไลด์ & ประตูท้าย', isCritical: false, desc: 'เปิด-ปิดลื่นไหล ล็อกแน่นหนา ป้องกันการเปิดขณะนำส่งด้วยความเร็ว' },
+            { id: 4, section: 'vehicle', letter: 'E', code: 'E1', title: 'สัญญาณไฟฉุกเฉิน (Siren Light)', isCritical: true, desc: 'ไฟวับวาบหลังคาและไฟรอบคัน (Scene Light) สว่างครบทุกตำแหน่ง' },
+            { id: 5, section: 'vehicle', letter: 'E', code: 'E2', title: 'สัญญาณเสียงไซเรน & ไมค์ PA', isCritical: true, desc: 'เสียงไซเรนทุกโทนดังชัดเจน ไมค์กระจายเสียงทำงานปกติ' },
+            { id: 6, section: 'vehicle', letter: 'E', code: 'E3', title: 'ระบบไฟส่องสว่างตัวรถ', isCritical: false, desc: 'ไฟหน้าสูง-ต่ำ, ไฟเลี้ยว, ไฟเบรก, ไฟถอย และไฟสปอตไลท์' },
+            { id: 7, section: 'vehicle', letter: 'E', code: 'E4', title: 'ระบบแบตเตอรี่คู่ & Shoreline', isCritical: false, desc: 'สวิตช์สลับแบตเตอรี่ทำงานปกติ เสียบไฟชาร์จบ้านไฟเข้าปกติ' },
+            { id: 8, section: 'vehicle', letter: 'W', code: 'W1', title: 'หม้อน้ำ & ถังพักน้ำสำรอง', isCritical: false, desc: 'ระดับน้ำ Coolant เต็มตามเกณฑ์ ไม่มีคราบน้ำรั่วซึมใต้ท้องรถ' },
+            { id: 9, section: 'vehicle', letter: 'W', code: 'W2', title: 'น้ำฉีดกระจก & ใบปัดน้ำฝน', isCritical: false, desc: 'น้ำเต็มถังฉีด ยางปัดกระจกหน้า-หลังไม่ฉีกขาด ปัดได้สะอาด' },
+            { id: 10, section: 'vehicle', letter: 'A', code: 'A1', title: 'ความดันลมยาง 4 ล้อ + ยางอะไหล่', isCritical: true, desc: 'แรงดันลมยางตามมาตรฐานรถพยาบาล (ตรวจสอบขณะยางเย็น)' },
+            { id: 11, section: 'vehicle', letter: 'A', code: 'A2', title: 'สภาพดอกยาง & น็อตล้อ', isCritical: true, desc: 'ดอกยางลึกไม่ต่ำกว่า 3 มม. ไม่มีรอยปูดบวม น็อตล้อแน่นครบ' },
+            { id: 12, section: 'vehicle', letter: 'A', code: 'A3', title: 'ช่วงล่าง / ระบบถุงลม (Air Sus.)', isCritical: false, desc: 'ตัวรถระนาบไม่เอียง โช้คอัพไม่รั่วซึม ระบบถุงลมทำงานปกติ' },
+            { id: 13, section: 'vehicle', letter: 'G', code: 'G1', title: 'ปริมาณน้ำมันเชื้อเพลิง', isCritical: true, desc: 'ระดับน้ำมันต้องไม่ต่ำกว่า 3/4 ของถัง (พร้อมออกเคสต่อเนื่อง)' },
+            { id: 14, section: 'vehicle', letter: 'O', code: 'O1', title: 'น้ำมันเครื่อง (Engine Oil)', isCritical: false, desc: 'วัดระดับขณะเครื่องเย็น อยู่ระหว่างขีด F-L (หรือ MAX-MIN)' },
+            { id: 15, section: 'vehicle', letter: 'O', code: 'O2', title: 'น้ำมันเกียร์ & น้ำมันพาวเวอร์', isCritical: false, desc: 'ระดับอยู่ในเกณฑ์ สีไม่ดำไหม้ ไม่มีคราบน้ำมันหยดใต้ท้อง' },
+            { id: 16, section: 'vehicle', letter: 'N', code: 'N1', title: 'เสียงเครื่องยนต์ & สายพาน', isCritical: false, desc: 'ไม่มีเสียงสายพานลื่นหย่อน ไม่มีเสียงเคาะผิดปกติในห้องเครื่อง' },
+            { id: 17, section: 'vehicle', letter: 'N', code: 'N2', title: 'แอร์ห้องขับ & แอร์ห้องพยาบาล', isCritical: false, desc: 'พัดลมและคอมเพรสเซอร์แอร์ทำงานปกติ ความเย็นเย็นเร็ว' },
+            { id: 18, section: 'vehicle', letter: 'N', code: 'N3', title: 'ระบบ GPS & วิทยุสื่อสาร', isCritical: false, desc: 'วิทยุสื่อสารรับ-ส่งสัญญาณชัดเจน สัญญาณ GPS ระบุตำแหน่งปกติ' },
 
-            // Clinical Section (#19 to #21)
-            { id: 19, section: 'clinical', code: 'C1', title: 'เตียงนอนผู้ป่วย (Stretcher)', isCritical: true, desc: 'กลไกพับขาขึ้น-ลง ล็อกล้อ ล็อกเตียงกับตัวรถแน่นหนา' },
-            { id: 20, section: 'clinical', code: 'C2', title: 'ระบบไฟห้องพยาบาล & Inverter', isCritical: false, desc: 'ไฟส่องสว่างทำหัตถการ ปลั๊กไฟ 220V AC แปลงไฟปกติ' },
-            { id: 21, section: 'clinical', code: 'C3', title: 'ระบบระบายอากาศ (Exhaust Fan)', isCritical: false, desc: 'พัดลมดูดอากาศทำงานได้ปกติ ไม่มีกลิ่นอับ/คราบสกปรก' }
+            // Clinical Compartment
+            { id: 19, section: 'clinical', letter: 'C', code: 'C1', title: 'เตียงนอนผู้ป่วย (Stretcher)', isCritical: true, desc: 'กลไกพับขาขึ้น-ลง ล็อกล้อ ล็อกเตียงกับตัวรถ (Fastener) แน่นหนา' },
+            { id: 20, section: 'clinical', letter: 'C', code: 'C2', title: 'ระบบไฟห้องพยาบาล & Inverter', isCritical: false, desc: 'ไฟส่องทำหัตถการ ปลั๊กไฟ 220V AC แปลงไฟฟ้าใช้งานได้ปกติ' },
+            { id: 21, section: 'clinical', letter: 'C', code: 'C3', title: 'ระบบระบายอากาศ (Exhaust Fan)', isCritical: false, desc: 'พัดลมดูดอากาศระบายกลิ่นและเชื้อโรคทำงานได้เต็มกำลัง' }
         ];
 
-        // State Store
         let checklistState = {};
 
-        // Initialize App on DOM Load
-        document.addEventListener('DOMContentLoaded', () => {
+        function playHapticSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'pass') {
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                } else if (type === 'fail') {
+                    osc.frequency.setValueAtTime(329.63, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.1);
+                }
+            } catch (e) {}
+        }
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                try {
+                    await signInAnonymously(auth);
+                } catch (anonErr) {
+                    console.error("Auth failed:", anonErr);
+                }
+            }
+        }
+
+        function subscribeToInspections() {
+            if (!currentUser) return;
+            const inspectionsCol = collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
+            onSnapshot(inspectionsCol, (snapshot) => {
+                const logs = [];
+                snapshot.forEach(docSnap => {
+                    logs.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                // Sort in memory by createdAt descending
+                logs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                cloudHistory = logs;
+                localStorage.setItem('ambulance_inspection_history', JSON.stringify(logs));
+                loadInspectionHistory();
+            }, (err) => {
+                console.warn("Real-time sync snapshot note:", err);
+                loadInspectionHistory();
+            });
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                subscribeToInspections();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
             initDateTime();
             startLiveClock();
             renderChecklist();
             updateOverallStatus();
             loadLocalStorageDraft();
             loadInspectionHistory();
+            await initAuth();
         });
 
         function initDateTime() {
@@ -499,13 +631,11 @@
         function selectPlate(plateText) {
             document.getElementById('selectedPlateValue').value = plateText;
             
-            // Remove selection class from all
             for (let i = 1; i <= 4; i++) {
                 const btn = document.getElementById(`plate-btn-${i}`);
                 if (btn) btn.classList.remove('selected');
             }
 
-            // Apply selected style
             if (plateText.includes('คันที่ 1')) document.getElementById('plate-btn-1')?.classList.add('selected');
             if (plateText.includes('คันที่ 2')) document.getElementById('plate-btn-2')?.classList.add('selected');
             if (plateText.includes('คันที่ 3')) document.getElementById('plate-btn-3')?.classList.add('selected');
@@ -519,30 +649,29 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId)?.classList.add('active');
 
-            // Reset tab button styles
-            const navVehicle = document.getElementById('nav-tab-vehicle');
-            const navClinical = document.getElementById('nav-tab-clinical');
-            const navHistory = document.getElementById('nav-tab-history');
+            const navBtns = [
+                { id: 'nav-tab-vehicle', key: 'tab-vehicle' },
+                { id: 'nav-tab-clinical', key: 'tab-clinical' },
+                { id: 'nav-tab-history', key: 'tab-history' }
+            ];
 
-            [navVehicle, navClinical, navHistory].forEach(btn => {
-                if (btn) {
-                    btn.className = "tab-btn flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-50";
+            navBtns.forEach(item => {
+                const btn = document.getElementById(item.id);
+                if (!btn) return;
+                if (item.key === tabId) {
+                    btn.className = "tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 bg-white text-brand-600 shadow-soft-sm";
+                } else {
+                    btn.className = "tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
                 }
             });
 
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) {
-                activeNav.className = "tab-btn flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 bg-periwinkle-500 text-white shadow-sm";
-            }
-
-            // Update mobile floating nav toggle text
             const txtMobileToggle = document.getElementById('txtMobileNavToggle');
             if (txtMobileToggle) {
                 txtMobileToggle.innerText = (tabId === 'tab-vehicle') ? 'ไปห้องพยาบาล' : 'ไปส่วนตัวรถ';
             }
 
             if (tabId === 'tab-history') {
-                fetchHistoryFromGSheet();
+                loadInspectionHistory();
             }
         }
 
@@ -568,46 +697,152 @@
                 const isFailed = checklistState[item.id]?.status === 'FAIL';
                 const noteVal = checklistState[item.id]?.note || '';
 
+                const letterBadgeBg = {
+                    'B': 'bg-rose-50 text-rose-600 border-rose-200',
+                    'E': 'bg-amber-50 text-amber-600 border-amber-200',
+                    'W': 'bg-sky-50 text-sky-600 border-sky-200',
+                    'A': 'bg-indigo-50 text-indigo-600 border-indigo-200',
+                    'G': 'bg-purple-50 text-purple-600 border-purple-200',
+                    'O': 'bg-teal-50 text-teal-600 border-teal-200',
+                    'N': 'bg-slate-100 text-slate-600 border-slate-200',
+                    'C': 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                }[item.letter] || 'bg-slate-100 text-slate-600 border-slate-200';
+
                 const cardHtml = `
-                    <div id="item-card-${item.id}" class="bg-white rounded-2xl p-4 shadow-sm border transition-all duration-200 ${
-                        isPassed ? 'border-sage-300 bg-sage-50/20' : isFailed ? 'border-rose-300 bg-rose-50/20' : 'border-slate-100'
+                    <div id="item-card-${item.id}" class="glass-panel rounded-3xl p-4 sm:p-5 shadow-soft-sm border transition-all duration-200 ${
+                        isPassed ? 'border-emerald-300 ring-2 ring-emerald-50 bg-emerald-50/15' :
+                        isFailed ? 'border-rose-300 ring-2 ring-rose-50 bg-rose-50/15' :
+                        'border-slate-200/70 hover:border-slate-300'
                     }">
-                        <!-- Title & Critical Tag -->
-                        <div class="flex items-start justify-between mb-1.5 gap-2">
-                            <h3 class="text-base sm:text-lg font-bold text-slate-800 leading-snug">
-                                <span class="text-periwinkle-500 font-extrabold mr-1">#${item.id}</span>
-                                ${item.title}
-                            </h3>
-                            ${item.isCritical ? '<span class="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-200/60 px-2 py-0.5 rounded-md shrink-0">วิกฤต</span>' : ''}
+                        <!-- Item Header with Pillar Badge -->
+                        <div class="flex items-start justify-between gap-2.5 mb-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-xl font-num font-extrabold text-xs flex items-center justify-center border shadow-xs ${letterBadgeBg}">
+                                    ${item.letter}
+                                </span>
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                                        <span class="text-brand-600 font-num font-extrabold mr-1">#${item.id}</span>
+                                        ${item.title}
+                                    </h3>
+                                </div>
+                            </div>
+                            ${item.isCritical ? `
+                                <span class="inline-flex items-center gap-1 text-[11px] font-extrabold text-rose-600 bg-rose-50 border border-rose-200/80 px-2.5 py-1 rounded-full shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+                                    วิกฤต
+                                </span>
+                            ` : ''}
                         </div>
 
-                        <!-- Description -->
-                        <p class="text-xs sm:text-sm text-slate-500 mb-3 leading-relaxed">${item.desc}</p>
+                        <!-- Description & Guidelines -->
+                        <p class="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed ml-10 mb-3.5">
+                            ${item.desc}
+                        </p>
 
-                        <!-- Action Buttons (Pass / Fail) -->
-                        <div class="grid grid-cols-2 gap-2 mb-2">
-                            <button type="button" onclick="setItemStatus(${item.id}, 'PASS')" class="h-12 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition active:scale-95 border ${
-                                isPassed 
-                                ? 'bg-sage-500 text-white border-sage-600 shadow-md shadow-sage-500/20' 
-                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                        ${item.id === 13 ? `
+                            <!-- Item #13: Long Horizontal Fuel Segmented Bar Gauge -->
+                            <div class="mb-3.5 pl-0 sm:pl-10">
+                                <div class="bg-slate-100/90 p-3 rounded-2xl border border-slate-200 space-y-2.5 shadow-inner">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                                            <i class="fa-solid fa-gas-pump text-brand-600 text-sm"></i>
+                                            <span>ระดับน้ำมันในถัง (มาตรฐาน &ge; 3/4)</span>
+                                        </div>
+                                        <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full font-num ${
+                                            (checklistState[13]?.fuelLevel === '3/4' || checklistState[13]?.fuelLevel === '4/4')
+                                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                                            : (checklistState[13]?.fuelLevel === '1/4' || checklistState[13]?.fuelLevel === '2/4')
+                                            ? 'bg-rose-100 text-rose-700 border border-rose-300 animate-pulse'
+                                            : 'bg-slate-200 text-slate-600'
+                                        }">
+                                            ${checklistState[13]?.fuelLevel ? `ระดับที่เลือก: ${checklistState[13].fuelLevel}` : 'ยังไม่ได้ระบุ'}
+                                        </span>
+                                    </div>
+
+                                    <!-- Segmented Long Bar -->
+                                    <div class="grid grid-cols-4 gap-1.5 p-1.5 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                                        <!-- 1/4 Segment -->
+                                        <button type="button" onclick="setFuelLevel('1/4')" class="h-11 rounded-xl font-num font-bold text-xs sm:text-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 border ${
+                                            checklistState[13]?.fuelLevel === '1/4'
+                                            ? 'bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-500/30 ring-2 ring-rose-200'
+                                            : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-rose-50 hover:text-rose-700'
+                                        }">
+                                            <span class="text-[10px] sm:text-xs opacity-75 leading-none mb-0.5">ต่ำมาก</span>
+                                            <span class="text-xs sm:text-sm leading-none font-black">1/4</span>
+                                        </button>
+
+                                        <!-- 2/4 Segment -->
+                                        <button type="button" onclick="setFuelLevel('2/4')" class="h-11 rounded-xl font-num font-bold text-xs sm:text-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 border ${
+                                            checklistState[13]?.fuelLevel === '2/4'
+                                            ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/30 ring-2 ring-amber-200'
+                                            : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-amber-50 hover:text-amber-700'
+                                        }">
+                                            <span class="text-[10px] sm:text-xs opacity-75 leading-none mb-0.5">ครึ่งถัง</span>
+                                            <span class="text-xs sm:text-sm leading-none font-black">2/4</span>
+                                        </button>
+
+                                        <!-- 3/4 Segment -->
+                                        <button type="button" onclick="setFuelLevel('3/4')" class="h-11 rounded-xl font-num font-bold text-xs sm:text-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 border ${
+                                            checklistState[13]?.fuelLevel === '3/4'
+                                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-500/30 ring-2 ring-emerald-200'
+                                            : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-emerald-50 hover:text-emerald-700'
+                                        }">
+                                            <span class="text-[10px] sm:text-xs opacity-75 leading-none mb-0.5">พร้อมเกณฑ์</span>
+                                            <span class="text-xs sm:text-sm leading-none font-black">3/4</span>
+                                        </button>
+
+                                        <!-- 4/4 Segment -->
+                                        <button type="button" onclick="setFuelLevel('4/4')" class="h-11 rounded-xl font-num font-bold text-xs sm:text-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 border ${
+                                            checklistState[13]?.fuelLevel === '4/4'
+                                            ? 'bg-brand-600 text-white border-brand-600 shadow-md shadow-brand-500/30 ring-2 ring-brand-200'
+                                            : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-brand-50 hover:text-brand-700'
+                                        }">
+                                            <span class="text-[10px] sm:text-xs opacity-75 leading-none mb-0.5">เต็มถัง</span>
+                                            <span class="text-xs sm:text-sm leading-none font-black">4/4</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Fuel Gauge Meter Progress Bar -->
+                                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full transition-all duration-300 ${
+                                            checklistState[13]?.fuelLevel === '1/4' ? 'w-1/4 bg-rose-500' :
+                                            checklistState[13]?.fuelLevel === '2/4' ? 'w-2/4 bg-amber-500' :
+                                            checklistState[13]?.fuelLevel === '3/4' ? 'w-3/4 bg-emerald-500' :
+                                            checklistState[13]?.fuelLevel === '4/4' ? 'w-full bg-brand-500' : 'w-0'
+                                        }"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Choice Buttons -->
+                        <div class="grid grid-cols-2 gap-2.5 pl-0 sm:pl-10">
+                            <button type="button" onclick="setItemStatus(${item.id}, 'PASS')" class="h-12 sm:h-13 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-150 active:scale-95 border ${
+                                isPassed
+                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-500/25 ring-2 ring-emerald-200'
+                                : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900'
                             }">
                                 <i class="fa-solid fa-check text-base"></i>
                                 <span>ปกติ</span>
                             </button>
 
-                            <button type="button" onclick="setItemStatus(${item.id}, 'FAIL')" class="h-12 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition active:scale-95 border ${
-                                isFailed 
-                                ? 'bg-rose-500 text-white border-rose-600 shadow-md shadow-rose-500/20' 
-                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                            <button type="button" onclick="setItemStatus(${item.id}, 'FAIL')" class="h-12 sm:h-13 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-150 active:scale-95 border ${
+                                isFailed
+                                ? 'bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-500/25 ring-2 ring-rose-200'
+                                : 'bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900'
                             }">
                                 <i class="fa-solid fa-xmark text-base"></i>
                                 <span>ชำรุด</span>
                             </button>
                         </div>
 
-                        <!-- Defect Note Input (Shows if Failed or for extra notes) -->
-                        <div class="${isFailed ? 'block' : 'hidden'} mt-2">
-                            <input type="text" id="note-input-${item.id}" value="${noteVal}" onchange="setItemNote(${item.id}, this.value)" placeholder="ระบุเหตุผลถ้าชำรุด..." class="w-full text-xs sm:text-sm bg-white border border-rose-200 rounded-xl px-3 py-2 text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-500">
+                        <!-- Defect Reason Input -->
+                        <div class="${isFailed ? 'block' : 'hidden'} mt-3 pl-0 sm:pl-10 animate-in fade-in duration-200">
+                            <div class="relative">
+                                <i class="fa-solid fa-triangle-exclamation absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-xs"></i>
+                                <input type="text" id="note-input-${item.id}" value="${noteVal}" onchange="setItemNote(${item.id}, this.value)" placeholder="ระบุเหตุผลหรืออาการชำรุด..." class="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2.5 bg-rose-50/50 border border-rose-200 rounded-xl text-rose-900 placeholder:text-rose-400 focus:outline-none focus:border-rose-500 focus:bg-white focus:ring-4 focus:ring-rose-100 transition">
+                            </div>
                         </div>
                     </div>
                 `;
@@ -624,6 +859,36 @@
             if (!checklistState[id]) checklistState[id] = {};
             checklistState[id].status = status;
             
+            if (id === 13) {
+                if (status === 'PASS' && (!checklistState[13].fuelLevel || checklistState[13].fuelLevel === '1/4' || checklistState[13].fuelLevel === '2/4')) {
+                    checklistState[13].fuelLevel = '4/4';
+                    checklistState[13].note = 'น้ำมัน 4/4 (เต็มถัง - พร้อมปฏิบัติการ)';
+                } else if (status === 'FAIL' && (!checklistState[13].fuelLevel || checklistState[13].fuelLevel === '3/4' || checklistState[13].fuelLevel === '4/4')) {
+                    checklistState[13].fuelLevel = '2/4';
+                    checklistState[13].note = 'น้ำมัน 2/4 (ต่ำกว่าเกณฑ์ 3/4 ถัง)';
+                }
+            }
+
+            playHapticSound(status === 'PASS' ? 'pass' : 'fail');
+            renderChecklist();
+            updateOverallStatus();
+            saveToLocalStorageDraft();
+        }
+
+        function setFuelLevel(level) {
+            if (!checklistState[13]) checklistState[13] = {};
+            checklistState[13].fuelLevel = level;
+
+            if (level === '1/4' || level === '2/4') {
+                checklistState[13].status = 'FAIL';
+                checklistState[13].note = `น้ำมันระดับ ${level} ถัง (ต่ำกว่าเกณฑ์มาตรฐาน 3/4 ถัง ต้องเติมด่วน)`;
+                playHapticSound('fail');
+            } else {
+                checklistState[13].status = 'PASS';
+                checklistState[13].note = `น้ำมันระดับ ${level} ถัง (พร้อมออกเคสต่อเนื่อง)`;
+                playHapticSound('pass');
+            }
+
             renderChecklist();
             updateOverallStatus();
             saveToLocalStorageDraft();
@@ -636,6 +901,7 @@
         }
 
         function markAllPassCurrentTab(section) {
+            playHapticSound('pass');
             checklistItems.filter(item => item.section === section).forEach(item => {
                 if (!checklistState[item.id]) checklistState[item.id] = {};
                 checklistState[item.id].status = 'PASS';
@@ -667,41 +933,39 @@
 
             const percent = Math.round((checkedCount / total) * 100);
             
-            // Progress Bar elements
             document.getElementById('progressPercent').innerText = `${percent}%`;
-            document.getElementById('progressCount').innerText = `${checkedCount}/${total} ข้อ`;
+            document.getElementById('progressCount').innerText = `${checkedCount} จาก ${total} ข้อ`;
             document.getElementById('progressBar').style.width = `${percent}%`;
 
-            // Banner status updates
             const statusBanner = document.getElementById('overallStatusBanner');
             const statusTitle = document.getElementById('statusTitle');
             const statusSubtitle = document.getElementById('statusSubtitle');
             const statusIcon = document.getElementById('statusBadgeIcon');
 
             if (checkedCount < total) {
-                statusBanner.className = "bg-white rounded-2xl p-4 shadow-sm border border-slate-100 transition-all duration-300";
-                statusIcon.className = "w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm";
+                statusBanner.className = "glass-panel rounded-3xl p-4 sm:p-5 shadow-soft-md border border-slate-200/70 transition-all duration-300";
+                statusIcon.className = "w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 border border-brand-100 flex items-center justify-center text-lg shadow-soft-sm";
                 statusIcon.innerHTML = `<i class="fa-solid fa-list-check"></i>`;
                 statusTitle.innerText = "กำลังตรวจเช็ก...";
                 statusSubtitle.innerText = `ตรวจแล้ว ${checkedCount} จาก ${total} รายการ`;
             } else if (criticalFailCount > 0) {
-                statusBanner.className = "bg-rose-50 rounded-2xl p-4 shadow-sm border border-rose-200 transition-all duration-300";
-                statusIcon.className = "w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center text-sm shadow-md shadow-rose-500/20";
+                statusBanner.className = "rounded-3xl p-4 sm:p-5 shadow-soft-md border border-rose-200 bg-rose-50/60 backdrop-blur-md transition-all duration-300";
+                statusIcon.className = "w-12 h-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-md shadow-rose-500/20";
                 statusIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
                 statusTitle.innerText = "🔴 งดปฏิบัติการ (Out of Service)";
-                statusSubtitle.innerText = `พบจุดชำรุดวิกฤต ${criticalFailCount} รายการ! กรุณาซ่อมบำรุงก่อนออกเคส`;
+                statusSubtitle.innerText = `พบจุดวิกฤตชำรุด ${criticalFailCount} จุด ห้ามนำรถออกปฏิบัติการ!`;
             } else if (failCount > 0) {
-                statusBanner.className = "bg-amber-50 rounded-2xl p-4 shadow-sm border border-amber-200 transition-all duration-300";
-                statusIcon.className = "w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm shadow-md shadow-amber-500/20";
+                statusBanner.className = "rounded-3xl p-4 sm:p-5 shadow-soft-md border border-amber-200 bg-amber-50/60 backdrop-blur-md transition-all duration-300";
+                statusIcon.className = "w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-md shadow-amber-500/20";
                 statusIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
                 statusTitle.innerText = "🟡 พร้อมแบบมีเงื่อนไข (Conditional)";
-                statusSubtitle.innerText = `พบจุดชำรุดทั่วไป ${failCount} รายการ (ไม่ใช่จุดวิกฤต)`;
+                statusSubtitle.innerText = `พบจุดชำรุดทั่วไป ${failCount} จุด (ไม่ใช่จุดวิกฤต)`;
             } else {
-                statusBanner.className = "bg-sage-50 rounded-2xl p-4 shadow-sm border border-sage-200 transition-all duration-300";
-                statusIcon.className = "w-8 h-8 rounded-full bg-sage-500 text-white flex items-center justify-center text-sm shadow-md shadow-sage-500/20";
+                statusBanner.className = "rounded-3xl p-4 sm:p-5 shadow-soft-md border border-emerald-200 bg-emerald-50/60 backdrop-blur-md transition-all duration-300";
+                statusIcon.className = "w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-500/20";
                 statusIcon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
                 statusTitle.innerText = "🟢 พร้อมปฏิบัติการ 100% (Operational)";
-                statusSubtitle.innerText = "ผ่านการตรวจเช็กครบถ้วนตามเกณฑ์ความปลอดภัย";
+                statusSubtitle.innerText = "ผ่านการตรวจเช็กครบถ้วนตามเกณฑ์ความปลอดภัยมาตรฐานสากล";
             }
         }
 
@@ -747,18 +1011,24 @@
             document.getElementById('inputOdometer').value = "142580";
             document.getElementById('inputDriver').value = "นายสมชาย ใจดี (พนักงานขับรถ)";
             
-            // Set all items to PASS
             checklistItems.forEach(item => {
                 checklistState[item.id] = { status: 'PASS', note: '' };
             });
 
-            // Set one item to fail for realistic demo
+            // Set Fuel Level to 4/4
+            checklistState[13] = {
+                status: 'PASS',
+                fuelLevel: '4/4',
+                note: 'น้ำมันระดับ 4/4 ถัง (พร้อมออกเคสต่อเนื่อง)'
+            };
+
+            // Defect simulation
             checklistState[9] = { status: 'FAIL', note: 'น้ำฉีดกระจกพร่องเล็กน้อย เติมเรียบร้อย' };
 
             renderChecklist();
             updateOverallStatus();
             saveToLocalStorageDraft();
-            showAlertModal("เติมข้อมูลตัวอย่างสำเร็จ!", "ระบบเติมข้อมูลตัวอย่างพร้อมผลตรวจเช็กเรียบร้อยแล้ว");
+            showAlertModal("เติมข้อมูลตัวอย่างสำเร็จ", "ระบบจำลองการตรวจเช็กและเติมข้อมูลเรียบร้อยแล้ว");
         }
 
         async function submitFinalReport() {
@@ -770,7 +1040,7 @@
             const generalNotes = document.getElementById('generalNotes')?.value || '-';
 
             if (!plate) {
-                showAlertModal("ข้อมูลไม่ครบถ้วน", "กรุณาเลือกรถพยาบาล (คันที่ 1-4) ก่อนส่งรายงาน");
+                showAlertModal("ข้อมูลไม่ครบถ้วน", "กรุณาแตะเลือกรถพยาบาล (คันที่ 1-4) ก่อนส่งรายงาน");
                 return;
             }
             if (!driver) {
@@ -778,7 +1048,6 @@
                 return;
             }
 
-            // Calculate status
             let checkedCount = 0;
             let passCount = 0;
             let failCount = 0;
@@ -793,7 +1062,7 @@
                     if (st === 'FAIL') {
                         failCount++;
                         if (item.isCritical) criticalFailCount++;
-                        const note = checklistState[item.id]?.note || 'ไม่ระบุเหตุผล';
+                        const note = checklistState[item.id]?.note || 'ไม่ได้ระบุเหตุผล';
                         defectsList.push(`• #${item.id} ${item.title}: ${note}`);
                     }
                 }
@@ -814,29 +1083,31 @@
                 passedItems: passCount,
                 failedItems: failCount,
                 defects: defectsList.join("\n"),
-                generalNotes
+                generalNotes,
+                fuelLevel: checklistState[13]?.fuelLevel || 'ไม่ระบุ',
+                createdAt: Date.now()
             };
 
-            // Save Record to History
-            saveInspectionToHistory(payload);
-
-            // Send to Telegram
-            sendTelegramMessage(payload);
-
-            // Send to Google Apps Script
-            const gsheetUrl = localStorage.getItem('ambulance_gsheet_url') || DEFAULT_GSHEET_URL;
-            try {
-                fetch(gsheetUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-            } catch (e) {
-                console.error("GSheet Error", e);
+            // 1. Save to Cloud Firestore
+            if (currentUser) {
+                try {
+                    const inspectionsCol = collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
+                    await addDoc(inspectionsCol, {
+                        ...payload,
+                        userId: currentUser.uid
+                    });
+                } catch (fsErr) {
+                    console.error("Firestore submission error:", fsErr);
+                }
             }
 
-            showAlertModal("ส่งรายงานสำเร็จ!", `บันทึกข้อมูลการตรวจเช็กเรียบร้อยแล้ว\nสถานะ: ${finalStatusText}`);
+            // 2. Save to local fallback cache
+            saveInspectionToHistory(payload);
+
+            // 3. Send Telegram Notification
+            sendTelegramMessage(payload);
+
+            showAlertModal("ส่งรายงานสำเร็จ!", `บันทึกข้อมูลขึ้น Cloud Firestore และส่งแจ้งเตือน Telegram เรียบร้อยแล้ว\nสถานะ: ${finalStatusText}`);
         }
 
         async function sendTelegramMessage(data) {
@@ -844,7 +1115,8 @@
                 `📌 *คันรถ:* ${data.plate}\n` +
                 `👤 *ผู้รับเวร:* ${data.driver}\n` +
                 `⏰ *เวลา/เวร:* ${data.shift}\n` +
-                `🛣️ *เลขกิโลเมตร:* ${data.odometer} กม.\n` +
+                `🛣️ *เลขกิโลเมตร:* ${data.odometer || '-'} กม.\n` +
+                `⛽ *ระดับน้ำมัน:* ${data.fuelLevel}\n` +
                 `----------------------------\n` +
                 `📊 *สถานะความพร้อม:* ${data.status}\n` +
                 `✅ *ปกติ:* ${data.passedItems} รายการ | ❌ *ชำรุด:* ${data.failedItems} รายการ\n` +
@@ -875,46 +1147,20 @@
 
             history.unshift({ id: Date.now(), ...record });
             localStorage.setItem('ambulance_inspection_history', JSON.stringify(history));
-        }
-
-        async function fetchHistoryFromGSheet() {
-            const gsheetUrl = localStorage.getItem('ambulance_gsheet_url') || DEFAULT_GSHEET_URL;
-            const container = document.getElementById('historyLogsList');
-            
-            if (container) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                        <i class="fa-solid fa-spinner fa-spin text-2xl text-periwinkle-500 mb-2"></i>
-                        <p class="text-xs text-slate-500">กำลังซิงค์ประวัติการตรวจจาก Google Sheet...</p>
-                    </div>
-                `;
-            }
-
-            try {
-                const response = await fetch(gsheetUrl);
-                if (response.ok) {
-                    const onlineHistory = await response.json();
-                    if (Array.isArray(onlineHistory) && onlineHistory.length > 0) {
-                        localStorage.setItem('ambulance_inspection_history', JSON.stringify(onlineHistory));
-                    }
-                }
-            } catch (e) {
-                console.log("Sync info: fallback to local storage history", e);
-            }
-
             loadInspectionHistory();
         }
 
         function loadInspectionHistory() {
-            let history = [];
-            try {
-                history = JSON.parse(localStorage.getItem('ambulance_inspection_history') || '[]');
-            } catch (e) { history = []; }
+            let history = cloudHistory.length > 0 ? cloudHistory : [];
+            if (history.length === 0) {
+                try {
+                    history = JSON.parse(localStorage.getItem('ambulance_inspection_history') || '[]');
+                } catch (e) { history = []; }
+            }
 
-            // Update stats
             const total = history.length;
-            const operational = history.filter(h => h.status.includes('🟢')).length;
-            const defects = history.reduce((sum, h) => sum + (h.failedItems || 0), 0);
+            const operational = history.filter(h => (h.status || '').includes('🟢')).length;
+            const defects = history.reduce((sum, h) => sum + (parseInt(h.failedItems) || 0), 0);
 
             document.getElementById('statTotalInspections').innerText = total;
             document.getElementById('statPassRate').innerText = total > 0 ? `${Math.round((operational / total) * 100)}%` : '0%';
@@ -924,10 +1170,12 @@
         }
 
         function filterHistoryLogs() {
-            let history = [];
-            try {
-                history = JSON.parse(localStorage.getItem('ambulance_inspection_history') || '[]');
-            } catch (e) { history = []; }
+            let history = cloudHistory.length > 0 ? cloudHistory : [];
+            if (history.length === 0) {
+                try {
+                    history = JSON.parse(localStorage.getItem('ambulance_inspection_history') || '[]');
+                } catch (e) { history = []; }
+            }
 
             const searchText = (document.getElementById('historySearchInput')?.value || '').toLowerCase();
             const statusFilter = document.getElementById('historyFilterStatus')?.value || 'ALL';
@@ -938,42 +1186,48 @@
             const filtered = history.filter(item => {
                 const matchesSearch = (item.driver || '').toLowerCase().includes(searchText) || (item.plate || '').toLowerCase().includes(searchText);
                 let matchesStatus = true;
-                if (statusFilter === 'OPERATIONAL') matchesStatus = item.status.includes('🟢');
-                if (statusFilter === 'CONDITIONAL') matchesStatus = item.status.includes('🟡');
-                if (statusFilter === 'OUT_OF_SERVICE') matchesStatus = item.status.includes('🔴');
+                if (statusFilter === 'OPERATIONAL') matchesStatus = (item.status || '').includes('🟢');
+                if (statusFilter === 'CONDITIONAL') matchesStatus = (item.status || '').includes('🟡');
+                if (statusFilter === 'OUT_OF_SERVICE') matchesStatus = (item.status || '').includes('🔴');
 
                 return matchesSearch && matchesStatus;
             });
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                        <i class="fa-solid fa-clipboard-list text-3xl text-slate-300 mb-2"></i>
-                        <p class="text-xs text-slate-500">ไม่พบประวัติการตรวจเช็ก</p>
+                    <div class="glass-panel rounded-3xl p-8 text-center border border-slate-200/60 shadow-soft-sm space-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 mx-auto flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </div>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-500">ไม่พบประวัติการตรวจเช็ก</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = filtered.map(item => `
-                <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-xs sm:text-sm text-slate-800">${item.plate}</span>
-                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                            item.status.includes('🟢') ? 'bg-sage-50 text-sage-600' :
-                            item.status.includes('🟡') ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                <div class="glass-panel rounded-3xl p-4 sm:p-5 border border-slate-200/70 shadow-soft-sm space-y-2.5 hover:shadow-soft-md transition-all">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-bold text-sm sm:text-base text-slate-900">${item.plate}</span>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full ${
+                            (item.status || '').includes('🟢') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' :
+                            (item.status || '').includes('🟡') ? 'bg-amber-50 text-amber-700 border border-amber-200/60' :
+                            'bg-rose-50 text-rose-700 border border-rose-200/60'
                         }">
                             ${item.status}
                         </span>
                     </div>
-                    <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-50 pt-2">
-                        <span><i class="fa-solid fa-user mr-1 text-slate-400"></i> ${item.driver}</span>
-                        <span><i class="fa-solid fa-clock mr-1 text-slate-400"></i> ${item.timestamp}</span>
+                    <div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2.5 font-medium">
+                        <span><i class="fa-solid fa-user-gear mr-1 text-slate-400"></i> ${item.driver}</span>
+                        <span class="font-num"><i class="fa-regular fa-clock mr-1 text-slate-400"></i> ${item.timestamp}</span>
                     </div>
                     ${item.failedItems > 0 ? `
-                        <div class="bg-rose-50/60 p-2.5 rounded-xl border border-rose-100 text-[11px] text-rose-700">
-                            <span class="font-bold block mb-0.5">จุดที่พบปัญหา (${item.failedItems} รายการ):</span>
-                            <pre class="font-sans whitespace-pre-wrap leading-relaxed">${item.defects}</pre>
+                        <div class="bg-rose-50/70 p-3 rounded-2xl border border-rose-200/60 text-xs text-rose-800 space-y-1">
+                            <span class="font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+                                รายการที่พบปัญหา (${item.failedItems} ข้อ):
+                            </span>
+                            <pre class="font-sans whitespace-pre-wrap leading-relaxed text-[11px] text-rose-700">${item.defects}</pre>
                         </div>
                     ` : ''}
                 </div>
@@ -995,7 +1249,7 @@
             const url = document.getElementById('inputGSheetUrl').value.trim();
             if (url) {
                 localStorage.setItem('ambulance_gsheet_url', url);
-                showAlertModal("บันทึกสำเร็จ", "บันทึก Google Sheet URL เรียบร้อยแล้ว");
+                showAlertModal("บันทึกการตั้งค่าเรียบร้อย", "บันทึก Google Apps Script Web App URL เรียบร้อยแล้ว");
                 closeGSheetModal();
             }
         }
@@ -1009,6 +1263,22 @@
         function closeAlertModal() {
             document.getElementById('modalAlert')?.classList.add('hidden');
         }
+
+        // Expose functions globally to window for onclick handlers
+        window.autoFillDemoData = autoFillDemoData;
+        window.switchTab = switchTab;
+        window.selectPlate = selectPlate;
+        window.markAllPassCurrentTab = markAllPassCurrentTab;
+        window.saveToLocalStorageDraft = saveToLocalStorageDraft;
+        window.submitFinalReport = submitFinalReport;
+        window.filterHistoryLogs = filterHistoryLogs;
+        window.loadInspectionHistory = loadInspectionHistory;
+        window.toggleMobileNavTab = toggleMobileNavTab;
+        window.setFuelLevel = setFuelLevel;
+        window.setItemStatus = setItemStatus;
+        window.setItemNote = setItemNote;
+        window.showAlertModal = showAlertModal;
+        window.closeAlertModal = closeAlertModal;
     </script>
 </body>
 </html>
