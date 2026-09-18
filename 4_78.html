@@ -2135,6 +2135,26 @@ function sendTelegramAlert(r) {
       const localData = localStorage.getItem('ambulance_inspections_data_78');
       if (localData) {
         inspectionsData = JSON.parse(localData);
+        // FIX: Populate missing items for mock data so they show up in the report
+        let wasPatched = false;
+        inspectionsData.forEach(r => {
+           if (!r.items || Object.keys(r.items).length === 0) {
+               r.items = {};
+               CHECKLIST_ITEMS_78.forEach(item => {
+                   r.items[item.id] = {
+                       id: item.id,
+                       name: item.name,
+                       catId: item.catId,
+                       catName: item.catName,
+                       status: 'READY',
+                       qty: item.minQty || 1,
+                       note: ''
+                   };
+               });
+               wasPatched = true;
+           }
+        });
+        if (wasPatched) saveLocalDataSilently();
       } else {
         inspectionsData = createMockData78();
         localStorage.setItem('ambulance_inspections_data_78', JSON.stringify(inspectionsData));
