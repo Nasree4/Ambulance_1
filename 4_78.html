@@ -11,15 +11,16 @@
   
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* Modern Medical Emergency Theme - Cho-airong Hospital */
     :root {
-      --primary: #059669;
-      --primary-hover: #047857;
+      --primary: #10b981;
+      --primary-hover: #059669;
       --primary-light: #ecfdf5;
-      --primary-dark: #065f46;
-      --secondary: #0284c7;
+      --primary-dark: #047857;
+      --secondary: #3b82f6;
       --secondary-light: #f0f9ff;
       --telegram: #0088cc;
       --telegram-hover: #006699;
@@ -60,7 +61,7 @@
 
     /* Header Navbar */
     .navbar {
-      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #0284c7 100%);
+      background: linear-gradient(135deg, #0ea5e9 0%, #10b981 50%, #3b82f6 100%);
       color: white;
       padding: 1rem 1.25rem;
       box-shadow: var(--shadow-md);
@@ -454,7 +455,7 @@
     }
 
     .category-header {
-      background: linear-gradient(to right, #ecfdf5, #f0f9ff);
+      background: linear-gradient(to right, #e0f2fe, #dcfce7);
       padding: 0.95rem 1.15rem;
       font-weight: 800;
       font-size: 1.05rem;
@@ -576,6 +577,9 @@
 
     /* Buttons */
     .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+      border: none;
+      color: white;
       background: var(--primary);
       color: white;
       padding: 1rem 1.75rem;
@@ -866,6 +870,170 @@
     .toast.success { border-left: 5px solid var(--success); }
     .toast.error { border-left: 5px solid var(--danger); }
     .toast.info { border-left: 5px solid var(--secondary); }
+  
+    /* Modern Minimal UI Additions */
+    .items-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8fafc;
+    }
+    @media (min-width: 768px) {
+      .items-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .item-card {
+      border-top: 4px solid #38bdf8;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: box-shadow 0.2s ease;
+    }
+    .item-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .item-name-group {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .badge-num {
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      margin-top: 0.1rem;
+    }
+
+    .item-title {
+      font-weight: 700;
+      color: #1e293b;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .item-subtitle {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.2rem;
+    }
+
+    .min-qty-text {
+      color: #ef4444;
+      font-weight: 600;
+      margin-left: 0.4rem;
+    }
+
+    .item-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+    }
+
+    .btn-stepper {
+      background: transparent;
+      border: none;
+      color: #475569;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-stepper:hover { background: #e2e8f0; }
+
+    .qty-input {
+      width: 45px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #0f172a;
+      -moz-appearance: textfield;
+    }
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .qty-input:focus { outline: none; background: white; }
+
+    .status-toggles {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .status-btn {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 10px;
+      font-size: 1rem;
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .status-btn.ready.active { background: #10b981; color: white; border-color: #059669; }
+    .status-btn.repair.active { background: #ef4444; color: white; border-color: #dc2626; }
+    .status-btn.refill.active { background: #f59e0b; color: white; border-color: #d97706; }
+
+    .item-note .note-input {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      transition: all 0.2s;
+    }
+    .item-note .note-input:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+    }
+
   </style>
 </head>
 <body>
@@ -874,8 +1042,8 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="brand">
-        <div class="brand-icon">
-          <i class="fa-solid fa-truck-medical"></i>
+        <div class="brand-icon" style="background: white; padding: 4px;">
+          <img src="logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="brand-title">
           <h1>ระบบตรวจเช็คอุปกรณ์รถพยาบาล 4 คัน (78 รายการ)</h1>
@@ -885,10 +1053,10 @@
       <div class="nav-actions">
         <div class="sync-badge" id="syncStatusBadge">
           <span class="status-dot local" id="statusDot"></span>
-          <span id="syncStatusText">Google Sheet Connected</span>
+          <span id="syncStatusText">Supabase Connected</span>
         </div>
         <button class="btn-config" onclick="openConfigModal()">
-          <i class="fa-solid fa-gear"></i> ตั้งค่า Google Sheet & Telegram
+          <i class="fa-solid fa-gear"></i> ตั้งค่า Supabase & Telegram
         </button>
       </div>
     </div>
@@ -1197,23 +1365,27 @@
     </div>
   </div>
 
-  <!-- MODAL: Configuration (Google Sheet & Telegram) -->
+  <!-- MODAL: Configuration (Supabase & Telegram) -->
   <div class="modal-backdrop" id="configModal">
     <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header" style="background: linear-gradient(135deg, #15803d, #0284c7);">
-        <h3><i class="fa-solid fa-sliders"></i> ตั้งค่าระบบ Google Sheet & Telegram Notification</h3>
+        <h3><i class="fa-solid fa-sliders"></i> ตั้งค่าระบบ Supabase & Telegram Notification</h3>
         <button class="modal-close" onclick="closeConfigModal()">&times;</button>
       </div>
       <div class="modal-body">
         
-        <!-- Section 1: Google Sheet Config -->
+        <!-- Section 1: Supabase Config -->
         <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
           <h4 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.5rem;">
-            <i class="fa-solid fa-file-excel"></i> 1. ตั้งค่า Google Sheets Web App URL
+            <i class="fa-solid fa-database"></i> 1. ตั้งค่า Supabase Database
           </h4>
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label style="font-weight: 700; font-size: 0.85rem;">Supabase Project URL:</label>
+            <input type="url" id="cfgSupabaseUrl" class="form-control" value="https://ywgfigqpcnkrlohnjgzk.supabase.co" placeholder="https://xxxx.supabase.co">
+          </div>
           <div class="form-group">
-            <label style="font-weight: 700; font-size: 0.85rem;">Web App URL:</label>
-            <input type="url" id="cfgGoogleScriptUrl" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+            <label style="font-weight: 700; font-size: 0.85rem;">Supabase Anon Key:</label>
+            <input type="text" id="cfgSupabaseKey" class="form-control" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Z2ZpZ3FwY25rcmxvaG5qZ3prIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NDk4MDcsImV4cCI6MjEwNTMyNTgwN30.nxWhcQYacBMVYmuaYkod3HIpfXaLIzRXQ5oE7__9seI" placeholder="eyJh...">
           </div>
         </div>
 
@@ -1240,16 +1412,16 @@
           </div>
         </div>
 
-        <!-- Section 3: Google Apps Script Code -->
+        <!-- Section 3: Supabase API Code -->
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 10px;">
           <h4 style="color: #166534; font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <span><i class="fa-solid fa-code"></i> โค้ด Google Apps Script (พร้อมฟังก์ชัน Telegram ในตัว):</span>
+            <span><i class="fa-solid fa-code"></i> โค้ด Supabase API (พร้อมฟังก์ชัน Telegram ในตัว):</span>
             <button class="btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.8rem; background: #dcfce7; border-color: #86efac; color: #15803d;" onclick="copyAppsScriptCode()">
               <i class="fa-solid fa-copy"></i> คัดลอกโค้ด GAS
             </button>
           </h4>
           <textarea id="appsScriptCodeText" class="form-control" style="font-family: monospace; font-size: 0.775rem; height: 130px; background: #ffffff;" readonly>
-// โค้ด Google Apps Script สำหรับรับข้อมูลและแจ้งเตือน Telegram
+// โค้ด Supabase API สำหรับรับข้อมูลและแจ้งเตือน Telegram
 const TELEGRAM_TOKEN = "8767296623:AAGRsnjD41DKw_9fLNrH3vQNRlxihEhaDw0"; // ใส่ Bot Token
 const TELEGRAM_CHAT_ID = "-5593653503"; // ใส่ Chat ID
 
@@ -1326,20 +1498,22 @@ function sendTelegramAlert(r) {
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" onclick="clearGoogleSheetConfig()">คืนค่าเริ่มต้น</button>
-        <button class="btn-primary" style="width: auto; background: var(--primary);" onclick="saveGoogleSheetConfig()">
+        <button class="btn-secondary" onclick="clearSupabaseConfig()">คืนค่าเริ่มต้น</button>
+        <button class="btn-primary" style="width: auto; background: var(--primary);" onclick="saveSupabaseConfig()">
           <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าทั้งหมด
-        </button>
+          </button>
+
+        
+
+        </div>
       </div>
     </div>
-  </div>
 
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- APPLICATION LOGIC CODE -->
   <script>
     // Default Web App URL requested by user
-    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzZ-VEvZQ_Q5S7LP59eLlyuJSVR1F_rcrhxoIe4jbo99bTdw15sAXpC2-PLaJaubhwbpg/exec";
     const DEFAULT_TELEGRAM_TOKEN = "8767296623:AAGRsnjD41DKw_9fLNrH3vQNRlxihEhaDw0";
     const DEFAULT_TELEGRAM_CHAT_ID = "-5593653503";
 
@@ -1368,84 +1542,84 @@ function sendTelegramAlert(r) {
     const CATEGORIES_ORDER = Object.keys(CATEGORIES_META);
 
     const CHECKLIST_ITEMS_78 = [
-      { num: 1, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'ambu-child', name: 'Ambu เด็ก' },
-      { num: 2, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'ambu-adult', name: 'Ambu ผู้ใหญ่' },
-      { num: 3, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'o2-mask-child', name: 'O2 mask เด็ก' },
-      { num: 4, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'o2-mask-adult', name: 'O2 mask ผู้ใหญ่' },
-      { num: 5, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'o2-cannular', name: 'O2 cannular' },
-      { num: 6, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'nebulizer-set-child', name: 'set พ่นยา เด็ก' },
-      { num: 7, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'nebulizer-set-adult', name: 'set พ่นยา ผู้ใหญ่' },
-      { num: 8, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'rubber-bulb-syringe', name: 'ลูกสูบยางแดง' },
-      { num: 9, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'stethoscope', name: 'stethoscope' },
-      { num: 10, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'oral-airway', name: 'oral airway ขนาดต่างๆ' },
-      { num: 11, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'nasal-airway', name: 'nasal airway ขนาดต่างๆ' },
-      { num: 12, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'ky-jelly', name: 'KY jelly' },
-      { num: 13, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'oxygen-tank-1', name: 'Oxygen ถังที่ 1' },
-      { num: 14, catId: 'airway-breathing', catName: 'Airway & Breathing', id: 'oxygen-tank-2', name: 'Oxygen ถังที่ 2' },
-      { num: 15, catId: 'circulation', catName: 'Circulation', id: 'nss-1000', name: 'NSS 1000 ml.' },
-      { num: 16, catId: 'circulation', catName: 'Circulation', id: '5dn2-1000', name: '5%D/N/2 1000 ml.' },
-      { num: 17, catId: 'circulation', catName: 'Circulation', id: 'aed', name: 'AED' },
-      { num: 18, catId: 'circulation', catName: 'Circulation', id: 'paddle-child', name: 'Paddle เด็ก' },
-      { num: 19, catId: 'circulation', catName: 'Circulation', id: 'paddle-adult', name: 'Paddle ผู้ใหญ่' },
-      { num: 20, catId: 'circulation', catName: 'Circulation', id: 'electrode-adult', name: 'แผ่น Electrode ผู้ใหญ่' },
-      { num: 21, catId: 'circulation', catName: 'Circulation', id: 'electrode-child', name: 'แผ่น Electrode เด็ก' },
-      { num: 22, catId: 'circulation', catName: 'Circulation', id: 'bp-digital', name: 'เครื่องวัด BP Digital' },
-      { num: 23, catId: 'circulation', catName: 'Circulation', id: 'o2-sat', name: 'เครื่องวัด O2 sat' },
-      { num: 24, catId: 'circulation', catName: 'Circulation', id: 'top-gauze', name: 'Top gauze' },
-      { num: 25, catId: 'circulation', catName: 'Circulation', id: 'gauze', name: 'gauze' },
-      { num: 26, catId: 'circulation', catName: 'Circulation', id: 'roll-gauze', name: 'Roll gauze' },
-      { num: 27, catId: 'circulation', catName: 'Circulation', id: 'elastic-bandage', name: 'Elastic bandage ขนาดต่างๆ' },
-      { num: 28, catId: 'circulation', catName: 'Circulation', id: 'three-side-dressing', name: 'three side dressing' },
-      { num: 29, catId: 'circulation', catName: 'Circulation', id: 'tourniquet-multi', name: 'tourniquet (อเนกประสงค์)' },
-      { num: 30, catId: 'circulation', catName: 'Circulation', id: 'dtx-set', name: 'ชุด DTX' },
-      { num: 31, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'medicut', name: 'medicut ขนาดต่างๆ' },
-      { num: 32, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'iv-set-child', name: 'set IV เด็ก' },
-      { num: 33, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'iv-set-adult', name: 'set IV ผู้ใหญ่' },
-      { num: 34, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'three-way', name: 'three way' },
-      { num: 35, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'extension-tube', name: 'extension tube' },
-      { num: 36, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'tourniquet', name: 'tourniquet' },
-      { num: 37, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'iv-plaster', name: 'พลาสเตอร์ IV' },
-      { num: 38, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'transpore-1-inch', name: 'transpore 1"' },
-      { num: 39, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'heplock', name: 'heplock' },
-      { num: 40, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', id: 'alcohol-ball-iv', name: 'alcohol ball' },
-      { num: 41, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', id: 'syringe', name: 'syringe ขนาดต่างๆ (50,20,10,5,3 cc)' },
-      { num: 42, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', id: 'needles', name: 'เข็มเบอร์ต่างๆ (18,21,23,24,25,26)' },
-      { num: 43, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', id: 'alcohol-ball-inject', name: 'alcohol ball' },
-      { num: 44, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'spinal-board', name: 'spinal board' },
-      { num: 45, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'head-immobilize', name: 'Head immobilizer' },
-      { num: 46, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'belt', name: 'สายรัด belt' },
-      { num: 47, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'hard-collar', name: 'Hard collar ขนาดต่างๆ' },
-      { num: 48, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'ked', name: 'KED' },
-      { num: 49, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'vacuum-splint', name: 'vacuum splint' },
-      { num: 50, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'leg-splint', name: 'ไม้ดามขา' },
-      { num: 51, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', id: 'arm-splint', name: 'ไม้ดามแขน' },
-      { num: 52, catId: 'ppe', catName: 'ชุด PPE', id: 'gloves-disposable', name: 'ถุงมือ Disposable' },
-      { num: 53, catId: 'ppe', catName: 'ชุด PPE', id: 'gloves-sterile', name: 'ถุงมือ sterile' },
-      { num: 54, catId: 'ppe', catName: 'ชุด PPE', id: 'apron', name: 'เอี๊ยม' },
-      { num: 55, catId: 'ppe', catName: 'ชุด PPE', id: 'mask', name: 'หน้ากากอนามัย' },
-      { num: 56, catId: 'ppe', catName: 'ชุด PPE', id: 'mask-n95', name: 'หน้ากาก N95' },
-      { num: 57, catId: 'ppe', catName: 'ชุด PPE', id: 'raincoat', name: 'เสื้อกันฝน' },
-      { num: 58, catId: 'ppe', catName: 'ชุด PPE', id: 'boots', name: 'รองเท้าบูท' },
-      { num: 59, catId: 'ppe', catName: 'ชุด PPE', id: 'goggles', name: 'แว่นตานิรภัย' },
-      { num: 60, catId: 'ppe', catName: 'ชุด PPE', id: 'cap', name: 'หมวกคลุมผม' },
-      { num: 61, catId: 'safety', catName: 'Safety', id: 'reflective-vest', name: 'เสื้อสะท้อนแสง' },
-      { num: 62, catId: 'safety', catName: 'Safety', id: 'safety-helmet', name: 'หมวกกันกระแทก' },
-      { num: 63, catId: 'safety', catName: 'Safety', id: 'traffic-cone', name: 'กรวยและอุปกรณ์สะท้อนแสง' },
-      { num: 64, catId: 'safety', catName: 'Safety', id: 'barrier-tape', name: 'แถบกั้นจราจร' },
-      { num: 65, catId: 'safety', catName: 'Safety', id: 'fire-extinguisher', name: 'ถังดับเพลิง' },
-      { num: 66, catId: 'safety', catName: 'Safety', id: 'whistle', name: 'นกหวีด' },
-      { num: 67, catId: 'safety', catName: 'Safety', id: 'glass-breaker', name: 'อุปกรณ์ทุบกระจก & ตัดสายรัด' },
-      { num: 68, catId: 'safety', catName: 'Safety', id: 'traffic-wand', name: 'กระบองไฟจราจร' },
-      { num: 69, catId: 'safety', catName: 'Safety', id: 'flashlight-safety', name: 'ไฟฉาย' },
-      { num: 70, catId: 'safety', catName: 'Safety', id: 'scissors', name: 'กรรไกร' },
-      { num: 71, catId: 'safety', catName: 'Safety', id: 'bulletproof-vest', name: 'เสื้อกันกระสุน' },
-      { num: 72, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'red-bag', name: 'ถุงขยะติดเชื้อ (ถุงแดง)' },
-      { num: 73, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'trash-bag', name: 'ถุงขยะทั่วไป' },
-      { num: 74, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'hand-sanitizer', name: 'เจลล้างมือ' },
-      { num: 75, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'ammonia', name: 'แอมโมเนียหอม' },
-      { num: 76, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'nss-wound', name: 'NSS ล้างแผล' },
-      { num: 77, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'betadine', name: 'เบต้าดีน' },
-      { num: 78, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', id: 'consent-form', name: 'ใบยินยอม/ไม่ยินยอมรักษา' }
+      { num: 1, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'ambu-child', name: 'Ambu เด็ก' },
+      { num: 2, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'ambu-adult', name: 'Ambu ผู้ใหญ่' },
+      { num: 3, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'o2-mask-child', name: 'O2 mask เด็ก' },
+      { num: 4, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'o2-mask-adult', name: 'O2 mask ผู้ใหญ่' },
+      { num: 5, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'o2-cannular', name: 'O2 cannular' },
+      { num: 6, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'nebulizer-set-child', name: 'set พ่นยา เด็ก' },
+      { num: 7, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'nebulizer-set-adult', name: 'set พ่นยา ผู้ใหญ่' },
+      { num: 8, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'rubber-bulb-syringe', name: 'ลูกสูบยางแดง' },
+      { num: 9, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'stethoscope', name: 'stethoscope' },
+      { num: 10, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'oral-airway', name: 'oral airway ขนาดต่างๆ' },
+      { num: 11, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'nasal-airway', name: 'nasal airway ขนาดต่างๆ' },
+      { num: 12, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'ky-jelly', name: 'KY jelly' },
+      { num: 13, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'oxygen-tank-1', name: 'Oxygen ถังที่ 1' },
+      { num: 14, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'oxygen-tank-2', name: 'Oxygen ถังที่ 2' },
+      { num: 15, catId: 'circulation', catName: 'Circulation', minQty: 2, id: 'nss-1000', name: 'NSS 1000 ml.' },
+      { num: 16, catId: 'circulation', catName: 'Circulation', minQty: 2, id: '5dn2-1000', name: '5%D/N/2 1000 ml.' },
+      { num: 17, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'aed', name: 'AED' },
+      { num: 18, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'paddle-child', name: 'Paddle เด็ก' },
+      { num: 19, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'paddle-adult', name: 'Paddle ผู้ใหญ่' },
+      { num: 20, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'electrode-adult', name: 'แผ่น Electrode ผู้ใหญ่' },
+      { num: 21, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'electrode-child', name: 'แผ่น Electrode เด็ก' },
+      { num: 22, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'bp-digital', name: 'เครื่องวัด BP Digital' },
+      { num: 23, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'o2-sat', name: 'เครื่องวัด O2 sat' },
+      { num: 24, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'top-gauze', name: 'Top gauze' },
+      { num: 25, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'gauze', name: 'gauze' },
+      { num: 26, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'roll-gauze', name: 'Roll gauze' },
+      { num: 27, catId: 'circulation', catName: 'Circulation', minQty: 3, id: 'elastic-bandage', name: 'Elastic bandage ขนาดต่างๆ' },
+      { num: 28, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'three-side-dressing', name: 'three side dressing' },
+      { num: 29, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'tourniquet-multi', name: 'tourniquet (อเนกประสงค์)' },
+      { num: 30, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'dtx-set', name: 'ชุด DTX' },
+      { num: 31, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'medicut', name: 'medicut ขนาดต่างๆ' },
+      { num: 32, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'iv-set-child', name: 'set IV เด็ก' },
+      { num: 33, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'iv-set-adult', name: 'set IV ผู้ใหญ่' },
+      { num: 34, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'three-way', name: 'three way' },
+      { num: 35, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'extension-tube', name: 'extension tube' },
+      { num: 36, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'tourniquet', name: 'tourniquet' },
+      { num: 37, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'iv-plaster', name: 'พลาสเตอร์ IV' },
+      { num: 38, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'transpore-1-inch', name: 'transpore 1"' },
+      { num: 39, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'heplock', name: 'heplock' },
+      { num: 40, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'alcohol-ball-iv', name: 'alcohol ball' },
+      { num: 41, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', minQty: 1, id: 'syringe', name: 'syringe ขนาดต่างๆ (50,20,10,5,3 cc)' },
+      { num: 42, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', minQty: 1, id: 'needles', name: 'เข็มเบอร์ต่างๆ (18,21,23,24,25,26)' },
+      { num: 43, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', minQty: 1, id: 'alcohol-ball-inject', name: 'alcohol ball' },
+      { num: 44, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'spinal-board', name: 'spinal board' },
+      { num: 45, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'head-immobilize', name: 'Head immobilizer' },
+      { num: 46, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'belt', name: 'สายรัด belt' },
+      { num: 47, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'hard-collar', name: 'Hard collar ขนาดต่างๆ' },
+      { num: 48, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'ked', name: 'KED' },
+      { num: 49, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'vacuum-splint', name: 'vacuum splint' },
+      { num: 50, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'leg-splint', name: 'ไม้ดามขา' },
+      { num: 51, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'arm-splint', name: 'ไม้ดามแขน' },
+      { num: 52, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'gloves-disposable', name: 'ถุงมือ Disposable' },
+      { num: 53, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'gloves-sterile', name: 'ถุงมือ sterile' },
+      { num: 54, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'apron', name: 'เอี๊ยม' },
+      { num: 55, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'mask', name: 'หน้ากากอนามัย' },
+      { num: 56, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'mask-n95', name: 'หน้ากาก N95' },
+      { num: 57, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'raincoat', name: 'เสื้อกันฝน' },
+      { num: 58, catId: 'ppe', catName: 'ชุด PPE', minQty: 3, id: 'boots', name: 'รองเท้าบูท' },
+      { num: 59, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'goggles', name: 'แว่นตานิรภัย' },
+      { num: 60, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'cap', name: 'หมวกคลุมผม' },
+      { num: 61, catId: 'safety', catName: 'Safety', minQty: 3, id: 'reflective-vest', name: 'เสื้อสะท้อนแสง' },
+      { num: 62, catId: 'safety', catName: 'Safety', minQty: 1, id: 'safety-helmet', name: 'หมวกกันกระแทก' },
+      { num: 63, catId: 'safety', catName: 'Safety', minQty: 3, id: 'traffic-cone', name: 'กรวยและอุปกรณ์สะท้อนแสง' },
+      { num: 64, catId: 'safety', catName: 'Safety', minQty: 1, id: 'barrier-tape', name: 'แถบกั้นจราจร' },
+      { num: 65, catId: 'safety', catName: 'Safety', minQty: 1, id: 'fire-extinguisher', name: 'ถังดับเพลิง' },
+      { num: 66, catId: 'safety', catName: 'Safety', minQty: 1, id: 'whistle', name: 'นกหวีด' },
+      { num: 67, catId: 'safety', catName: 'Safety', minQty: 1, id: 'glass-breaker', name: 'อุปกรณ์ทุบกระจก & ตัดสายรัด' },
+      { num: 68, catId: 'safety', catName: 'Safety', minQty: 1, id: 'traffic-wand', name: 'กระบองไฟจราจร' },
+      { num: 69, catId: 'safety', catName: 'Safety', minQty: 1, id: 'flashlight-safety', name: 'ไฟฉาย' },
+      { num: 70, catId: 'safety', catName: 'Safety', minQty: 1, id: 'scissors', name: 'กรรไกร' },
+      { num: 71, catId: 'safety', catName: 'Safety', minQty: 1, id: 'bulletproof-vest', name: 'เสื้อกันกระสุน' },
+      { num: 72, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'red-bag', name: 'ถุงขยะติดเชื้อ (ถุงแดง)' },
+      { num: 73, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'trash-bag', name: 'ถุงขยะทั่วไป' },
+      { num: 74, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'hand-sanitizer', name: 'เจลล้างมือ' },
+      { num: 75, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'ammonia', name: 'แอมโมเนียหอม' },
+      { num: 76, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'nss-wound', name: 'NSS ล้างแผล' },
+      { num: 77, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'betadine', name: 'เบต้าดีน' },
+      { num: 78, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'consent-form', name: 'ใบยินยอม/ไม่ยินยอมรักษา' }
     ];
 
     let currentVehicle = 'คันที่ 1 (รถ Refer)';
@@ -1453,7 +1627,7 @@ function sendTelegramAlert(r) {
     let searchQuery = '';
     let inspectionFormState = {};
     let inspectionsData = [];
-    let isGoogleSheetActive = false;
+    let isSupabaseActive = false;
     let barChartObj = null;
     let doughnutChartObj = null;
 
@@ -1462,7 +1636,7 @@ function sendTelegramAlert(r) {
       resetInspectionFormState();
       renderCategoryNavGrid();
       renderChecklistCategories();
-      initGoogleSheetOrLocal();
+      initSupabaseOrLocal();
     });
 
     // Helper: Initial Date Populator
@@ -1479,7 +1653,7 @@ function sendTelegramAlert(r) {
     function resetInspectionFormState() {
       inspectionFormState = {};
       CHECKLIST_ITEMS_78.forEach(item => {
-        inspectionFormState[item.id] = { status: 'READY', note: '', name: item.name, catName: item.catName };
+        inspectionFormState[item.id] = { status: 'READY', note: '', qty: item.minQty || 1, name: item.name, catName: item.catName };
       });
     }
 
@@ -1594,36 +1768,39 @@ function sendTelegramAlert(r) {
 
         const rowsHtml = items.map(item => {
           if (!inspectionFormState[item.id]) {
-            inspectionFormState[item.id] = { status: 'READY', note: '', name: item.name, catName: meta.name };
+            inspectionFormState[item.id] = { status: 'READY', note: '', qty: item.minQty || 1, name: item.name, catName: meta.name };
           }
           const itemState = inspectionFormState[item.id];
+          const currentQty = itemState.qty !== undefined ? itemState.qty : (item.minQty || 1);
 
           return `
-            <div class="item-row">
-              <div class="item-title-bar">
-                <span class="item-badge-num">${item.num}</span>
-                <div>
-                  <span class="item-name-text">${escapeHtml(item.name)}</span>
-                  <span class="item-code-text">(${escapeHtml(item.id)})</span>
+            <div class="item-card">
+              <div class="item-header">
+                <div class="item-name-group">
+                  <span class="badge-num">${item.num}</span>
+                  <div>
+                    <div class="item-title">${escapeHtml(item.name)}</div>
+                    <div class="item-subtitle">${escapeHtml(item.id)} <span class="min-qty-text">(ขั้นต่ำ: ${item.minQty || 1})</span></div>
+                  </div>
                 </div>
               </div>
-              <div class="status-options">
-                <button type="button" class="status-btn ready ${itemState.status === 'READY' ? 'active' : ''}" 
-                  id="btn_${item.id}_READY" onclick="setCheckitemStatus('${item.id}', 'READY')">
-                  <i class="fa-solid fa-circle-check"></i> พร้อมใช้
-                </button>
-                <button type="button" class="status-btn repair ${itemState.status === 'REPAIR' ? 'active' : ''}" 
-                  id="btn_${item.id}_REPAIR" onclick="setCheckitemStatus('${item.id}', 'REPAIR')">
-                  <i class="fa-solid fa-circle-xmark"></i> ชำรุด
-                </button>
-                <button type="button" class="status-btn refill ${itemState.status === 'REFILL' ? 'active' : ''}" 
-                  id="btn_${item.id}_REFILL" onclick="setCheckitemStatus('${item.id}', 'REFILL')">
-                  <i class="fa-solid fa-circle-exclamation"></i> ต้องเติม
-                </button>
+              
+              <div class="item-controls">
+                <div class="qty-stepper">
+                  <button class="btn-stepper" type="button" onclick="changeQty('${item.id}', -1, ${item.minQty || 1})"><i class="fa-solid fa-minus"></i></button>
+                  <input type="number" id="qty_${item.id}" class="qty-input" value="${currentQty}" onchange="setCheckitemQty('${item.id}', this.value, ${item.minQty || 1})">
+                  <button class="btn-stepper" type="button" onclick="changeQty('${item.id}', 1, ${item.minQty || 1})"><i class="fa-solid fa-plus"></i></button>
+                </div>
+
+                <div class="status-toggles">
+                  <button type="button" class="status-btn ready ${itemState.status === 'READY' ? 'active' : ''}" id="btn_${item.id}_READY" onclick="setCheckitemStatus('${item.id}', 'READY')" title="พร้อมใช้"><i class="fa-solid fa-check"></i></button>
+                  <button type="button" class="status-btn repair ${itemState.status === 'REPAIR' ? 'active' : ''}" id="btn_${item.id}_REPAIR" onclick="setCheckitemStatus('${item.id}', 'REPAIR')" title="ชำรุด"><i class="fa-solid fa-wrench"></i></button>
+                  <button type="button" class="status-btn refill ${itemState.status === 'REFILL' ? 'active' : ''}" id="btn_${item.id}_REFILL" onclick="setCheckitemStatus('${item.id}', 'REFILL')" title="ต้องเติม"><i class="fa-solid fa-exclamation"></i></button>
+                </div>
               </div>
-              <div>
-                <input type="text" class="item-note-input" value="${escapeHtml(itemState.note || '')}"
-                  placeholder="หมายเหตุเพิ่มเติม..." oninput="setCheckitemNote('${item.id}', this.value)">
+              
+              <div class="item-note">
+                <input type="text" class="note-input" value="${escapeHtml(itemState.note || '')}" placeholder="📝 หมายเหตุเพิ่มเติม..." oninput="setCheckitemNote('${item.id}', this.value)">
               </div>
             </div>
           `;
@@ -1636,9 +1813,8 @@ function sendTelegramAlert(r) {
               ${items.length} รายการ
             </span>
           </div>
-          <div>${rowsHtml}</div>
+          <div class="items-grid">${rowsHtml}</div>
         `;
-
         container.appendChild(block);
       });
     }
@@ -1659,6 +1835,43 @@ function sendTelegramAlert(r) {
       } else {
         const targetCard = document.querySelector(`.vehicle-card[data-vehicle="${vehicleName}"]`);
         if (targetCard) targetCard.classList.add('selected');
+      }
+    }
+
+    function changeQty(itemId, delta, minQty) {
+      if (!inspectionFormState[itemId]) return;
+      let current = inspectionFormState[itemId].qty;
+      if (current === undefined || isNaN(current)) current = minQty || 0;
+      let newQty = current + delta;
+      if (newQty < 0) newQty = 0;
+      
+      const inputEl = document.getElementById('qty_' + itemId);
+      if (inputEl) inputEl.value = newQty;
+      
+      setCheckitemQty(itemId, newQty, minQty);
+    }
+
+    function setCheckitemQty(itemId, value, minQty) {
+      if (!inspectionFormState[itemId]) return;
+      const qty = parseInt(value, 10);
+      inspectionFormState[itemId].qty = isNaN(qty) ? 0 : qty;
+      
+      const elReady = document.getElementById('btn_' + itemId + '_READY');
+      const elRepair = document.getElementById('btn_' + itemId + '_REPAIR');
+      const elRefill = document.getElementById('btn_' + itemId + '_REFILL');
+
+      if (inspectionFormState[itemId].qty < minQty) {
+        inspectionFormState[itemId].status = 'REFILL';
+        if (elReady) elReady.classList.remove('active');
+        if (elRepair) elRepair.classList.remove('active');
+        if (elRefill) elRefill.classList.add('active');
+      } else {
+        if (inspectionFormState[itemId].status === 'REFILL') {
+            inspectionFormState[itemId].status = 'READY';
+            if (elReady) elReady.classList.add('active');
+            if (elRepair) elRepair.classList.remove('active');
+            if (elRefill) elRefill.classList.remove('active');
+        }
       }
     }
 
@@ -1715,6 +1928,7 @@ function sendTelegramAlert(r) {
           catId: item.catId,
           catName: item.catName,
           status: st,
+          qty: state.qty !== undefined ? state.qty : (item.minQty || 1),
           note: state.note ? state.note.trim() : ''
         };
       });
@@ -1739,8 +1953,8 @@ function sendTelegramAlert(r) {
 
       showToast(`⚡ บันทึกข้อมูลเรียบร้อยแล้ว (${savedVehicleChoice})`, 'success');
 
-      if (isGoogleSheetActive) {
-        saveToGoogleSheet(record);
+      if (isSupabaseActive) {
+        saveToSupabase(record);
       }
 
       // Send Telegram Notification if configured
@@ -1848,13 +2062,62 @@ function sendTelegramAlert(r) {
       }
     }
 
-    function initGoogleSheetOrLocal() {
-      const savedUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
-      localStorage.setItem('ambulance_google_sheet_url', savedUrl);
+    async function initSupabaseOrLocal() {
+      const savedUrl = localStorage.getItem('ambulance_supabase_url');
+      const savedKey = localStorage.getItem('ambulance_supabase_key');
 
-      isGoogleSheetActive = true;
-      updateSyncBadge(true, 'Google Sheet & Telegram Sync Active');
-      fetchFromGoogleSheet();
+      isSupabaseActive = !!(savedUrl && savedKey);
+      
+      if (isSupabaseActive) {
+         updateSyncBadge(true, 'Supabase & Telegram Sync Active');
+         // Try fetching from Supabase
+         const client = getSupabaseClient();
+         if (client) {
+            try {
+                const { data, error } = await client.from('inspections').select('*').order('timestamp', { ascending: false }).limit(100);
+                if (!error && data) {
+                    // Map data back to our format
+                    const fetchedData = data.map(d => ({
+                        id: d.id,
+                        vehicle: d.vehicle,
+                        inspector: d.inspector,
+                        shift: d.shift,
+                        dateStr: d.date_str,
+                        timestamp: d.timestamp,
+                        readyCount: d.readyCount,
+                        repairCount: d.repairCount,
+                        refillCount: d.refillCount,
+                        totalCount: d.totalCount,
+                        items: d.items
+                    }));
+                    // If local has hundreds of mock records and Supabase has almost none, keep local for demo purposes.
+                    const localDataRaw = localStorage.getItem('ambulance_inspections_data_78');
+                    let localCount = 0;
+                    if (localDataRaw) {
+                        try { localCount = JSON.parse(localDataRaw).length; } catch(e){}
+                    }
+                    if (localCount > 500 && fetchedData.length < 500) {
+                        // We are in a mock demo state, keep local data
+                        console.log('Keeping local mock data instead of wiping it with Supabase data.');
+                        loadLocalData();
+                    } else {
+                        inspectionsData = fetchedData;
+                        saveLocalDataSilently(); // cache it
+                    }
+                } else {
+                    loadLocalData();
+                }
+            } catch(e) {
+                loadLocalData();
+            }
+         } else {
+            loadLocalData();
+         }
+      } else {
+         updateSyncBadge(false, 'Local Mode (Offline)');
+         loadLocalData();
+      }
+      refreshActiveViews();
     }
 
     function updateSyncBadge(isConnected, text) {
@@ -1866,33 +2129,7 @@ function sendTelegramAlert(r) {
       }
     }
 
-    async function fetchFromGoogleSheet() {
-      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
-      if (!scriptUrl) return;
-
-      try {
-        updateSyncBadge(true, 'กำลังโหลดข้อมูลจาก Sheet...');
-        const response = await fetch(scriptUrl);
-        const result = await response.json();
-        
-        if (result && result.status === 'success' && Array.isArray(result.data)) {
-          if (result.data.length > 0) {
-            inspectionsData = result.data;
-            saveLocalDataSilently();
-          } else {
-            loadLocalData();
-          }
-          updateSyncBadge(true, 'Google Sheet Connected');
-          refreshActiveViews();
-        } else {
-          loadLocalData();
-        }
-      } catch (err) {
-        console.warn('Cannot fetch from Google Sheet, using local cache:', err);
-        updateSyncBadge(false, 'Local Mode (Offline/Sheet Error)');
-        loadLocalData();
-      }
-    }
+     
 
     function loadLocalData() {
       const localData = localStorage.getItem('ambulance_inspections_data_78');
@@ -1920,30 +2157,58 @@ function sendTelegramAlert(r) {
       if (activeTab && activeTab.id === 'historyTab') filterHistoryTable();
     }
 
-    async function saveToGoogleSheet(record) {
-      const scriptUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
-      if (!scriptUrl) return;
+    
+    let supabaseClientInstance = null;
+    function getSupabaseClient() {
+      if (supabaseClientInstance) return supabaseClientInstance;
+      
+      const url = localStorage.getItem('ambulance_supabase_url') || document.getElementById('cfgSupabaseUrl').value;
+      const key = localStorage.getItem('ambulance_supabase_key') || document.getElementById('cfgSupabaseKey').value;
+      
+      if (!url || !key || !window.supabase) {
+        console.warn('Supabase credentials missing or SDK not loaded');
+        return null;
+      }
+      
+      supabaseClientInstance = window.supabase.createClient(url, key);
+      return supabaseClientInstance;
+    }
+
+    async function saveToSupabase(record) {
+      const client = getSupabaseClient();
+      if (!client) return;
 
       try {
-        await fetch(scriptUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'addInspection', record: record })
-        });
-        showToast('🟢 บันทึกลง Google Sheet เรียบร้อยแล้ว', 'info');
+        const { data, error } = await client
+          .from('inspections')
+          .insert([{
+            id: record.id,
+            vehicle: record.vehicle,
+            inspector: record.inspector,
+            shift: record.shift,
+            date_str: record.dateStr,
+            timestamp: record.timestamp,
+            readyCount: record.readyCount,
+            repairCount: record.repairCount,
+            refillCount: record.refillCount,
+            totalCount: record.totalCount,
+            items: record.items
+          }]);
+          
+        if (error) throw error;
+        showToast('🟢 บันทึกลง Supabase เรียบร้อยแล้ว', 'info');
       } catch (err) {
-        console.warn('Failed to post to Google Sheet:', err);
-        showToast('⚠️ ไม่สามารถส่งไป Google Sheet ได้ ข้อมูลยังคงเซฟอยู่ในเครื่อง', 'warning');
+        console.warn('Failed to post to Supabase:', err);
+        showToast('⚠️ ไม่สามารถส่งไป Supabase ได้', 'warning');
       }
     }
 
     function openConfigModal() {
-      const savedUrl = localStorage.getItem('ambulance_google_sheet_url') || DEFAULT_GAS_URL;
+      const savedUrl = localStorage.getItem('ambulance_supabase_url') || 'https://ywgfigqpcnkrlohnjgzk.supabase.co';
       const savedToken = localStorage.getItem('ambulance_telegram_token') || DEFAULT_TELEGRAM_TOKEN;
       const savedChatId = localStorage.getItem('ambulance_telegram_chatid') || DEFAULT_TELEGRAM_CHAT_ID;
 
-      const inputUrl = document.getElementById('cfgGoogleScriptUrl');
+      const inputUrl = document.getElementById('cfgSupabaseUrl');
       if (inputUrl) inputUrl.value = savedUrl;
 
       const inputToken = document.getElementById('cfgTelegramToken');
@@ -1955,36 +2220,39 @@ function sendTelegramAlert(r) {
       document.getElementById('configModal').classList.add('open');
     }
 
+    
     function closeConfigModal() {
       document.getElementById('configModal').classList.remove('open');
     }
 
-    function saveGoogleSheetConfig() {
-      const url = document.getElementById('cfgGoogleScriptUrl').value.trim();
+    function saveSupabaseConfig() {
+      const url = document.getElementById('cfgSupabaseUrl').value.trim();
+      const key = document.getElementById('cfgSupabaseKey').value.trim();
       const token = document.getElementById('cfgTelegramToken').value.trim();
       const chatId = document.getElementById('cfgTelegramChatId').value.trim();
 
       if (!url) {
-        showToast('กรุณากรอก Web App URL ของ Google Apps Script', 'error');
+        showToast('กรุณากรอก Web App URL ของ Supabase API', 'error');
         return;
       }
 
-      localStorage.setItem('ambulance_google_sheet_url', url);
+      localStorage.setItem('ambulance_supabase_url', url);
+      localStorage.setItem('ambulance_supabase_key', key);
       localStorage.setItem('ambulance_telegram_token', token);
       localStorage.setItem('ambulance_telegram_chatid', chatId);
 
       closeConfigModal();
-      showToast('บันทึกการตั้งค่า Google Sheet & Telegram เรียบร้อยแล้ว!', 'success');
-      setTimeout(() => initGoogleSheetOrLocal(), 500);
+      showToast('บันทึกการตั้งค่า Supabase & Telegram เรียบร้อยแล้ว!', 'success');
+      setTimeout(() => initSupabaseOrLocal(), 500);
     }
 
-    function clearGoogleSheetConfig() {
-      localStorage.setItem('ambulance_google_sheet_url', DEFAULT_GAS_URL);
+    function clearSupabaseConfig() {
+      localStorage.setItem('ambulance_supabase_url', 'https://ywgfigqpcnkrlohnjgzk.supabase.co');
       localStorage.setItem('ambulance_telegram_token', DEFAULT_TELEGRAM_TOKEN);
       localStorage.setItem('ambulance_telegram_chatid', DEFAULT_TELEGRAM_CHAT_ID);
 
-      const inputUrl = document.getElementById('cfgGoogleScriptUrl');
-      if (inputUrl) inputUrl.value = DEFAULT_GAS_URL;
+      const inputUrl = document.getElementById('cfgSupabaseUrl');
+      if (inputUrl) inputUrl.value = 'https://ywgfigqpcnkrlohnjgzk.supabase.co';
       const inputToken = document.getElementById('cfgTelegramToken');
       if (inputToken) inputToken.value = DEFAULT_TELEGRAM_TOKEN;
       const inputChatId = document.getElementById('cfgTelegramChatId');
@@ -1998,7 +2266,7 @@ function sendTelegramAlert(r) {
       if (textarea) {
         textarea.select();
         document.execCommand('copy');
-        showToast('คัดลอกโค้ด Google Apps Script เรียบร้อยแล้ว!', 'success');
+        showToast('คัดลอกโค้ด Supabase API เรียบร้อยแล้ว!', 'success');
       }
     }
 
@@ -2201,6 +2469,7 @@ function sendTelegramAlert(r) {
               <td><code>${escapeHtml(itm.id || k)}</code></td>
               <td><strong>${escapeHtml(itm.name || k)}</strong></td>
               <td><span class="badge badge-blue">${escapeHtml(itm.catName || '-')}</span></td>
+              <td style="text-align: center;"><strong>${itm.qty !== undefined ? itm.qty : '-'}</strong></td>
               <td>${badge}</td>
               <td>${escapeHtml(itm.note || '-')}</td>
             </tr>
@@ -2230,8 +2499,9 @@ function sendTelegramAlert(r) {
               <tr>
                 <th style="width: 5%;">#</th>
                 <th style="width: 15%;">ID</th>
-                <th style="width: 30%;">ชื่ออุปกรณ์</th>
-                <th style="width: 20%;">หมวดหมู่</th>
+                <th style="width: 25%;">ชื่ออุปกรณ์</th>
+                <th style="width: 15%;">หมวดหมู่</th>
+                <th style="width: 10%;">จำนวน</th>
                 <th style="width: 15%;">สถานะ</th>
                 <th style="width: 15%;">หมายเหตุ</th>
               </tr>
