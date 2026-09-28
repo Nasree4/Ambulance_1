@@ -4,13 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ระบบตรวจเช็คอุปกรณ์รถพยาบาล 4 คัน - รพ.เจาะไอร้อง</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#10b981">
+  <link rel="apple-touch-icon" href="app-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EMS Choairong">
+
   
   <!-- FontAwesome & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap">
   
   <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('ServiceWorker registration successful with scope: ', reg.scope);
+        }).catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+
+    </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -1043,10 +1063,10 @@
     <div class="navbar-container">
       <div class="brand">
         <div class="brand-icon" style="background: white; padding: 4px;">
-          <img src="logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+          <img src="app-icon.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="brand-title">
-          <h1>ระบบตรวจเช็คอุปกรณ์รถพยาบาล 4 คัน (78 รายการ)</h1>
+          <h1>ระบบตรวจเช็คอุปกรณ์รถพยาบาล 4 คัน (96 รายการ)</h1>
           <p>กลุ่มงานการพยาบาลผู้ป่วยนอกและอุบัติเหตุฉุกเฉิน โรงพยาบาลเจาะไอร้อง</p>
         </div>
       </div>
@@ -1055,8 +1075,8 @@
           <span class="status-dot local" id="statusDot"></span>
           <span id="syncStatusText">Supabase Connected</span>
         </div>
-        <button class="btn-config" onclick="openConfigModal()">
-          <i class="fa-solid fa-gear"></i> ตั้งค่า Supabase & Telegram
+        <button class="btn-config" onclick="openConfigModal()" title="ตั้งค่าระบบ Supabase & Telegram">
+          <i class="fa-solid fa-gear"></i>
         </button>
       </div>
     </div>
@@ -1149,7 +1169,7 @@
           <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
             <span><i class="fa-solid fa-layer-group"></i> เลือกหมวดหมู่อุปกรณ์ (8 หมวดหมู่)</span>
             <button type="button" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" onclick="setAllItemsStatus('READY')">
-              <i class="fa-solid fa-check-double"></i> เลือก "พร้อมใช้" ทั้งหมด (78 รายการ)
+              <i class="fa-solid fa-check-double"></i> เลือก "พร้อมใช้" ทั้งหมด (96 รายการ)
             </button>
           </div>
 
@@ -1157,7 +1177,7 @@
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
             <button type="button" id="btnShowAllPill" class="cat-pill active" style="flex: 1; justify-content: center; min-height: 44px;" onclick="switchCategory('ALL')">
               <i class="fa-solid fa-border-all"></i>
-              <span>แสดงครบทุกหมวดหมู่ (78 รายการ)</span>
+              <span>แสดงครบทุกหมวดหมู่ (96 รายการ)</span>
             </button>
             <div style="flex: 1; min-width: 220px;">
               <input type="text" id="quickSearchInput" class="form-control" style="min-height: 44px;" placeholder="🔍 ค้นหาชื่ออุปกรณ์ด่วน..." oninput="handleQuickSearch(this.value)">
@@ -1176,7 +1196,7 @@
               <i class="fa-solid fa-chevron-left"></i> หมวดก่อนหน้า
             </button>
             <span id="catStepProgressText" style="font-weight: 700; color: var(--primary-dark); font-size: 0.95rem;">
-              แสดงครบทั้ง 8 หมวดหมู่
+              แสดงครบทั้ง 9 หมวดหมู่
             </span>
             <button type="button" class="btn-secondary" id="btnNextCat" onclick="stepCategory(1)">
               หมวดถัดไป <i class="fa-solid fa-chevron-right"></i>
@@ -1185,7 +1205,7 @@
 
           <div style="margin-top: 1.5rem;">
             <button type="submit" class="btn-primary" id="btnSubmit">
-              <i class="fa-solid fa-paper-plane"></i> บันทึกผลการตรวจเช็คและแจ้งเตือน (78 รายการ)
+              <i class="fa-solid fa-paper-plane"></i> บันทึกผลการตรวจเช็คและแจ้งเตือน (96 รายการ)
             </button>
           </div>
         </div>
@@ -1258,7 +1278,7 @@
         </div>
         <div class="chart-box">
           <div class="card-title">
-            <i class="fa-solid fa-chart-pie"></i> สัดส่วนสถานะอุปกรณ์รวม (78 รายการ)
+            <i class="fa-solid fa-chart-pie"></i> สัดส่วนสถานะอุปกรณ์รวม (96 รายการ)
           </div>
           <div class="chart-container">
             <canvas id="doughnutStatus"></canvas>
@@ -1482,7 +1502,7 @@ function sendTelegramAlert(r) {
   msg += "👤 *ผู้ตรวจ:* " + r.inspector + "\n";
   msg += "🕒 *เวร:* " + r.shift + "\n";
   msg += "📅 *เวลา:* " + r.dateStr + "\n\n";
-  msg += "📊 *สรุปผล (78 รายการ):*\n";
+  msg += "📊 *สรุปผล (96 รายการ):*\n";
   msg += "✅ พร้อมใช้: " + r.readyCount + " รายการ\n";
   msg += "🛠️ ชำรุด: " + r.repairCount + " รายการ\n";
   msg += "📦 ต้องเติม: " + r.refillCount + " รายการ\n";
@@ -1534,6 +1554,7 @@ function sendTelegramAlert(r) {
       'iv-kit': { name: 'ชุดอุปกรณ์ให้ IV', icon: 'fa-droplet' },
       'injection-kit': { name: 'ชุดอุปกรณ์ฉีดยา', icon: 'fa-syringe' },
       'splint-moving': { name: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', icon: 'fa-bed-pulse' },
+      'emergency-drugs': { name: 'ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)', icon: 'fa-pills' },
       'ppe': { name: 'ชุด PPE', icon: 'fa-head-side-mask' },
       'safety': { name: 'Safety', icon: 'fa-shield-halved' },
       'other': { name: 'อุปกรณ์อื่นๆ ทั่วไป', icon: 'fa-box-archive' }
@@ -1619,7 +1640,26 @@ function sendTelegramAlert(r) {
       { num: 75, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'ammonia', name: 'แอมโมเนียหอม' },
       { num: 76, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'nss-wound', name: 'NSS ล้างแผล' },
       { num: 77, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'betadine', name: 'เบต้าดีน' },
-      { num: 78, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'consent-form', name: 'ใบยินยอม/ไม่ยินยอมรักษา' }
+      { num: 78, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'consent-form', name: 'ใบยินยอม/ไม่ยินยอมรักษา' },
+
+      { num: 79, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 20, id: 'adrenaline', name: 'Adrenaline (amp)' },
+      { num: 80, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 18, id: 'adenosine', name: 'Adenosine (mg)' },
+      { num: 81, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 3, id: 'atropine', name: 'Atropine (mg)' },
+      { num: 82, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 450, id: 'amiodarone', name: 'Amiodarone (mg)' },
+      { num: 83, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'calcium-gluconate', name: 'Calcium Gluconate (g)' },
+      { num: 84, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 250, id: 'dopamine', name: 'Dopamine (mg)' },
+      { num: 85, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 100, id: 'sodium-bicarbonate', name: 'Sodium Bicarbonate (mg)' },
+      { num: 86, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 4, id: 'magnesium-sulphate', name: 'Magnesium Sulphate (g)' },
+      { num: 87, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 10, id: 'dexamethasone', name: 'Dexamethasone inj. (mg)' },
+      { num: 88, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 20, id: 'diazepam', name: 'Diazepam inj. 10 mg/2 ml (mg)' },
+      { num: 89, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 50, id: 'dextrose-50', name: 'Dextrose 50 % (g)' },
+      { num: 90, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'berodual-neb', name: 'Berodual neb. (NB)' },
+      { num: 91, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'ventolin-neb', name: 'Ventolin neb. (NB)' },
+      { num: 92, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 10, id: 'haloperidol', name: 'Haloperidol (mg)' },
+      { num: 93, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 10, id: 'pain-med', name: 'Pain med (Morphine/NSAID) (mg/amp)' },
+      { num: 94, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'naloxone', name: 'Naloxone (amp)' },
+      { num: 95, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'ntg', name: 'NTG Sublingual (Tab)' },
+      { num: 96, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'antiplatelet', name: 'Antiplatelet (ASA/ACLS) (dose)' }
     ];
 
     let currentVehicle = 'คันที่ 1 (รถ Refer)';
@@ -1733,11 +1773,11 @@ function sendTelegramAlert(r) {
       if (!text) return;
 
       if (currentCategory === 'ALL') {
-        text.innerText = 'แสดงครบทั้ง 8 หมวดหมู่ (78 รายการ)';
+        text.innerText = 'แสดงครบทั้ง 9 หมวดหมู่ (96 รายการ)';
       } else {
         const idx = CATEGORIES_ORDER.indexOf(currentCategory) + 1;
         const meta = CATEGORIES_META[currentCategory];
-        text.innerText = `หมวดที่ ${idx} / 8: ${meta.name}`;
+        text.innerText = `หมวดที่ ${idx} / 9: ${meta.name}`;
       }
     }
 
@@ -1823,7 +1863,7 @@ function sendTelegramAlert(r) {
       CHECKLIST_ITEMS_78.forEach(item => {
         setCheckitemStatus(item.id, status);
       });
-      showToast(`ตั้งค่าให้รายการทั้งหมด 78 รายการ เป็น "${status === 'READY' ? 'พร้อมใช้งาน' : status}" แล้ว`, 'info');
+      showToast(`ตั้งค่าให้รายการทั้งหมด 96 รายการ เป็น "${status === 'READY' ? 'พร้อมใช้งาน' : status}" แล้ว`, 'info');
     }
 
     function selectVehicle(vehicleName, element) {
@@ -1984,7 +2024,7 @@ function sendTelegramAlert(r) {
       msg += `👤 *ผู้ตรวจ:* ${record.inspector}\n`;
       msg += `🕒 *เวร:* ${record.shift}\n`;
       msg += `📅 *วันที่/เวลา:* ${record.dateStr}\n\n`;
-      msg += `📊 *สรุปสถานะอุปกรณ์ (78 รายการ):*\n`;
+      msg += `📊 *สรุปสถานะอุปกรณ์ (96 รายการ):*\n`;
       msg += `✅ พร้อมใช้งาน: ${record.readyCount} รายการ\n`;
       msg += `🛠️ ชำรุด (ต้องซ่อม): ${record.repairCount} รายการ\n`;
       msg += `📦 ขาดแคลน (ต้องเติม): ${record.refillCount} รายการ\n`;
@@ -2090,20 +2130,49 @@ function sendTelegramAlert(r) {
                         totalCount: d.totalCount,
                         items: d.items
                     }));
-                    // If local has hundreds of mock records and Supabase has almost none, keep local for demo purposes.
+                    
+                    // Auto-sync: Check if local has records that Supabase doesn't have
+                    let localData = [];
                     const localDataRaw = localStorage.getItem('ambulance_inspections_data_78');
-                    let localCount = 0;
                     if (localDataRaw) {
-                        try { localCount = JSON.parse(localDataRaw).length; } catch(e){}
+                        try { localData = JSON.parse(localDataRaw); } catch(e){}
                     }
-                    if (localCount > 500 && fetchedData.length < 500) {
-                        // We are in a mock demo state, keep local data
-                        console.log('Keeping local mock data instead of wiping it with Supabase data.');
-                        loadLocalData();
+                    
+                    const supabaseIds = new Set(fetchedData.map(d => d.id));
+                    const unsyncedRecords = localData.filter(r => !supabaseIds.has(r.id));
+                    
+                    if (unsyncedRecords.length > 0) {
+                        console.log('Found ' + unsyncedRecords.length + ' unsynced local records. Uploading to Supabase...');
+                        // Upload unsynced records
+                        const sbRecords = unsyncedRecords.map(r => ({
+                            id: r.id, vehicle: r.vehicle, inspector: r.inspector, shift: r.shift,
+                            date_str: r.dateStr, timestamp: r.timestamp, readyCount: r.readyCount,
+                            repairCount: r.repairCount, refillCount: r.refillCount, totalCount: r.totalCount, items: r.items
+                        }));
+                        
+                        // Async upload without blocking the UI load
+                        (async () => {
+                            for (let i = 0; i < sbRecords.length; i += 50) {
+                                const batch = sbRecords.slice(i, i + 50);
+                                try {
+                                    await client.from('inspections').insert(batch);
+                                } catch(err) {
+                                    console.warn('Auto-sync batch failed:', err);
+                                }
+                            }
+                            console.log('Auto-sync complete.');
+                            showToast('อัปเดตข้อมูลขึ้นฐานข้อมูลออนไลน์เรียบร้อยแล้ว', 'success');
+                        })();
+                        
+                        // Merge local and fetched data
+                        inspectionsData = [...unsyncedRecords, ...fetchedData].sort((a,b) => b.timestamp - a.timestamp);
                     } else {
                         inspectionsData = fetchedData;
-                        saveLocalDataSilently(); // cache it
                     }
+                    
+                    saveLocalDataSilently(); // cache it
+                    refreshActiveViews();
+
                 } else {
                     loadLocalData();
                 }
@@ -2456,7 +2525,7 @@ function sendTelegramAlert(r) {
           <td><span class="badge badge-blue"><i class="fa-solid fa-ambulance"></i> ${escapeHtml(rec.vehicle)}</span></td>
           <td><strong>${escapeHtml(rec.inspector || '-')}</strong></td>
           <td>${escapeHtml(rec.shift || '-')}</td>
-          <td><span class="badge badge-green">${rec.readyCount} / ${rec.totalCount || 78}</span></td>
+          <td><span class="badge badge-green">${rec.readyCount} / ${rec.totalCount || 96}</span></td>
           <td>${rec.repairCount > 0 ? `<span class="badge badge-red">${rec.repairCount} รายการ</span>` : '0'}</td>
           <td>${rec.refillCount > 0 ? `<span class="badge badge-amber">${rec.refillCount} รายการ</span>` : '0'}</td>
           <td>
@@ -2508,7 +2577,7 @@ function sendTelegramAlert(r) {
         </div>
         
         <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
-          <span class="badge badge-green">พร้อมใช้งาน: ${record.readyCount} / ${record.totalCount || 78}</span>
+          <span class="badge badge-green">พร้อมใช้งาน: ${record.readyCount} / ${record.totalCount || 96}</span>
           <span class="badge badge-red">ชำรุด: ${record.repairCount}</span>
           <span class="badge badge-amber">ต้องเติม: ${record.refillCount}</span>
         </div>
@@ -2546,7 +2615,7 @@ function sendTelegramAlert(r) {
 
       let csvContent = "\uFEFFวันที่/เวลา,หมายเลขรถ,ผู้ตรวจเช็ค,เวร,พร้อมใช้,ชำรุด,ต้องเติม,รายการรวม\n";
       inspectionsData.forEach(r => {
-        csvContent += `"${r.dateStr}","${r.vehicle}","${r.inspector}","${r.shift}",${r.readyCount},${r.repairCount},${r.refillCount},${r.totalCount || 78}\n`;
+        csvContent += `"${r.dateStr}","${r.vehicle}","${r.inspector}","${r.shift}",${r.readyCount},${r.repairCount},${r.refillCount},${r.totalCount || 96}\n`;
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
