@@ -1054,7 +1054,107 @@
       box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
     }
 
-  </style>
+  
+    
+    /* Clean Unit Tag Badge */
+    .unit-tag-badge {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .psi-input-field {
+      width: 75px !important;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    /* Oxygen Pressure Visual Status Bar */
+    .psi-bar-wrapper {
+      width: 100%;
+      margin-top: 0.45rem;
+    }
+    .psi-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 99px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .psi-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.35s ease, background-color 0.35s ease;
+    }
+    .psi-bar-fill.green {
+      background: linear-gradient(90deg, #34d399, #10b981);
+    }
+    .psi-bar-fill.yellow {
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    }
+    .psi-bar-fill.red {
+      background: linear-gradient(90deg, #f87171, #ef4444);
+    }
+    .psi-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+    .psi-scale-labels .scale-crit {
+      color: #dc2626;
+    }
+    .psi-scale-labels .scale-warn {
+      color: #d97706;
+    }
+
+    /* Oxygen PSI 3-Zone Badges */
+    .psi-zone {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 0.4rem;
+      transition: all 0.25s ease;
+    }
+    .psi-zone.green {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    .psi-zone.yellow {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .psi-zone.red {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      animation: pulse-red-zone 1.5s infinite;
+    }
+    @keyframes pulse-red-zone {
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+
+    </style>
 </head>
 <body>
 
@@ -1196,7 +1296,7 @@
               <i class="fa-solid fa-chevron-left"></i> หมวดก่อนหน้า
             </button>
             <span id="catStepProgressText" style="font-weight: 700; color: var(--primary-dark); font-size: 0.95rem;">
-              แสดงครบทั้ง 9 หมวดหมู่
+              แสดงครบทั้ง 8 หมวดหมู่
             </span>
             <button type="button" class="btn-secondary" id="btnNextCat" onclick="stepCategory(1)">
               หมวดถัดไป <i class="fa-solid fa-chevron-right"></i>
@@ -1548,119 +1648,789 @@ function sendTelegramAlert(r) {
         .replace(/'/g, '&#039;');
     }
 
-    const CATEGORIES_META = {
+            const CATEGORIES_META = {
       'airway-breathing': { name: 'Airway & Breathing', icon: 'fa-lungs' },
       'circulation': { name: 'Circulation', icon: 'fa-heart-pulse' },
       'iv-kit': { name: 'ชุดอุปกรณ์ให้ IV', icon: 'fa-droplet' },
       'injection-kit': { name: 'ชุดอุปกรณ์ฉีดยา', icon: 'fa-syringe' },
       'splint-moving': { name: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', icon: 'fa-bed-pulse' },
       'emergency-drugs': { name: 'ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)', icon: 'fa-pills' },
-      'ppe': { name: 'ชุด PPE', icon: 'fa-head-side-mask' },
-      'safety': { name: 'Safety', icon: 'fa-shield-halved' },
+      'ppe-safety': { name: 'ชุด PPE & Safety', icon: 'fa-shield-halved' },
       'other': { name: 'อุปกรณ์อื่นๆ ทั่วไป', icon: 'fa-box-archive' }
     };
 
     const CATEGORIES_ORDER = Object.keys(CATEGORIES_META);
 
     const CHECKLIST_ITEMS_78 = [
-      { num: 1, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'ambu-child', name: 'Ambu เด็ก' },
-      { num: 2, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'ambu-adult', name: 'Ambu ผู้ใหญ่' },
-      { num: 3, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'o2-mask-child', name: 'O2 mask เด็ก' },
-      { num: 4, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'o2-mask-adult', name: 'O2 mask ผู้ใหญ่' },
-      { num: 5, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'o2-cannular', name: 'O2 cannular' },
-      { num: 6, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'nebulizer-set-child', name: 'set พ่นยา เด็ก' },
-      { num: 7, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'nebulizer-set-adult', name: 'set พ่นยา ผู้ใหญ่' },
-      { num: 8, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'rubber-bulb-syringe', name: 'ลูกสูบยางแดง' },
-      { num: 9, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'stethoscope', name: 'stethoscope' },
-      { num: 10, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'oral-airway', name: 'oral airway ขนาดต่างๆ' },
-      { num: 11, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'nasal-airway', name: 'nasal airway ขนาดต่างๆ' },
-      { num: 12, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'ky-jelly', name: 'KY jelly' },
-      { num: 13, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'oxygen-tank-1', name: 'Oxygen ถังที่ 1' },
-      { num: 14, catId: 'airway-breathing', catName: 'Airway & Breathing', minQty: 3, id: 'oxygen-tank-2', name: 'Oxygen ถังที่ 2' },
-      { num: 15, catId: 'circulation', catName: 'Circulation', minQty: 2, id: 'nss-1000', name: 'NSS 1000 ml.' },
-      { num: 16, catId: 'circulation', catName: 'Circulation', minQty: 2, id: '5dn2-1000', name: '5%D/N/2 1000 ml.' },
-      { num: 17, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'aed', name: 'AED' },
-      { num: 18, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'paddle-child', name: 'Paddle เด็ก' },
-      { num: 19, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'paddle-adult', name: 'Paddle ผู้ใหญ่' },
-      { num: 20, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'electrode-adult', name: 'แผ่น Electrode ผู้ใหญ่' },
-      { num: 21, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'electrode-child', name: 'แผ่น Electrode เด็ก' },
-      { num: 22, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'bp-digital', name: 'เครื่องวัด BP Digital' },
-      { num: 23, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'o2-sat', name: 'เครื่องวัด O2 sat' },
-      { num: 24, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'top-gauze', name: 'Top gauze' },
-      { num: 25, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'gauze', name: 'gauze' },
-      { num: 26, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'roll-gauze', name: 'Roll gauze' },
-      { num: 27, catId: 'circulation', catName: 'Circulation', minQty: 3, id: 'elastic-bandage', name: 'Elastic bandage ขนาดต่างๆ' },
-      { num: 28, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'three-side-dressing', name: 'three side dressing' },
-      { num: 29, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'tourniquet-multi', name: 'tourniquet (อเนกประสงค์)' },
-      { num: 30, catId: 'circulation', catName: 'Circulation', minQty: 1, id: 'dtx-set', name: 'ชุด DTX' },
-      { num: 31, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'medicut', name: 'medicut ขนาดต่างๆ' },
-      { num: 32, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'iv-set-child', name: 'set IV เด็ก' },
-      { num: 33, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'iv-set-adult', name: 'set IV ผู้ใหญ่' },
-      { num: 34, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'three-way', name: 'three way' },
-      { num: 35, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'extension-tube', name: 'extension tube' },
-      { num: 36, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'tourniquet', name: 'tourniquet' },
-      { num: 37, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'iv-plaster', name: 'พลาสเตอร์ IV' },
-      { num: 38, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'transpore-1-inch', name: 'transpore 1"' },
-      { num: 39, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'heplock', name: 'heplock' },
-      { num: 40, catId: 'iv-kit', catName: 'ชุดอุปกรณ์ให้ IV', minQty: 1, id: 'alcohol-ball-iv', name: 'alcohol ball' },
-      { num: 41, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', minQty: 1, id: 'syringe', name: 'syringe ขนาดต่างๆ (50,20,10,5,3 cc)' },
-      { num: 42, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', minQty: 1, id: 'needles', name: 'เข็มเบอร์ต่างๆ (18,21,23,24,25,26)' },
-      { num: 43, catId: 'injection-kit', catName: 'ชุดอุปกรณ์ฉีดยา', minQty: 1, id: 'alcohol-ball-inject', name: 'alcohol ball' },
-      { num: 44, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'spinal-board', name: 'spinal board' },
-      { num: 45, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'head-immobilize', name: 'Head immobilizer' },
-      { num: 46, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'belt', name: 'สายรัด belt' },
-      { num: 47, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'hard-collar', name: 'Hard collar ขนาดต่างๆ' },
-      { num: 48, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'ked', name: 'KED' },
-      { num: 49, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'vacuum-splint', name: 'vacuum splint' },
-      { num: 50, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'leg-splint', name: 'ไม้ดามขา' },
-      { num: 51, catId: 'splint-moving', catName: 'อุปกรณ์ดาม & ยกเคลื่อนย้าย', minQty: 1, id: 'arm-splint', name: 'ไม้ดามแขน' },
-      { num: 52, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'gloves-disposable', name: 'ถุงมือ Disposable' },
-      { num: 53, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'gloves-sterile', name: 'ถุงมือ sterile' },
-      { num: 54, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'apron', name: 'เอี๊ยม' },
-      { num: 55, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'mask', name: 'หน้ากากอนามัย' },
-      { num: 56, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'mask-n95', name: 'หน้ากาก N95' },
-      { num: 57, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'raincoat', name: 'เสื้อกันฝน' },
-      { num: 58, catId: 'ppe', catName: 'ชุด PPE', minQty: 3, id: 'boots', name: 'รองเท้าบูท' },
-      { num: 59, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'goggles', name: 'แว่นตานิรภัย' },
-      { num: 60, catId: 'ppe', catName: 'ชุด PPE', minQty: 1, id: 'cap', name: 'หมวกคลุมผม' },
-      { num: 61, catId: 'safety', catName: 'Safety', minQty: 3, id: 'reflective-vest', name: 'เสื้อสะท้อนแสง' },
-      { num: 62, catId: 'safety', catName: 'Safety', minQty: 1, id: 'safety-helmet', name: 'หมวกกันกระแทก' },
-      { num: 63, catId: 'safety', catName: 'Safety', minQty: 3, id: 'traffic-cone', name: 'กรวยและอุปกรณ์สะท้อนแสง' },
-      { num: 64, catId: 'safety', catName: 'Safety', minQty: 1, id: 'barrier-tape', name: 'แถบกั้นจราจร' },
-      { num: 65, catId: 'safety', catName: 'Safety', minQty: 1, id: 'fire-extinguisher', name: 'ถังดับเพลิง' },
-      { num: 66, catId: 'safety', catName: 'Safety', minQty: 1, id: 'whistle', name: 'นกหวีด' },
-      { num: 67, catId: 'safety', catName: 'Safety', minQty: 1, id: 'glass-breaker', name: 'อุปกรณ์ทุบกระจก & ตัดสายรัด' },
-      { num: 68, catId: 'safety', catName: 'Safety', minQty: 1, id: 'traffic-wand', name: 'กระบองไฟจราจร' },
-      { num: 69, catId: 'safety', catName: 'Safety', minQty: 1, id: 'flashlight-safety', name: 'ไฟฉาย' },
-      { num: 70, catId: 'safety', catName: 'Safety', minQty: 1, id: 'scissors', name: 'กรรไกร' },
-      { num: 71, catId: 'safety', catName: 'Safety', minQty: 1, id: 'bulletproof-vest', name: 'เสื้อกันกระสุน' },
-      { num: 72, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'red-bag', name: 'ถุงขยะติดเชื้อ (ถุงแดง)' },
-      { num: 73, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'trash-bag', name: 'ถุงขยะทั่วไป' },
-      { num: 74, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'hand-sanitizer', name: 'เจลล้างมือ' },
-      { num: 75, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'ammonia', name: 'แอมโมเนียหอม' },
-      { num: 76, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'nss-wound', name: 'NSS ล้างแผล' },
-      { num: 77, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'betadine', name: 'เบต้าดีน' },
-      { num: 78, catId: 'other', catName: 'อุปกรณ์อื่นๆ ทั่วไป', minQty: 1, id: 'consent-form', name: 'ใบยินยอม/ไม่ยินยอมรักษา' },
-
-      { num: 79, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 20, id: 'adrenaline', name: 'Adrenaline (amp)' },
-      { num: 80, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 18, id: 'adenosine', name: 'Adenosine (mg)' },
-      { num: 81, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 3, id: 'atropine', name: 'Atropine (mg)' },
-      { num: 82, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 3, id: 'amiodarone', name: 'Amiodarone (150 mg/amp)' },
-      { num: 83, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'calcium-gluconate', name: 'Calcium Gluconate (g)' },
-      { num: 84, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'dopamine', name: 'Dopamine (250 mg/amp)' },
-      { num: 85, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'sodium-bicarbonate', name: 'Sodium Bicarbonate (100 mg/amp)' },
-      { num: 86, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 4, id: 'magnesium-sulphate', name: 'Magnesium Sulphate (g)' },
-      { num: 87, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 10, id: 'dexamethasone', name: 'Dexamethasone inj. (mg)' },
-      { num: 88, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 20, id: 'diazepam', name: 'Diazepam inj. 10 mg/2 ml (mg)' },
-      { num: 89, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'dextrose-50', name: 'Dextrose 50 % (50 mg/amp)' },
-      { num: 90, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'berodual-neb', name: 'Berodual neb. (NB)' },
-      { num: 91, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'ventolin-neb', name: 'Ventolin neb. (NB)' },
-      { num: 92, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'haloperidol', name: 'Haloperidol (10 mg/amp)' },
-      { num: 93, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'pain-med', name: 'Morphine (10 mg/amp)' },
-      { num: 94, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'naloxone', name: 'Naloxone (10 mg/amp)' },
-      { num: 95, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 2, id: 'ntg', name: 'NTG Sublingual (Tab)' },
-      { num: 96, catId: 'emergency-drugs', catName: 'ยาฉุกเฉินและอื่นๆ', minQty: 1, id: 'antiplatelet', name: 'Antiplatelet (ASA/ACLS) (dose)' }
-    ];
+      {
+            "num": 1,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "ambu-child",
+            "name": "Ambu เด็ก"
+      },
+      {
+            "num": 2,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "ambu-adult",
+            "name": "Ambu ผู้ใหญ่"
+      },
+      {
+            "num": 3,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "o2-mask-child",
+            "name": "O2 mask เด็ก"
+      },
+      {
+            "num": 4,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "o2-mask-adult",
+            "name": "O2 mask ผู้ใหญ่"
+      },
+      {
+            "num": 5,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "o2-cannular",
+            "name": "O2 cannular"
+      },
+      {
+            "num": 6,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "nebulizer-set-child",
+            "name": "set พ่นยา เด็ก"
+      },
+      {
+            "num": 7,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "nebulizer-set-adult",
+            "name": "set พ่นยา ผู้ใหญ่"
+      },
+      {
+            "num": 8,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "rubber-bulb-syringe",
+            "name": "ลูกสูบยางแดง"
+      },
+      {
+            "num": 9,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "stethoscope",
+            "name": "stethoscope"
+      },
+      {
+            "num": 10,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "oral-airway",
+            "name": "oral airway ขนาดต่างๆ"
+      },
+      {
+            "num": 11,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 3,
+            "id": "nasal-airway",
+            "name": "nasal airway ขนาดต่างๆ"
+      },
+      {
+            "num": 12,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "ky-jelly",
+            "name": "KY jelly"
+      },
+      {
+            "num": 13,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "oxygen-tank-1",
+            "name": "Oxygen ถังที่ 1"
+      },
+      {
+            "num": 14,
+            "catId": "airway-breathing",
+            "catName": "Airway & Breathing",
+            "minQty": 1,
+            "id": "oxygen-tank-2",
+            "name": "Oxygen ถังที่ 2"
+      },
+      {
+            "num": 15,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 2,
+            "id": "nss-1000",
+            "name": "NSS 1000 ml."
+      },
+      {
+            "num": 16,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 2,
+            "id": "dn2-1000",
+            "name": "5%D/N/2 1000 ml."
+      },
+      {
+            "num": 17,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "aed",
+            "name": "AED"
+      },
+      {
+            "num": 18,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "paddle-child",
+            "name": "Paddle เด็ก"
+      },
+      {
+            "num": 19,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "paddle-adult",
+            "name": "Paddle ผู้ใหญ่"
+      },
+      {
+            "num": 20,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "electrode-adult",
+            "name": "แผ่น Electrode ผู้ใหญ่"
+      },
+      {
+            "num": 21,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "electrode-child",
+            "name": "แผ่น Electrode เด็ก"
+      },
+      {
+            "num": 22,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "bp-monitor",
+            "name": "เครื่องวัด BP Digital"
+      },
+      {
+            "num": 23,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "o2-sat-monitor",
+            "name": "เครื่องวัด O2 sat"
+      },
+      {
+            "num": 24,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "top-gauze",
+            "name": "Top gauze"
+      },
+      {
+            "num": 25,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "gauze",
+            "name": "gauze"
+      },
+      {
+            "num": 26,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "roll-gauze",
+            "name": "Roll gauze"
+      },
+      {
+            "num": 27,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 3,
+            "id": "elastic-bandage",
+            "name": "Elastic bandage ขนาดต่างๆ"
+      },
+      {
+            "num": 28,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "three-side-dressing",
+            "name": "three side dressing"
+      },
+      {
+            "num": 29,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "tourniquet-gen",
+            "name": "tourniquet (อเนกประสงค์)"
+      },
+      {
+            "num": 30,
+            "catId": "circulation",
+            "catName": "Circulation",
+            "minQty": 1,
+            "id": "dtx-kit",
+            "name": "ชุด DTX"
+      },
+      {
+            "num": 31,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "medicut",
+            "name": "medicut ขนาดต่างๆ"
+      },
+      {
+            "num": 32,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "iv-set-child",
+            "name": "set IV เด็ก"
+      },
+      {
+            "num": 33,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "iv-set-adult",
+            "name": "set IV ผู้ใหญ่"
+      },
+      {
+            "num": 34,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "three-way",
+            "name": "three way"
+      },
+      {
+            "num": 35,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "extension-tube",
+            "name": "extension tube"
+      },
+      {
+            "num": 36,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "tourniquet-iv",
+            "name": "tourniquet"
+      },
+      {
+            "num": 37,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "plaster-iv",
+            "name": "พลาสเตอร์ IV"
+      },
+      {
+            "num": 38,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "transpore",
+            "name": "transpore 1\""
+      },
+      {
+            "num": 39,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "heplock",
+            "name": "heplock"
+      },
+      {
+            "num": 40,
+            "catId": "iv-kit",
+            "catName": "ชุดอุปกรณ์ให้ IV",
+            "minQty": 1,
+            "id": "alcohol-ball-iv",
+            "name": "alcohol ball"
+      },
+      {
+            "num": 41,
+            "catId": "injection-kit",
+            "catName": "ชุดอุปกรณ์ฉีดยา",
+            "minQty": 1,
+            "id": "syringes",
+            "name": "syringe ขนาดต่างๆ (50,20,10,5,3 cc)"
+      },
+      {
+            "num": 42,
+            "catId": "injection-kit",
+            "catName": "ชุดอุปกรณ์ฉีดยา",
+            "minQty": 1,
+            "id": "needles",
+            "name": "เข็มเบอร์ต่างๆ (18,21,23,24,25,26)"
+      },
+      {
+            "num": 43,
+            "catId": "injection-kit",
+            "catName": "ชุดอุปกรณ์ฉีดยา",
+            "minQty": 1,
+            "id": "alcohol-ball-inj",
+            "name": "alcohol ball"
+      },
+      {
+            "num": 44,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 1,
+            "id": "spinal-board",
+            "name": "spinal board"
+      },
+      {
+            "num": 45,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 1,
+            "id": "head-immobilizer",
+            "name": "Head immobilizer"
+      },
+      {
+            "num": 46,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 3,
+            "id": "belt-strap",
+            "name": "สายรัด belt"
+      },
+      {
+            "num": 47,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 3,
+            "id": "hard-collar",
+            "name": "Hard collar ขนาดต่างๆ"
+      },
+      {
+            "num": 48,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 1,
+            "id": "ked",
+            "name": "KED"
+      },
+      {
+            "num": 49,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 1,
+            "id": "vacuum-splint",
+            "name": "vacuum splint"
+      },
+      {
+            "num": 50,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 2,
+            "id": "leg-splint",
+            "name": "ไม้ดามขา"
+      },
+      {
+            "num": 51,
+            "catId": "splint-moving",
+            "catName": "อุปกรณ์ดาม & ยกเคลื่อนย้าย",
+            "minQty": 2,
+            "id": "arm-splint",
+            "name": "ไม้ดามแขน"
+      },
+      {
+            "num": 52,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 20,
+            "id": "adrenaline",
+            "name": "Adrenaline (20 amp)"
+      },
+      {
+            "num": 53,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 18,
+            "id": "adenosine",
+            "name": "Adenosine (18 mg)"
+      },
+      {
+            "num": 54,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 3,
+            "id": "atropine",
+            "name": "Atropine (3 mg)"
+      },
+      {
+            "num": 55,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 450,
+            "id": "amiodarone",
+            "name": "Amiodarone (450 mg / 3 amp)"
+      },
+      {
+            "num": 56,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 1,
+            "id": "calcium-gluconate",
+            "name": "Calcium Gluconate (1 g)"
+      },
+      {
+            "num": 57,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 250,
+            "id": "dopamine",
+            "name": "Dopamine (250 mg / 1 amp)"
+      },
+      {
+            "num": 58,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 100,
+            "id": "sodium-bicarbonate",
+            "name": "Sodium Bicarbonate (100 mg / 1 amp)"
+      },
+      {
+            "num": 59,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 4,
+            "id": "magnesium-sulphate",
+            "name": "Magnesium Sulphate (4 g)"
+      },
+      {
+            "num": 60,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 10,
+            "id": "dexamethasone",
+            "name": "Dexamethasone inj. (10 mg)"
+      },
+      {
+            "num": 61,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 20,
+            "id": "diazepam",
+            "name": "Diazepam inj. 10 mg/2 ml (20 mg)"
+      },
+      {
+            "num": 62,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 50,
+            "id": "dextrose-50",
+            "name": "Dextrose 50 % (50 g / 1 amp)"
+      },
+      {
+            "num": 63,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 2,
+            "id": "berodual-neb",
+            "name": "Berodual neb. (2 NB)"
+      },
+      {
+            "num": 64,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 2,
+            "id": "ventolin-neb",
+            "name": "Ventolin neb. (2 NB)"
+      },
+      {
+            "num": 65,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 10,
+            "id": "haloperidol",
+            "name": "Haloperidol (10 mg / 1 amp)"
+      },
+      {
+            "num": 66,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 10,
+            "id": "pain-med",
+            "name": "Morphine / NSAID inj. (10 mg / 1 amp)"
+      },
+      {
+            "num": 67,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 2,
+            "id": "naloxone",
+            "name": "Naloxone (2 amp / 10 mg)"
+      },
+      {
+            "num": 68,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 2,
+            "id": "ntg",
+            "name": "NTG Sublingual (2 Tab)"
+      },
+      {
+            "num": 69,
+            "catId": "emergency-drugs",
+            "catName": "ยาฉุกเฉินที่จำเป็น (Emergency Drug Box)",
+            "minQty": 1,
+            "id": "antiplatelet",
+            "name": "Antiplatelet (ASA / ACLS 1 dose)"
+      },
+      {
+            "num": 70,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "disposable-gloves",
+            "name": "ถุงมือ Disposable"
+      },
+      {
+            "num": 71,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "sterile-gloves",
+            "name": "ถุงมือ sterile"
+      },
+      {
+            "num": 72,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "apron",
+            "name": "เอี๊ยม"
+      },
+      {
+            "num": 73,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "surgical-mask",
+            "name": "หน้ากากอนามัย"
+      },
+      {
+            "num": 74,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "mask-n95",
+            "name": "หน้ากาก N95"
+      },
+      {
+            "num": 75,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "raincoat",
+            "name": "เสื้อกันฝน"
+      },
+      {
+            "num": 76,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 3,
+            "id": "boots",
+            "name": "รองเท้าบูท"
+      },
+      {
+            "num": 77,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "goggles",
+            "name": "แว่นตานิรภัย"
+      },
+      {
+            "num": 78,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "cap",
+            "name": "หมวกคลุมผม"
+      },
+      {
+            "num": 79,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 3,
+            "id": "reflective-vest",
+            "name": "เสื้อสะท้อนแสง"
+      },
+      {
+            "num": 80,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "safety-helmet",
+            "name": "หมวกกันกระแทก"
+      },
+      {
+            "num": 81,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 3,
+            "id": "traffic-cone",
+            "name": "กรวยและอุปกรณ์สะท้อนแสง"
+      },
+      {
+            "num": 82,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "barrier-tape",
+            "name": "แถบกั้นจราจร"
+      },
+      {
+            "num": 83,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "fire-extinguisher",
+            "name": "ถังดับเพลิง"
+      },
+      {
+            "num": 84,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "whistle",
+            "name": "นกหวีด"
+      },
+      {
+            "num": 85,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "glass-breaker",
+            "name": "อุปกรณ์ทุบกระจก & ตัดสายรัด"
+      },
+      {
+            "num": 86,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "traffic-wand",
+            "name": "กระบองไฟจราจร"
+      },
+      {
+            "num": 87,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "flashlight-safety",
+            "name": "ไฟฉาย"
+      },
+      {
+            "num": 88,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "scissors",
+            "name": "กรรไกร"
+      },
+      {
+            "num": 89,
+            "catId": "ppe-safety",
+            "catName": "ชุด PPE & Safety",
+            "minQty": 1,
+            "id": "bulletproof-vest",
+            "name": "เสื้อกันกระสุน"
+      },
+      {
+            "num": 90,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "red-bag",
+            "name": "ถุงขยะติดเชื้อ (ถุงแดง)"
+      },
+      {
+            "num": 91,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "trash-bag",
+            "name": "ถุงขยะทั่วไป"
+      },
+      {
+            "num": 92,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "hand-sanitizer",
+            "name": "เจลล้างมือ"
+      },
+      {
+            "num": 93,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "ammonia",
+            "name": "แอมโมเนียหอม"
+      },
+      {
+            "num": 94,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "nss-wound",
+            "name": "NSS ล้างแผล"
+      },
+      {
+            "num": 95,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "betadine",
+            "name": "เบต้าดีน"
+      },
+      {
+            "num": 96,
+            "catId": "other",
+            "catName": "อุปกรณ์อื่นๆ ทั่วไป",
+            "minQty": 1,
+            "id": "consent-form",
+            "name": "ใบยินยอม/ไม่ยินยอมรักษา"
+      }
+];
 
     let currentVehicle = 'คันที่ 1 (รถ Refer)';
     let currentCategory = 'ALL';
@@ -1693,7 +2463,15 @@ function sendTelegramAlert(r) {
     function resetInspectionFormState() {
       inspectionFormState = {};
       CHECKLIST_ITEMS_78.forEach(item => {
-        inspectionFormState[item.id] = { status: 'READY', note: '', qty: item.minQty || 1, name: item.name, catName: item.catName };
+        const defQty = item.defaultQty !== undefined ? item.defaultQty : (item.minQty || 1);
+        inspectionFormState[item.id] = { 
+          status: 'READY', 
+          note: '', 
+          qty: defQty, 
+          name: item.name, 
+          catName: item.catName,
+          unit: item.unit || ''
+        };
       });
     }
 
@@ -1773,11 +2551,11 @@ function sendTelegramAlert(r) {
       if (!text) return;
 
       if (currentCategory === 'ALL') {
-        text.innerText = 'แสดงครบทั้ง 9 หมวดหมู่ (96 รายการ)';
+        text.innerText = 'แสดงครบทั้ง 8 หมวดหมู่ (96 รายการ)';
       } else {
         const idx = CATEGORIES_ORDER.indexOf(currentCategory) + 1;
         const meta = CATEGORIES_META[currentCategory];
-        text.innerText = `หมวดที่ ${idx} / 9: ${meta.name}`;
+        text.innerText = `หมวดที่ ${idx} / 8: ${meta.name}`;
       }
     }
 
@@ -1811,7 +2589,10 @@ function sendTelegramAlert(r) {
             inspectionFormState[item.id] = { status: 'READY', note: '', qty: item.minQty || 1, name: item.name, catName: meta.name };
           }
           const itemState = inspectionFormState[item.id];
-          const currentQty = itemState.qty !== undefined ? itemState.qty : (item.minQty || 1);
+          const defQty = item.defaultQty !== undefined ? item.defaultQty : (item.minQty || 1);
+          const currentQty = itemState.qty !== undefined ? itemState.qty : defQty;
+          const unitLabel = item.unit || (item.id.includes('oxygen-tank') ? 'PSI' : '');
+          const stepDelta = unitLabel === 'PSI' ? 100 : 1;
 
           return `
             <div class="item-card">
@@ -1820,16 +2601,33 @@ function sendTelegramAlert(r) {
                   <span class="badge-num">${item.num}</span>
                   <div>
                     <div class="item-title">${escapeHtml(item.name)}</div>
-                    <div class="item-subtitle">${escapeHtml(item.id)} <span class="min-qty-text">(ขั้นต่ำ: ${item.minQty || 1})</span></div>
+                    <div class="item-subtitle">${escapeHtml(item.id)} <span class="min-qty-text">(${unitLabel === 'PSI' ? 'โซนเตือน: < 500 PSI, วิกฤต: < 300 PSI' : 'ขั้นต่ำ: ' + (item.minQty || 1)})</span></div>
+                    ${unitLabel === 'PSI' || item.id.includes('oxygen-tank') ? `
+                      <div id="psi_zone_${item.id}">${getPsiZoneInfo(currentQty).badgeHtml}</div>
+                      <div class="psi-bar-wrapper">
+                        <div class="psi-bar-bg">
+                          <div id="psi_bar_${item.id}" class="psi-bar-fill ${getPsiZoneInfo(currentQty).zone.toLowerCase()}" style="width: ${Math.min(100, Math.max(0, (currentQty / 2000) * 100))}%;"></div>
+                        </div>
+                        <div class="psi-scale-labels">
+                          <span>0</span>
+                          <span class="scale-crit">300 (วิกฤต)</span>
+                          <span class="scale-warn">500 (เตือน)</span>
+                          <span>2000+ PSI</span>
+                        </div>
+                      </div>
+                    ` : ''}
                   </div>
                 </div>
               </div>
               
               <div class="item-controls">
-                <div class="qty-stepper">
-                  <button class="btn-stepper" type="button" onclick="changeQty('${item.id}', -1, ${item.minQty || 1})"><i class="fa-solid fa-minus"></i></button>
-                  <input type="number" id="qty_${item.id}" class="qty-input" value="${currentQty}" onchange="setCheckitemQty('${item.id}', this.value, ${item.minQty || 1})">
-                  <button class="btn-stepper" type="button" onclick="changeQty('${item.id}', 1, ${item.minQty || 1})"><i class="fa-solid fa-plus"></i></button>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <div class="qty-stepper">
+                    <button class="btn-stepper" type="button" onclick="changeQty('${item.id}', -${stepDelta}, ${item.minQty || 1})"><i class="fa-solid fa-minus"></i></button>
+                    <input type="number" id="qty_${item.id}" class="qty-input ${unitLabel === 'PSI' ? 'psi-input-field' : ''}" value="${currentQty}" step="${stepDelta}" onchange="setCheckitemQty('${item.id}', this.value, ${item.minQty || 1})">
+                    <button class="btn-stepper" type="button" onclick="changeQty('${item.id}', ${stepDelta}, ${item.minQty || 1})"><i class="fa-solid fa-plus"></i></button>
+                  </div>
+                  ${unitLabel ? `<span class="unit-tag-badge">${unitLabel}</span>` : ''}
                 </div>
 
                 <div class="status-toggles">
@@ -1891,26 +2689,77 @@ function sendTelegramAlert(r) {
       setCheckitemQty(itemId, newQty, minQty);
     }
 
+    
+    function getPsiZoneInfo(psi) {
+      const val = parseInt(psi, 10) || 0;
+      if (val >= 500) {
+        return {
+          zone: 'GREEN',
+          status: 'READY',
+          badgeHtml: '<span class="psi-zone green"><i class="fa-solid fa-circle-check"></i> 🟢 โซนสีเขียว: ปลอดภัย / ก๊าซเพียงพอ (≥ 500 PSI)</span>'
+        };
+      } else if (val >= 300) {
+        return {
+          zone: 'YELLOW',
+          status: 'REFILL',
+          badgeHtml: '<span class="psi-zone yellow"><i class="fa-solid fa-triangle-exclamation"></i> 🟡 โซนสีเหลือง: เตือน / ควรเตรียมถังสำรอง (300-500 PSI)</span>'
+        };
+      } else {
+        return {
+          zone: 'RED',
+          status: 'REFILL',
+          badgeHtml: '<span class="psi-zone red"><i class="fa-solid fa-circle-exclamation"></i> 🔴 โซนสีแดง: อันตราย! ต้องเปลี่ยนถังทันที (< 300 PSI)</span>'
+        };
+      }
+    }
+
     function setCheckitemQty(itemId, value, minQty) {
       if (!inspectionFormState[itemId]) return;
       const qty = parseInt(value, 10);
-      inspectionFormState[itemId].qty = isNaN(qty) ? 0 : qty;
+      const finalQty = isNaN(qty) ? 0 : qty;
+      inspectionFormState[itemId].qty = finalQty;
       
       const elReady = document.getElementById('btn_' + itemId + '_READY');
       const elRepair = document.getElementById('btn_' + itemId + '_REPAIR');
       const elRefill = document.getElementById('btn_' + itemId + '_REFILL');
+      const elZoneContainer = document.getElementById('psi_zone_' + itemId);
+      const elBar = document.getElementById('psi_bar_' + itemId);
 
-      if (inspectionFormState[itemId].qty < minQty) {
-        inspectionFormState[itemId].status = 'REFILL';
-        if (elReady) elReady.classList.remove('active');
-        if (elRepair) elRepair.classList.remove('active');
-        if (elRefill) elRefill.classList.add('active');
+      const isPsiItem = itemId.includes('oxygen-tank') || (inspectionFormState[itemId].unit === 'PSI');
+
+      if (isPsiItem) {
+        const zoneInfo = getPsiZoneInfo(finalQty);
+        if (elZoneContainer) elZoneContainer.innerHTML = zoneInfo.badgeHtml;
+        
+        if (elBar) {
+          const pct = Math.min(100, Math.max(0, (finalQty / 2000) * 100));
+          elBar.style.width = pct + '%';
+          elBar.className = 'psi-bar-fill ' + zoneInfo.zone.toLowerCase();
+        }
+        
+        inspectionFormState[itemId].status = zoneInfo.status;
+        if (zoneInfo.status === 'REFILL') {
+          if (elReady) elReady.classList.remove('active');
+          if (elRepair) elRepair.classList.remove('active');
+          if (elRefill) elRefill.classList.add('active');
+        } else {
+          if (elReady) elReady.classList.add('active');
+          if (elRepair) elRepair.classList.remove('active');
+          if (elRefill) elRefill.classList.remove('active');
+        }
       } else {
-        if (inspectionFormState[itemId].status === 'REFILL') {
-            inspectionFormState[itemId].status = 'READY';
-            if (elReady) elReady.classList.add('active');
-            if (elRepair) elRepair.classList.remove('active');
-            if (elRefill) elRefill.classList.remove('active');
+        if (finalQty < minQty) {
+          inspectionFormState[itemId].status = 'REFILL';
+          if (elReady) elReady.classList.remove('active');
+          if (elRepair) elRepair.classList.remove('active');
+          if (elRefill) elRefill.classList.add('active');
+        } else {
+          if (inspectionFormState[itemId].status === 'REFILL') {
+              inspectionFormState[itemId].status = 'READY';
+              if (elReady) elReady.classList.add('active');
+              if (elRepair) elRepair.classList.remove('active');
+              if (elRefill) elRefill.classList.remove('active');
+          }
         }
       }
     }
@@ -2558,7 +3407,7 @@ function sendTelegramAlert(r) {
               <td><code>${escapeHtml(itm.id || k)}</code></td>
               <td><strong>${escapeHtml(itm.name || k)}</strong></td>
               <td><span class="badge badge-blue">${escapeHtml(itm.catName || '-')}</span></td>
-              <td style="text-align: center;"><strong>${itm.qty !== undefined ? itm.qty : '-'}</strong></td>
+              <td style="text-align: center;"><strong>${itm.qty !== undefined ? itm.qty : '-'} ${itm.unit || (itm.id && itm.id.includes('oxygen-tank') ? 'PSI' : '')}</strong></td>
               <td>${badge}</td>
               <td>${escapeHtml(itm.note || '-')}</td>
             </tr>
